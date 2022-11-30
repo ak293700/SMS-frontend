@@ -1,1 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
+body, html {
+  /*overflow: hidden;*/
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colors */
+  /*
+  --main-color: #5DB5B8;
+  --secondary-color: #E41337;
+  --third-color: #5FE4DE;
+  --fourth-color: #E5F7DF;
+  --fifth-color: #5CD1A1;
+  */
+  --main-color: #ddfdf4;
+  --secondary-color: #DB3D3D;
+  --third-color: #000;
+
+  --default-font-family: Copperplate, cursive;
+  --default-font-weight: 400;
+}
+

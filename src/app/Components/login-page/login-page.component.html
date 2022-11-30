@@ -1,2 +1,18 @@
-<p>login-page works!</p>
+<main>
+  <section>
+    <h1>Login</h1>
+
+    <form (ngSubmit)="logIn()" [formGroup]="loginForm">
+      <input pInputText placeholder="Login">
+      <div>
+        <input [type]="showPassword ? 'text' : 'password'" formControlName="password" pInputText
+               placeholder="Mot de passe"/>
+
+        <p-button (click)="showHidePassword()" [icon]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></p-button>
+      </div>
+      <button [disabled]="!loginForm.valid" label="Se connecter" pButton
+              type="submit"></button>
+    </form>
+  </section>
+</main>
 
