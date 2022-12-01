@@ -42,14 +42,14 @@
          [tableStyle]="{'min-width': '50rem'}"
          [rows]="2" [scrollable]="true" [showCurrentPageReport]="true"
          [totalRecords]="totalRecords"
-         [selectAll]="selectedProducts.data.length === productsId.length"
-         [value]="productsPageData" dataKey="id"
+         [selectAll]="selectedProducts.data.length === products.allId.length"
+         [value]="products.pageData" dataKey="id"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
   <!-- Column toggle -->
   <ng-template pTemplate="caption">
-    <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="productsHeader" [style]="{'min-width': '200px'}"
+    <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="products.header" [style]="{'min-width': '200px'}"
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
     </p-multiSelect>

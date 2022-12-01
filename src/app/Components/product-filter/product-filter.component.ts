@@ -7,6 +7,13 @@ import {LazyLoadEvent} from "primeng/api";
   * The fields in the filter and the table can be different.
  */
 
+interface Products
+{
+  header: any[];
+  pageData: any[];
+  allId: number[];
+}
+
 @Component({
   selector: 'app-product-filter',
   templateUrl: './product-filter.component.html',
@@ -17,61 +24,63 @@ export class ProductFilterComponent
   // @ts-ignore initialize in the constructor
   filters: any[];
 
-  // We do not add the photo field in the header because it is mange differently.
-  // Do that to display markup instead of text.
-  productsHeader: any[] = [
-    {
-      label: 'Référence produit',
-      field: 'productReference',
-    },
-    {
-      label: 'Nom ElecProShop',
-      field: 'name',
-    },
-    {
-      label: 'Id Prestashop',
-      field: 'idPrestashop',
-    },
-    {
-      label: 'Marque',
-      field: 'brand',
-    },
-    {
-      label: 'Catégorie principale',
-      field: 'mainCategory',
-    },
-    {
-      label: 'Famille fournisseur',
-      field: 'supplierFamily',
-    },
-    {
-      label: 'Actif',
-      field: 'active',
-    },
-    {
-      label: 'Popularité',
-      field: 'popularity',
-    },
-    {
-      label: 'Type de produit',
-      field: 'productType',
-    },
-    {
-      label: 'Prix de vente TTC',
-      field: 'salePriceIt',
-    },
-    {
-      label: 'Taux de marge',
-      field: 'marginRate',
-    },
-    {
-      label: 'Écart ElecPlusSimple',
-      field: 'esDifference',
-    },
-  ];
-
+  // We do not add the photo field to use it with html markup.
   // The id of every product matching the filter.
-  productsId: number[] = [6190, 6237, 1387];
+  products: Products =
+    {
+      header: [
+        {
+          label: 'Référence produit',
+          field: 'productReference',
+        },
+        {
+          label: 'Nom ElecProShop',
+          field: 'name',
+        },
+        {
+          label: 'Id Prestashop',
+          field: 'idPrestashop',
+        },
+        {
+          label: 'Marque',
+          field: 'brand',
+        },
+        {
+          label: 'Catégorie principale',
+          field: 'mainCategory',
+        },
+        {
+          label: 'Famille fournisseur',
+          field: 'supplierFamily',
+        },
+        {
+          label: 'Actif',
+          field: 'active',
+        },
+        {
+          label: 'Popularité',
+          field: 'popularity',
+        },
+        {
+          label: 'Type de produit',
+          field: 'productType',
+        },
+        {
+          label: 'Prix de vente TTC',
+          field: 'salePriceIt',
+        },
+        {
+          label: 'Taux de marge',
+          field: 'marginRate',
+        },
+        {
+          label: 'Écart ElecPlusSimple',
+          field: 'esDifference',
+        },
+      ],
+      pageData: [], // The products of the current page.
+      allId: [6190, 6237, 1387],
+    };
 
   // There for test purposes.
   allProductsData: any[] = [
@@ -125,8 +134,7 @@ export class ProductFilterComponent
     }
   ];
 
-  // The products of the current page.
-  productsPageData: any[] = [];
+
   // The products we did select. After it should be a list of ids.
   selectedProducts: any = {
     data: [], // the selected product (only the ones in the current page)
@@ -137,14 +145,13 @@ export class ProductFilterComponent
   // boolean
   loading: boolean = false;
 
-
   // Private we use getter and setter to manipulate it.
-  _displayedProductHeader = this.productsHeader;
+  _displayedProductHeader = this.products.header;
 
   constructor()
   {
     this.fetchFilter();
-    this.totalRecords = this.productsId.length;
+    this.totalRecords = this.products.allId.length;
   }
 
   @Input() get displayedProductHeader(): any[]
@@ -156,8 +163,8 @@ export class ProductFilterComponent
   set displayedProductHeader(val: any[])
   {
     // restore original order
-    this._displayedProductHeader = this.productsHeader
-      .filter(col => val.includes(col));
+    this._displayedProductHeader = this.products.header
+      .filter((col: any) => val.includes(col));
   }
 
   fetchFilter()
@@ -250,7 +257,7 @@ export class ProductFilterComponent
     const begin: number = event.first ?? 0;
     const end: number = begin + (event.rows ?? 0);
 
-    this.productsPageData = this.allProductsData.slice(begin, end);
+    this.products.pageData = this.allProductsData.slice(begin, end);
 
     this.loading = false;
   }
@@ -283,11 +290,11 @@ export class ProductFilterComponent
 
     if (checked)
     {
-      // problem with lazy loads
-      this.selectedProducts.data = this.allProductsData;
+      // Can't select everything because of the lazy load.
+      this.selectedProducts.data = this.products.pageData;
 
       // get all ids that where unselected
-      const newIds = this.selectedProducts.data
+      const newIds = this.products.pageData
         .map((product: any) => product.id)
         .filter((id: number) => !this.selectedProducts.ids.includes(id));
 
