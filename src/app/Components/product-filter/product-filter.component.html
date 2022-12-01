@@ -2,16 +2,17 @@
 
 </nav>
 
-<p-table [columns]="selectedProductHeader" [selection]="'multiple'" [tableStyle]="{'min-width': '50rem'}"
-         [value]="productsData"
+<!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
+<p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"
+         [resizableColumns]="true" [scrollable]="true" [tableStyle]="{'min-width': '50rem'}"
+         [value]="productsData" selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
   <!-- Column toggle -->
   <ng-template pTemplate="caption">
-    <p-multiSelect [(ngModel)]="selectedProductHeader" [options]="productsHeader" [style]="{'min-width': '200px'}"
+    <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="productsHeader" [style]="{'min-width': '200px'}"
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
-
     </p-multiSelect>
   </ng-template>
 
@@ -24,8 +25,8 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-product pTemplate="body">
-    <tr>
+  <ng-template let-columns="columns" let-product let-rowIndex="rowIndex" pTemplate="body">
+    <tr [pSelectableRowIndex]="rowIndex" [pSelectableRow]="product">
       <td style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%"/>
       <td *ngFor="let col of columns">
