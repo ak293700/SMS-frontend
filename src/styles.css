@@ -1,15 +1,30 @@
 body, html {
-  /*overflow: hidden;*/
   margin: 0;
   padding: 0;
 }
 
 :root {
   /* Colors */
-  --main-color: #ddfdf4;
-  --secondary-color: #DB3D3D;
+  --main-color: #F8B464;
+  --secondary-color: #db3d3d;
   --third-color: #000;
+  --fourth-color: #ddfdf4;
 
   --default-font-family: Arial, cursive;
   --default-font-weight: 400;
+
+  --font-size-1: 2rem;
+  --font-size-2: 1.5rem;
+  --font-size-3: 1.25rem;
+
+  --default-border-size: 5px;
+}
+
+.text {
+  text-align: center;
+  margin: 30px 0;
+
+  font-family: var(--default-font-family);
+  font-weight: var(--default-font-weight);
+  color: var(--third-color);
 }

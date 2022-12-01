@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login-page',
@@ -11,7 +12,8 @@ export class LoginPageComponent
   loginForm: FormGroup;
   public showPassword: boolean = false;
 
-  constructor(private formBuilder: FormBuilder)
+  constructor(private formBuilder: FormBuilder,
+              private router: Router)
   {
     this.loginForm = this.formBuilder.group({
       'login': [null, Validators.required],
@@ -22,6 +24,7 @@ export class LoginPageComponent
   logIn()
   {
     console.log(this.loginForm.value);
+    this.router.navigate(['home']);
   }
 
   showHidePassword()

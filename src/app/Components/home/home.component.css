@@ -1,0 +1,65 @@
+:host {
+  /* Center the list on the screen */
+  display: flex; /* need to change to any other value than basic inline */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--main-color);
+
+  padding: 50px;
+
+
+}
+
+.page-link-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 80px;
+
+  height: 100%;
+
+  margin: auto 0;
+}
+
+.page-link-item {
+  list-style: none;
+
+  width: 250px;
+  height: 150px;
+
+  border-radius: 10%;
+  border: var(--default-border-size) solid var(--third-color);
+
+  background-color: var(--secondary-color);
+  transition: .2s ease-in-out;
+}
+
+.page-link-item:hover {
+  background-color: var(--fourth-color);
+}
+
+.page-link-item a {
+  display: block;
+  position: relative;
+
+  text-decoration: none;
+
+  height: 100%;
+  width: 100%;
+}
+
+.text {
+  position: absolute;
+  font-size: var(--font-size-1);
+  text-align: center;
+  margin: 0;
+
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}

@@ -7,5 +7,13 @@ import {Component} from '@angular/core';
 })
 export class HomeComponent
 {
-
+  public readonly sections = [
+    {
+      label: 'Produits',
+      link: '/products'
+    },
+    {
+      label: 'Paramètres',
+      link: '/settings'
+    }];
 }

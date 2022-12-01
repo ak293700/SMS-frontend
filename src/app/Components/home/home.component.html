@@ -1,1 +1,9 @@
-<p>home works!</p>
+<ul class="page-link-container">
+  <li *ngFor="let section of sections" class="page-link-item">
+    <a [routerLink]="section.link">
+      <h3 class="text">{{section.label}}</h3>
+    </a>
+  </li>
+</ul>
+
+
