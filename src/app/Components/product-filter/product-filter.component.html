@@ -5,6 +5,9 @@
 <button (click)="logFilters()">Log filter</button>
 
 <ul class="filter-container">
+
+  <!--  <input type="text" pInputText [(ngModel)]="filters[0].value" readonly/>-->
+
   <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
     <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
     <!--    switch on filter.type-->
@@ -14,8 +17,10 @@
                    mode="decimal"></p-inputNumber>
     <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" id="filter-{{filter.label}}">
     </p-checkbox>
-    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
-    ></p-slider>
+
+    <input *ngSwitchCase="'range'" [(ngModel)]="filter.value" pInputText readonly type="text"/>
+    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" [range]="true" id="filter-{{filter.label}}"
+              inputMode="decimal"></p-slider>
     <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value"
                 dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
   </li>

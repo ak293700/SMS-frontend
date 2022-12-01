@@ -38,7 +38,7 @@ nav {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
 
   text-decoration: none;
 
@@ -57,4 +57,8 @@ nav {
 
 .filter-item label {
   margin: 15px
+}
+
+p-slider {
+  width: 100%;
 }
