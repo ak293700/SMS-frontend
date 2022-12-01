@@ -13,6 +13,10 @@ import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {InputNumberModule} from "primeng/inputnumber";
+import {CheckboxModule} from "primeng/checkbox";
+import {SliderModule} from "primeng/slider";
+import {CalendarModule} from "primeng/calendar";
 
 @NgModule({
   declarations: [
@@ -31,7 +35,11 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     TableModule,
     FormsModule,
     MultiSelectModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    InputNumberModule,
+    CheckboxModule,
+    SliderModule,
+    CalendarModule
   ],
   providers: [],
   bootstrap: [RoutingAppComponent]

@@ -17,7 +17,7 @@ export class ProductFilterComponent
   // Do that to display markup instead of text.
   readonly productsHeader = [
     {
-      label: 'Reference produit',
+      label: 'Référence produit',
       field: 'productReference',
     },
     {
@@ -114,6 +114,76 @@ export class ProductFilterComponent
   ];
   selectedProducts: any[] = [];
 
+  filters: any[] = [
+    {
+      label: "Référence produit",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Id Prestashop",
+      value: null,
+      type: "number"
+    },
+    {
+      label: "Nom ElecProShop",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Marque",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Catégorie",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Famille fournisseur",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Actif",
+      value: null,
+      type: "checkbox"
+    },
+    {
+      label: "Type",
+      value: null,
+      type: "text"
+    },
+    {
+      label: "Promotion",
+      value: [0, 100],
+      type: "range"
+    },
+    {
+      label: "Date fin promotion",
+      value: null,
+      type: "date"
+    },
+    {
+      label: "Taux de marge",
+      value: null,
+      type: "range"
+    },
+    {
+      label: "Coefficient de marge",
+      value: null,
+      type: "range"
+    },
+    {
+      label: "Écart ElecPlusSimple",
+      value: null,
+      type: "range"
+    }
+  ];
+
+  range: number[] = [0, 100];
+
   // Private we use getter and setter to manipulate it.
   _displayedProductHeader = this.productsHeader;
 
@@ -128,5 +198,10 @@ export class ProductFilterComponent
     // restore original order
     this._displayedProductHeader = this.productsHeader
       .filter(col => val.includes(col));
+  }
+
+  logFilters()
+  {
+    console.log(this.filters);
   }
 }

@@ -21,7 +21,40 @@ nav {
 
 :host ::ng-deep .p-button.backButton {
   background-color: var(--main-color);
-  border-color: var(--main-color);
+  /*border-color: 5px solid var(--third-color);*/
+  border: none;
 
-  color: var(--fourth-color);
+  color: var(--third-color);
+  transition: all .2s ease-in-out;
+}
+
+:host ::ng-deep .p-button.backButton:hover {
+  background-color: var(--secondary-color);
+  border: 2px solid var(--third-color);
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  text-decoration: none;
+
+  margin: 4rem 0;
+}
+
+.filter-item {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  min-width: 215px;
+}
+
+.filter-item label {
+  margin: 15px
 }

@@ -2,6 +2,25 @@
   <p-button label="Retour Écran Principal" routerLink="/home" styleClass="backButton"></p-button>
 </nav>
 
+<button (click)="logFilters()">Log filter</button>
+
+<ul class="filter-container">
+  <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
+    <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
+    <!--    switch on filter.type-->
+    <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
+           pInputText type="text">
+    <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
+                   mode="decimal"></p-inputNumber>
+    <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" id="filter-{{filter.label}}">
+    </p-checkbox>
+    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
+    ></p-slider>
+    <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value"
+                dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
+  </li>
+</ul>
+
 <!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
 <p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"
          [resizableColumns]="true" [scrollable]="true" [tableStyle]="{'min-width': '50rem'}"
@@ -30,7 +49,7 @@
       <td style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%"/>
       <td *ngFor="let col of columns">
-        {{product[col.field]}}
+        {{ product[col.field] }}
       </td>
     </tr>
   </ng-template>
