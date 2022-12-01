@@ -8,12 +8,14 @@ import {LoginPageComponent} from './Components/login-page/login-page.component';
 import {InputTextModule} from "primeng/inputtext";
 import {ReactiveFormsModule} from "@angular/forms";
 import {HomeComponent} from './Components/home/home.component';
+import {ProductFilterComponent} from './Components/product-filter/product-filter.component';
 
 @NgModule({
   declarations: [
     RoutingAppComponent,
     LoginPageComponent,
-    HomeComponent
+    HomeComponent,
+    ProductFilterComponent
   ],
   imports: [
     BrowserModule,

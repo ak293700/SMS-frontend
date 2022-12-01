@@ -10,7 +10,7 @@ export class HomeComponent
   public readonly sections = [
     {
       label: 'Produits',
-      link: '/products'
+      link: '/product'
     },
     {
       label: 'Paramètres',
