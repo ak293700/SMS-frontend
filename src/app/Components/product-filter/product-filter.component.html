@@ -2,10 +2,22 @@
 
 </nav>
 
-<p-table [columns]="productsHeader" [tableStyle]="{'min-width': '50rem'}" [value]="productsData"
+<p-table [columns]="selectedProductHeader" [selection]="'multiple'" [tableStyle]="{'min-width': '50rem'}"
+         [value]="productsData"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+
+  <!-- Column toggle -->
+  <ng-template pTemplate="caption">
+    <p-multiSelect [(ngModel)]="selectedProductHeader" [options]="productsHeader" [style]="{'min-width': '200px'}"
+                   optionLabel="label" placeholder="Choose Columns"
+                   selectedItemsLabel="{0} columns selected">
+
+    </p-multiSelect>
+  </ng-template>
+
   <ng-template let-columns pTemplate="header">
     <tr>
+      <!--  We display the photo differently because we need to add html markup-->
       <th>Photo</th>
       <th *ngFor="let col of columns">
         {{col.label}}
@@ -15,7 +27,7 @@
   <ng-template let-columns="columns" let-product pTemplate="body">
     <tr>
       <td style="width: 100px">
-        <img [src]="product.image" class="shadow-4" width="100%"/>
+        <img [src]="product.photo" class="shadow-4" width="100%"/>
       <td *ngFor="let col of columns">
         {{product[col.field]}}
       </td>
