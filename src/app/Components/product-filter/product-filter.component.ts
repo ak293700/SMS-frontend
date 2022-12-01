@@ -24,9 +24,14 @@ export class ProductFilterComponent
       label: 'Nom ElecProShop',
       field: 'name',
     },
+    {
+      label: 'Id Prestashop',
+      field: 'idPrestashop',
+    },
   ];
 
-  selectedProductHeader = this.productsHeader;
+  // Private we use getter and setter to manipulate it.
+  _selectedProductHeader = this.productsHeader;
 
   readonly productsData = [
     {
@@ -46,14 +51,16 @@ export class ProductFilterComponent
     }
   ];
 
-  @Input() get selectedColumns(): any[]
+  @Input() get selectedProductHeader(): any[]
   {
-    return this.selectedProductHeader;
+    // remove @Input() from function signature
+    return this._selectedProductHeader;
   }
 
-  set selectedColumns(val: any[])
+  set selectedProductHeader(val: any[])
   {
-    //restore original order
-    this.selectedProductHeader = this.selectedColumns.filter(col => val.includes(col));
+    // restore original order
+    this._selectedProductHeader = this.productsHeader
+      .filter(col => val.includes(col));
   }
 }
