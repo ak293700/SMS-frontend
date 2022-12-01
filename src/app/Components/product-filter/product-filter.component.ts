@@ -76,6 +76,7 @@ export class ProductFilterComponent
   // There for test purposes.
   allProductsData: any[] = [
     {
+      id: 6190,
       photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
       productReference: "67001",
       name: "Interrupteur Commande VMC - 2 Vitesse Céliane",
@@ -91,6 +92,7 @@ export class ProductFilterComponent
       esDifference: "37.89%",
     },
     {
+      id: 6237,
       photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
       productReference: "67001D",
       name: "Double Interrupteur Va Et Vient Céliane",
@@ -106,6 +108,7 @@ export class ProductFilterComponent
       esDifference: "36.99%",
     },
     {
+      id: 1387,
       photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
       productReference: "T493821",
       name: "Radiateur Bilbao 3 - 750W - Fluide Caloporteur",
@@ -123,11 +126,15 @@ export class ProductFilterComponent
   ];
 
   // The products of the current page.
-  productsData: any[] = [];
+  productsPageData: any[] = [];
   // The products we did select. After it should be a list of ids.
-  selectedProducts: any[] = [];
+  selectedProducts: any = {
+    data: [], // the selected product (only the ones in the current page)
+    ids: [] // al the selected product (including the ones not in the curent filter)
+  };
   totalRecords: number;
 
+  // boolean
   loading: boolean = false;
 
 
@@ -233,8 +240,6 @@ export class ProductFilterComponent
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-
-    console.log(filters);
   }
 
   loadProductsLazy(event: LazyLoadEvent)
@@ -245,9 +250,58 @@ export class ProductFilterComponent
     const begin: number = event.first ?? 0;
     const end: number = begin + (event.rows ?? 0);
 
-    this.productsData = this.allProductsData.slice(begin, end);
+    this.productsPageData = this.allProductsData.slice(begin, end);
 
     this.loading = false;
   }
 
+
+  onSelectionChange(value: any[] = [])
+  {
+    /* console.log(value.length);
+     console.log(this.selectedProducts.data.length);
+     this.selectedProducts.data = value;
+     console.log("onSelectionChange");*/
+    console.log('this.selectedProducts', this.selectedProducts)
+  }
+
+  // (selectAllChange)="onSelectAllChange($event)"
+
+  onRowSelect(event: any)
+  {
+    this.selectedProducts.ids.push(event.data.id);
+  }
+
+  onRowUnselect(event: any)
+  {
+    this.selectedProducts.ids = this.selectedProducts.ids.filter((id: number) => id !== event.data.id);
+  }
+
+  onSelectAllChange(event: any)
+  {
+    const checked: boolean = event.checked;
+
+    if (checked)
+    {
+      // problem with lazy loads
+      this.selectedProducts.data = this.allProductsData;
+
+      // get all ids that where unselected
+      const newIds = this.selectedProducts.data
+        .map((product: any) => product.id)
+        .filter((id: number) => !this.selectedProducts.ids.includes(id));
+
+      // concat the ids of the selected products
+      this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
+    }
+    else
+    {
+      this.selectedProducts.ids =
+        this.selectedProducts.ids.filter((id: number) => !this.selectedProducts.ids.includes(id));
+      this.selectedProducts.data = [];
+    }
+
+    console.log(this.selectedProducts);
+
+  }
 }

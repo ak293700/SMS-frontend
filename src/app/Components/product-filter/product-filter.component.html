@@ -34,13 +34,17 @@
 
 
 <!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
-<p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"
+<p-table (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+         (selectAllChange)="onSelectAllChange($event)"
          [paginator]="true" [resizableColumns]="true"
-         [value]="productsData" selectionMode="multiple"
+         [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
          (onLazyLoad)="loadProductsLazy($event)" [lazy]="true" [loading]="loading"
          [tableStyle]="{'min-width': '50rem'}"
          [rows]="2" [scrollable]="true" [showCurrentPageReport]="true"
          [totalRecords]="totalRecords"
+         [selectAll]="selectedProducts.data.length === productsId.length"
+         [value]="productsPageData" dataKey="id"
+         selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
   <!-- Column toggle -->
@@ -54,6 +58,9 @@
   <ng-template let-columns pTemplate="header">
     <tr>
       <!--  We display the photo differently because we need to add html markup-->
+      <th style="width: 4rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
       <th>Photo</th>
       <th *ngFor="let col of columns">
         {{col.label}}
@@ -62,6 +69,9 @@
   </ng-template>
   <ng-template let-columns="columns" let-product let-rowIndex="rowIndex" pTemplate="body">
     <tr [pSelectableRowIndex]="rowIndex" [pSelectableRow]="product">
+      <td>
+        <p-tableCheckbox [value]="product"></p-tableCheckbox>
+      </td>
       <td style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%"/>
       <td *ngFor="let col of columns">
