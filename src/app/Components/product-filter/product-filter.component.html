@@ -2,33 +2,36 @@
   <p-button label="Retour Écran Principal" routerLink="/home" styleClass="backButton"></p-button>
 </nav>
 
-<button (click)="logFilters()">Log filters</button>
+<div class="filter-container">
+  <ul class="filter-item-container">
+    <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
+      <div class="filter-label-container">
+        <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
+        <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>
+      </div>
 
-<ul class="filter-container">
-  <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
-    <div class="filter-item-container">
-      <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
-      <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>
-    </div>
+      <!--    switch on filter.type-->
+      <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" [disabled]="!filter.active" id="filter-{{filter.label}}"
+             pInputText type="text">
+      <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" [disabled]="!filter.active"
+                     id="filter-{{filter.label}}"
+                     mode="decimal"></p-inputNumber>
+      <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" [binary]="true" [disabled]="!filter.active"
+                  id="filter-{{filter.label}}"></p-checkbox>
 
-    <!--    switch on filter.type-->
-    <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" [disabled]="!filter.active" id="filter-{{filter.label}}"
-           pInputText type="text">
-    <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-                   id="filter-{{filter.label}}"
-                   mode="decimal"></p-inputNumber>
-    <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" [binary]="true" [disabled]="!filter.active"
-                id="filter-{{filter.label}}"></p-checkbox>
+      <div *ngSwitchCase="'range'" class="flex-center" id="filter-{{filter.label}}">
+        <input [(ngModel)]="filter.value[0]" [disabled]="!filter.active" class="half-width"
+               pInputText type="number"/>
+        <input [(ngModel)]="filter.value[1]" [disabled]="!filter.active" class="half-width"
+               pInputText type="number"/>
+      </div>
+      <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value" [disabled]="!filter.active"
+                  dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
+    </li>
+  </ul>
+  <p-button (click)="applyFilters()" label="Appliquer" styleClass="btn-hover-main"></p-button>
+</div>
 
-    <input *ngSwitchCase="'range'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-           pInputText readonly type="text"/>
-    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" [disabled]="!filter.active" [range]="true"
-              id="filter-{{filter.label}}"
-              inputMode="decimal"></p-slider>
-    <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-                dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
-  </li>
-</ul>
 
 <!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
 <p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"

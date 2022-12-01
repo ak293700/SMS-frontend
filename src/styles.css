@@ -29,8 +29,17 @@ body, html {
 }
 
 .title {
-  @apply text;
   margin: 30px 0;
-
   font-size: var(--font-size-1);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }

@@ -210,11 +210,11 @@ export class ProductFilterComponent
     this.filters.forEach(filter => {
       filter.active = false;
       if (filter.type === "range")
-        filter.value = [0, 100];
+        filter.value = [0, 0];
     })
   }
 
-  logFilters()
+  applyFilters()
   {
     console.log(this.filters);
   }
