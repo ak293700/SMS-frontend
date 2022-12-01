@@ -17,6 +17,7 @@ import {InputNumberModule} from "primeng/inputnumber";
 import {CheckboxModule} from "primeng/checkbox";
 import {SliderModule} from "primeng/slider";
 import {CalendarModule} from "primeng/calendar";
+import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {CalendarModule} from "primeng/calendar";
     InputNumberModule,
     CheckboxModule,
     SliderModule,
-    CalendarModule
+    CalendarModule,
+    TriStateCheckboxModule
   ],
   providers: [],
   bootstrap: [RoutingAppComponent]

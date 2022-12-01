@@ -15,8 +15,8 @@
            pInputText type="text">
     <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
                    mode="decimal"></p-inputNumber>
-    <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" id="filter-{{filter.label}}">
-    </p-checkbox>
+    <p-triStateCheckbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" id="filter-{{filter.label}}">
+    </p-triStateCheckbox>
 
     <input *ngSwitchCase="'range'" [(ngModel)]="filter.value" pInputText readonly type="text"/>
     <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" [range]="true" id="filter-{{filter.label}}"
