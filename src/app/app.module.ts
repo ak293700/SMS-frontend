@@ -9,6 +9,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {ReactiveFormsModule} from "@angular/forms";
 import {HomeComponent} from './Components/home/home.component';
 import {ProductFilterComponent} from './Components/product-filter/product-filter.component';
+import {SharedModule} from "primeng/api";
+import {TableModule} from "primeng/table";
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import {ProductFilterComponent} from './Components/product-filter/product-filter
     AppRoutingModule,
     ButtonModule,
     InputTextModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule,
+    TableModule
   ],
   providers: [],
   bootstrap: [RoutingAppComponent]

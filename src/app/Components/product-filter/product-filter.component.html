@@ -1,1 +1,25 @@
-<p>product-filtering works!</p>
+<nav>
+
+</nav>
+
+<p-table [columns]="productsHeader" [tableStyle]="{'min-width': '50rem'}" [value]="productsData"
+         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+  <ng-template let-columns pTemplate="header">
+    <tr>
+      <th>Photo</th>
+      <th *ngFor="let col of columns">
+        {{col.label}}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template let-columns="columns" let-product pTemplate="body">
+    <tr>
+      <td style="width: 100px">
+        <img [src]="product.image" class="shadow-4" width="100%"/>
+      <td *ngFor="let col of columns">
+        {{product[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
