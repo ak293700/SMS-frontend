@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {LazyLoadEvent} from "primeng/api";
 
 /*
   * This component is used to display the filter form.
@@ -13,9 +14,12 @@ import {Component, Input} from '@angular/core';
 })
 export class ProductFilterComponent
 {
+  // @ts-ignore initialize in the constructor
+  filters: any[];
+
   // We do not add the photo field in the header because it is mange differently.
   // Do that to display markup instead of text.
-  readonly productsHeader = [
+  productsHeader: any[] = [
     {
       label: 'Référence produit',
       field: 'productReference',
@@ -65,7 +69,12 @@ export class ProductFilterComponent
       field: 'esDifference',
     },
   ];
-  readonly productsData = [
+
+  // The id of every product matching the filter.
+  productsId: number[] = [6190, 6237, 1387];
+
+  // There for test purposes.
+  allProductsData: any[] = [
     {
       photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
       productReference: "67001",
@@ -112,17 +121,23 @@ export class ProductFilterComponent
       esDifference: "8.85%",
     }
   ];
-  selectedProducts: any[] = [];
 
-  // @ts-ignore initialize in the constructor
-  filters: any[];
+  // The products of the current page.
+  productsData: any[] = [];
+  // The products we did select. After it should be a list of ids.
+  selectedProducts: any[] = [];
+  totalRecords: number;
+
+  loading: boolean = false;
+
 
   // Private we use getter and setter to manipulate it.
   _displayedProductHeader = this.productsHeader;
 
   constructor()
   {
-    this.fetchFilter()
+    this.fetchFilter();
+    this.totalRecords = this.productsId.length;
   }
 
   @Input() get displayedProductHeader(): any[]
@@ -220,6 +235,19 @@ export class ProductFilterComponent
     let filters = this.filters.filter(filter => filter.active);
 
     console.log(filters);
+  }
+
+  loadProductsLazy(event: LazyLoadEvent)
+  {
+    this.loading = true;
+    console.log(event);
+
+    const begin: number = event.first ?? 0;
+    const end: number = begin + (event.rows ?? 0);
+
+    this.productsData = this.allProductsData.slice(begin, end);
+
+    this.loading = false;
   }
 
 }

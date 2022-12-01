@@ -37,11 +37,11 @@
 <p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"
          [paginator]="true" [resizableColumns]="true"
          [value]="productsData" selectionMode="multiple"
-         [rows]="100" [scrollable]="true" [showCurrentPageReport]="true"
+         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true" [loading]="loading"
          [tableStyle]="{'min-width': '50rem'}"
-         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
->
-  >
+         [rows]="2" [scrollable]="true" [showCurrentPageReport]="true"
+         [totalRecords]="totalRecords"
+         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
   <!-- Column toggle -->
   <ng-template pTemplate="caption">
