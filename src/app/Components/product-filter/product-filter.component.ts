@@ -33,6 +33,16 @@ export class ProductFilterComponent
       photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
       productReference: "67001",
       name: "Interrupteur Commande VMC - 2 Vitesse Céliane",
+    },
+    {
+      photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
+      productReference: "67001D",
+      name: "Double Interrupteur Va Et Vient Céliane",
+    },
+    {
+      photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
+      productReference: "T493821",
+      name: "Radiateur Bilbao 3 - 750W - Fluide Caloporteur",
     }
   ];
 
