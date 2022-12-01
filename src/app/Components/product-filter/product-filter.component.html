@@ -35,9 +35,13 @@
 
 <!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
 <p-table [(selection)]="selectedProducts" [columns]="displayedProductHeader"
-         [resizableColumns]="true" [scrollable]="true" [tableStyle]="{'min-width': '50rem'}"
+         [paginator]="true" [resizableColumns]="true"
          [value]="productsData" selectionMode="multiple"
-         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
+         [rows]="100" [scrollable]="true" [showCurrentPageReport]="true"
+         [tableStyle]="{'min-width': '50rem'}"
+         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+>
+  >
 
   <!-- Column toggle -->
   <ng-template pTemplate="caption">

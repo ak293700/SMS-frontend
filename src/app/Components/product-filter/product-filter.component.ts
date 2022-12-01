@@ -216,7 +216,10 @@ export class ProductFilterComponent
 
   applyFilters()
   {
-    console.log(this.filters);
+    // keep only the active filters
+    let filters = this.filters.filter(filter => filter.active);
+
+    console.log(filters);
   }
 
 }
