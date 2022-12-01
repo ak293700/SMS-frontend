@@ -52,6 +52,18 @@ export class ProductFilterComponent
       label: 'Type de produit',
       field: 'productType',
     },
+    {
+      label: 'Prix de vente TTC',
+      field: 'salePriceIt',
+    },
+    {
+      label: 'Taux de marge',
+      field: 'marginRate',
+    },
+    {
+      label: 'Écart ElecPlusSimple',
+      field: 'esDifference',
+    },
   ];
   readonly productsData = [
     {
@@ -65,6 +77,9 @@ export class ProductFilterComponent
       popularity: "Level4",
       productType: "Simple",
       brand: "Legrand",
+      salePriceIt: "7.98€",
+      marginRate: "22%",
+      esDifference: "37.89%",
     },
     {
       photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
@@ -77,6 +92,9 @@ export class ProductFilterComponent
       popularity: "Level4",
       productType: "Bundle",
       brand: "Legrand",
+      salePriceIt: "19.46€",
+      marginRate: "24%",
+      esDifference: "36.99%",
     },
     {
       photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
@@ -89,6 +107,9 @@ export class ProductFilterComponent
       popularity: "Level1",
       productType: "Simple",
       brand: "Thermor",
+      salePriceIt: "545.77€",
+      marginRate: "17%",
+      esDifference: "8.85%",
     }
   ];
   selectedProducts: any[] = [];
