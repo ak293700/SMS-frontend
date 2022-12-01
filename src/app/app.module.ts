@@ -46,4 +46,4 @@ import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
   providers: [],
   bootstrap: [RoutingAppComponent]
 })
-export class AppModule { }
+export class AppModule {}

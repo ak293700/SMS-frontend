@@ -2,26 +2,30 @@
   <p-button label="Retour Écran Principal" routerLink="/home" styleClass="backButton"></p-button>
 </nav>
 
-<button (click)="logFilters()">Log filter</button>
+<button (click)="logFilters()">Log filters</button>
 
 <ul class="filter-container">
-
-  <!--  <input type="text" pInputText [(ngModel)]="filters[0].value" readonly/>-->
-
   <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
-    <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
-    <!--    switch on filter.type-->
-    <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
-           pInputText type="text">
-    <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" id="filter-{{filter.label}}"
-                   mode="decimal"></p-inputNumber>
-    <p-triStateCheckbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" id="filter-{{filter.label}}">
-    </p-triStateCheckbox>
+    <div class="filter-item-container">
+      <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
+      <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>
+    </div>
 
-    <input *ngSwitchCase="'range'" [(ngModel)]="filter.value" pInputText readonly type="text"/>
-    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" [range]="true" id="filter-{{filter.label}}"
+    <!--    switch on filter.type-->
+    <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" [disabled]="!filter.active" id="filter-{{filter.label}}"
+           pInputText type="text">
+    <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" [disabled]="!filter.active"
+                   id="filter-{{filter.label}}"
+                   mode="decimal"></p-inputNumber>
+    <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" [binary]="true" [disabled]="!filter.active"
+                id="filter-{{filter.label}}"></p-checkbox>
+
+    <input *ngSwitchCase="'range'" [(ngModel)]="filter.value" [disabled]="!filter.active"
+           pInputText readonly type="text"/>
+    <p-slider *ngSwitchCase="'range'" [(ngModel)]="filter.value" [disabled]="!filter.active" [range]="true"
+              id="filter-{{filter.label}}"
               inputMode="decimal"></p-slider>
-    <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value"
+    <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value" [disabled]="!filter.active"
                 dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
   </li>
 </ul>

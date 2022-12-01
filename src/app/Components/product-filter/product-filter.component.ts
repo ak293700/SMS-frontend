@@ -114,78 +114,16 @@ export class ProductFilterComponent
   ];
   selectedProducts: any[] = [];
 
-  filters: any[] = [
-    {
-      label: "Référence produit",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Id Prestashop",
-      value: null,
-      type: "number"
-    },
-    {
-      label: "Nom ElecProShop",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Marque",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Catégorie",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Famille fournisseur",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Actif",
-      value: null,
-      type: "checkbox"
-    },
-    {
-      label: "Type",
-      value: null,
-      type: "text"
-    },
-    {
-      label: "Promotion",
-      value: [0, 100],
-      type: "range"
-    },
-    {
-      label: "Date fin promotion",
-      value: null,
-      type: "date"
-    },
-    {
-      label: "Taux de marge",
-      value: null,
-      type: "range"
-    },
-    {
-      label: "Coefficient de marge",
-      value: null,
-      type: "range"
-    },
-    {
-      label: "Écart ElecPlusSimple",
-      value: null,
-      type: "range"
-    }
-  ];
-
-  range: number[] = [0, 100];
+  // @ts-ignore initialize in the constructor
+  filters: any[];
 
   // Private we use getter and setter to manipulate it.
   _displayedProductHeader = this.productsHeader;
+
+  constructor()
+  {
+    this.fetchFilter()
+  }
 
   @Input() get displayedProductHeader(): any[]
   {
@@ -200,8 +138,85 @@ export class ProductFilterComponent
       .filter(col => val.includes(col));
   }
 
+  fetchFilter()
+  {
+    this.filters = [
+      {
+        label: "Référence produit",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Id Prestashop",
+        value: null,
+        type: "number"
+      },
+      {
+        label: "Nom ElecProShop",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Marque",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Catégorie",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Famille fournisseur",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Actif",
+        value: null,
+        type: "checkbox"
+      },
+      {
+        label: "Type",
+        value: null,
+        type: "text"
+      },
+      {
+        label: "Promotion",
+        value: null,
+        type: "range"
+      },
+      {
+        label: "Date fin promotion",
+        value: null,
+        type: "date"
+      },
+      {
+        label: "Taux de marge",
+        value: null,
+        type: "range"
+      },
+      {
+        label: "Coefficient de marge",
+        value: null,
+        type: "range"
+      },
+      {
+        label: "Écart ElecPlusSimple",
+        value: null,
+        type: "range"
+      }
+    ];
+    this.filters.forEach(filter => {
+      filter.active = false;
+      if (filter.type === "range")
+        filter.value = [0, 100];
+    })
+  }
+
   logFilters()
   {
     console.log(this.filters);
   }
+
 }
