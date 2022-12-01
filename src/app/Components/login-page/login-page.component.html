@@ -1,13 +1,12 @@
 <main>
   <section>
-    <h1>Login</h1>
+    <h1 class="title">Login</h1>
 
     <form (ngSubmit)="logIn()" [formGroup]="loginForm">
-      <input pInputText placeholder="Login">
+      <input formControlName="login" pInputText placeholder="Login">
       <div>
         <input [type]="showPassword ? 'text' : 'password'" formControlName="password" pInputText
                placeholder="Mot de passe"/>
-
         <p-button (click)="showHidePassword()" [icon]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></p-button>
       </div>
       <button [disabled]="!loginForm.valid" label="Se connecter" pButton
@@ -15,4 +14,3 @@
     </form>
   </section>
 </main>
-

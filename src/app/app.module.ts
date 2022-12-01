@@ -7,11 +7,13 @@ import {RoutingAppComponent} from './Components/routing-app/routing-app.componen
 import {LoginPageComponent} from './Components/login-page/login-page.component';
 import {InputTextModule} from "primeng/inputtext";
 import {ReactiveFormsModule} from "@angular/forms";
+import {HomeComponent} from './Components/home/home.component';
 
 @NgModule({
   declarations: [
     RoutingAppComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
