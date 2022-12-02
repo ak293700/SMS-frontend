@@ -45,16 +45,16 @@ export class ProductFilterComponent implements OnInit
           field: 'idPrestashop',
         },
         {
-          label: 'Marque',
-          field: 'brand',
+          label: 'Fabricant',
+          field: 'manufacturer',
         },
         {
           label: 'Catégorie principale',
           field: 'mainCategory',
         },
         {
-          label: 'Famille fournisseur',
-          field: 'supplierFamily',
+          label: 'Famille fabricant',
+          field: 'manufacturerFamily',
         },
         {
           label: 'Actif',
@@ -78,7 +78,7 @@ export class ProductFilterComponent implements OnInit
         },
         {
           label: 'Écart ElecPlusSimple',
-          field: 'esDifference',
+          field: 'esDiff',
         },
       ],
       pageData: [], // The products of the current page.
@@ -86,58 +86,59 @@ export class ProductFilterComponent implements OnInit
       // So product of every page of the tab
     };
 
-  // There for test purposes.
-  allProductsData: any[] = [
-    {
-      id: 6190,
-      photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
-      productReference: "67001",
-      name: "Interrupteur Commande VMC - 2 Vitesse Céliane",
-      idPrestashop: "1226 | 1226",
-      mainCategory: "Appareillage Céliane à composer",
-      supplierFamily: "Non défini",
-      active: "Oui | Oui",
-      popularity: "Level4",
-      productType: "Simple",
-      brand: "Legrand",
-      salePriceIt: "7.98€",
-      marginRate: "22%",
-      esDifference: "37.89%",
-    },
-    {
-      id: 6237,
-      photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
-      productReference: "67001D",
-      name: "Double Interrupteur Va Et Vient Céliane",
-      idPrestashop: "10184 | 10184",
-      mainCategory: "Appareillage Céliane à composer",
-      supplierFamily: "Non défini",
-      active: "Oui | Oui",
-      popularity: "Level4",
-      productType: "Bundle",
-      brand: "Legrand",
-      salePriceIt: "19.46€",
-      marginRate: "24%",
-      esDifference: "36.99%",
-    },
-    {
-      id: 1387,
-      photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
-      productReference: "T493821",
-      name: "Radiateur Bilbao 3 - 750W - Fluide Caloporteur",
-      idPrestashop: "9510 | 96193",
-      mainCategory: "Radiateurs à inertie fluide",
-      supplierFamily: "Non défini",
-      active: "Oui | Oui",
-      popularity: "Level1",
-      productType: "Simple",
-      brand: "Thermor",
-      salePriceIt: "545.77€",
-      marginRate: "17%",
-      esDifference: "8.85%",
-    }
-  ];
+  rowsNumber: number = 50;
 
+  // There for test purposes.
+  // allProductsData: any[] = [
+  //   {
+  //     id: 6190,
+  //     photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
+  //     productReference: "67001",
+  //     name: "Interrupteur Commande VMC - 2 Vitesse Céliane",
+  //     idPrestashop: "1226 | 1226",
+  //     mainCategory: "Appareillage Céliane à composer",
+  //     manufacturerFamily: "Non défini",
+  //     active: "Oui | Oui",
+  //     popularity: "Level4",
+  //     productType: "Simple",
+  //     manufacturer: "Legrand",
+  //     salePriceIt: "7.98€",
+  //     marginRate: "22%",
+  //     esDiff: "37.89%",
+  //   },
+  //   {
+  //     id: 6237,
+  //     photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
+  //     productReference: "67001D",
+  //     name: "Double Interrupteur Va Et Vient Céliane",
+  //     idPrestashop: "10184 | 10184",
+  //     mainCategory: "Appareillage Céliane à composer",
+  //     manufacturerFamily: "Non défini",
+  //     active: "Oui | Oui",
+  //     popularity: "Level4",
+  //     productType: "Bundle",
+  //     manufacturer: "Legrand",
+  //     salePriceIt: "19.46€",
+  //     marginRate: "24%",
+  //     esDiff: "36.99%",
+  //   },
+  //   {
+  //     id: 1387,
+  //     photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
+  //     productReference: "T493821",
+  //     name: "Radiateur Bilbao 3 - 750W - Fluide Caloporteur",
+  //     idPrestashop: "9510 | 96193",
+  //     mainCategory: "Radiateurs à inertie fluide",
+  //     manufacturerFamily: "Non défini",
+  //     active: "Oui | Oui",
+  //     popularity: "Level1",
+  //     productType: "Simple",
+  //     manufacturer: "Thermor",
+  //     salePriceIt: "545.77€",
+  //     marginRate: "17%",
+  //     esDiff: "8.85%",
+  //   }
+  // ];
 
   // The products we did select. After it should be a list of ids.
   selectedProducts: any = {
@@ -271,23 +272,38 @@ export class ProductFilterComponent implements OnInit
       return;
 
     this.products.allId = response.data;
-
     this.totalRecords = this.products.allId.length;
+
+    await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
   }
 
-  loadProductsLazy(event: LazyLoadEvent)
+  async loadProductsLazy(event: LazyLoadEvent)
   {
     this.loading = true;
 
     const begin: number = event.first ?? 0;
     const end: number = begin + (event.rows ?? 0);
 
+    // get the ids of the products of the page
+    const ids = this.products.allId.slice(begin, end);
+    const joinedIds = ids.length > 0 ? "ids=" + ids.join("&ids=") : "";
+
+    const response = await axios.get(`${api}/Product/filter/values?${joinedIds}`, {responseType: 'json'});
+    if (response.status !== 200)
+      return;
+
     // Update the productsPageData
-    this.products.pageData = this.allProductsData.slice(begin, end);
+    this.products.pageData = response.data;
 
     // Update the selected data
     this.selectedProducts.data = this.products.pageData
       .filter((product: any) => this.selectedProducts.ids.includes(product.id));
+
+    for (const product of this.products.pageData)
+    {
+      if (product.photo === "#")
+        product.photo = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930";
+    }
 
     this.loading = false;
   }

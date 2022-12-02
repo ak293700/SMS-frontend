@@ -38,13 +38,13 @@
          [totalRecords]="products.allId.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
          (onLazyLoad)="loadProductsLazy($event)" [lazy]="true"
-         [loading]="loading"
+         [lazyLoadOnInit]="true" [loading]="loading"
          (selectAllChange)="onSelectAllChange($event)"
          [selectAll]="selectedProducts.ids.length === products.allId.length"
          [paginator]="true" [resizableColumns]="true"
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
-         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="100vh"
-         [rows]="2" [showCurrentPageReport]="true"
+         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="50vh"
+         [rows]="rowsNumber" [showCurrentPageReport]="true"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
