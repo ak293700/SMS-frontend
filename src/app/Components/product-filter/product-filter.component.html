@@ -37,7 +37,8 @@
 <p-table [value]="products.pageData" dataKey="id"
          [totalRecords]="products.allId.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true" [loading]="loading"
+         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true"
+         [loading]="loading"
          (selectAllChange)="onSelectAllChange($event)"
          [selectAll]="selectedProducts.ids.length === products.allId.length"
          [paginator]="true" [resizableColumns]="true"
@@ -73,7 +74,7 @@
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
       </td>
       <td style="width: 100px">
-        <img [src]="product.photo" class="shadow-4" width="100%"/>
+        <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
       <td *ngFor="let col of columns">
         {{ product[col.field] }}
       </td>

@@ -18,6 +18,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {SliderModule} from "primeng/slider";
 import {CalendarModule} from "primeng/calendar";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
     CheckboxModule,
     SliderModule,
     CalendarModule,
-    TriStateCheckboxModule
+    TriStateCheckboxModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [RoutingAppComponent]

@@ -13,7 +13,7 @@ const routes: Routes = [
       {path: 'filter', component: ProductFilterComponent},
     ]
   },
-  {path: '**', redirectTo: 'login'}
+  // {path: '**', redirectTo: 'login'}
 ];
 
 @NgModule({

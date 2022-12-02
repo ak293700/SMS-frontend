@@ -1,5 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {LazyLoadEvent} from "primeng/api";
+import axios from "axios";
 
 /*
   * This component is used to display the filter form.
@@ -20,10 +21,10 @@ interface ProductTableVector
   templateUrl: './product-filter.component.html',
   styleUrls: ['./product-filter.component.css']
 })
-export class ProductFilterComponent
+export class ProductFilterComponent implements OnInit
 {
-  // @ts-ignore initialize in the constructor
-  filters: any[];
+  // initialize in the constructor
+  filters: any[] = [];
 
   // We do not add the photo field to use it with html markup.
   // The id of every product matching the filter.
@@ -80,7 +81,7 @@ export class ProductFilterComponent
         },
       ],
       pageData: [], // The products of the current page.
-      allId: [6190, 6237, 1387], // The id of every product matching the filter.
+      allId: [], // The id of every product matching the filter.
       // So product of every page of the tab
     };
 
@@ -142,19 +143,26 @@ export class ProductFilterComponent
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
-  totalRecords: number;
+
+  totalRecords: number = 0;
 
   // boolean
-  loading: boolean = false;
+  loading: boolean = true;
 
   // Private we use getter and setter to manipulate it.
   _displayedProductHeader = this.products.header;
 
-  constructor()
+  constructor(private changeDetectorRef: ChangeDetectorRef)
+  {}
+
+  async ngOnInit(): Promise<void>
   {
-    this.fetchFilter();
+    await this.fetchFilter();
     this.totalRecords = this.products.allId.length;
+
+    this.changeDetectorRef.detectChanges();
   }
+
 
   @Input() get displayedProductHeader(): any[]
   {
@@ -169,9 +177,9 @@ export class ProductFilterComponent
       .filter((col: any) => val.includes(col));
   }
 
-  fetchFilter()
+  async fetchFilter()
   {
-    this.filters = [
+    /*    this.filters = [
       {
         label: "Référence produit",
         value: null,
@@ -237,18 +245,30 @@ export class ProductFilterComponent
         value: null,
         type: "range"
       }
-    ];
-    this.filters.forEach(filter => {
+    ];*/
+
+    let response = await axios.get('https://localhost:7093/api/Product/filter', {responseType: 'json'});
+    if (response.status !== 200)
+      return;
+
+    let tmp: any[] = response.data;
+    tmp.forEach(filter => {
       filter.active = false;
+      filter.value = null;
       if (filter.type === "range")
         filter.value = [0, 0];
     })
+    this.filters = tmp;
   }
 
   applyFilters()
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
+    // this.product.Id
+    //
+    // this.product.data
+    this.totalRecords = this.products.allId.length;
   }
 
   loadProductsLazy(event: LazyLoadEvent)
