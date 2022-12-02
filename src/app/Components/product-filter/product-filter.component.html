@@ -42,7 +42,7 @@
          [selectAll]="selectedProducts.ids.length === products.allId.length"
          [paginator]="true" [resizableColumns]="true"
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
-         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="40vh"
+         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="100vh"
          [rows]="2" [showCurrentPageReport]="true"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
@@ -67,9 +67,8 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-product let-rowIndex="rowIndex" pTemplate="body">
+  <ng-template let-columns="columns" let-product pTemplate="body">
     <tr>
-      <!--      [pSelectableRowIndex]="rowIndex" [pSelectableRow]="product"-->
       <td pFrozenColumn>
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
       </td>

@@ -7,7 +7,8 @@ import {LazyLoadEvent} from "primeng/api";
   * The fields in the filter and the table can be different.
  */
 
-interface Products
+// Store everything to manage a product show in the table
+interface ProductTableVector
 {
   header: any[];
   pageData: any[];
@@ -26,7 +27,7 @@ export class ProductFilterComponent
 
   // We do not add the photo field to use it with html markup.
   // The id of every product matching the filter.
-  products: Products =
+  products: ProductTableVector =
     {
       header: [
         {
@@ -253,7 +254,6 @@ export class ProductFilterComponent
   loadProductsLazy(event: LazyLoadEvent)
   {
     this.loading = true;
-    console.log(event);
 
     const begin: number = event.first ?? 0;
     const end: number = begin + (event.rows ?? 0);
@@ -285,8 +285,6 @@ export class ProductFilterComponent
       this.onSelectAll()
     else
       this.onUnselectAll();
-
-    console.log(this.selectedProducts);
   }
 
   onSelectAll()
