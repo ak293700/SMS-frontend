@@ -1,6 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {LazyLoadEvent} from "primeng/api";
 import axios from "axios";
+import {api} from "../../GlobalUsings";
 
 /*
   * This component is used to display the filter form.
@@ -247,7 +248,7 @@ export class ProductFilterComponent implements OnInit
       }
     ];*/
 
-    let response = await axios.get('https://localhost:7093/api/Product/filter', {responseType: 'json'});
+    let response = await axios.get(`${api}/Product/filter`, {responseType: 'json'});
     if (response.status !== 200)
       return;
 
