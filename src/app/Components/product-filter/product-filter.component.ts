@@ -79,7 +79,8 @@ export class ProductFilterComponent
         },
       ],
       pageData: [], // The products of the current page.
-      allId: [6190, 6237, 1387],
+      allId: [6190, 6237, 1387], // The id of every product matching the filter.
+      // So product of every page of the tab
     };
 
   // There for test purposes.
@@ -257,22 +258,16 @@ export class ProductFilterComponent
     const begin: number = event.first ?? 0;
     const end: number = begin + (event.rows ?? 0);
 
+    // Update the productsPageData
     this.products.pageData = this.allProductsData.slice(begin, end);
+
+    // Update the selected data
+    this.selectedProducts.data = this.products.pageData
+      .filter((product: any) => this.selectedProducts.ids.includes(product.id));
 
     this.loading = false;
   }
 
-
-  onSelectionChange(value: any[] = [])
-  {
-    /* console.log(value.length);
-     console.log(this.selectedProducts.data.length);
-     this.selectedProducts.data = value;
-     console.log("onSelectionChange");*/
-    console.log('this.selectedProducts', this.selectedProducts)
-  }
-
-  // (selectAllChange)="onSelectAllChange($event)"
 
   onRowSelect(event: any)
   {
@@ -286,29 +281,33 @@ export class ProductFilterComponent
 
   onSelectAllChange(event: any)
   {
-    const checked: boolean = event.checked;
-
-    if (checked)
-    {
-      // Can't select everything because of the lazy load.
-      this.selectedProducts.data = this.products.pageData;
-
-      // get all ids that where unselected
-      const newIds = this.products.pageData
-        .map((product: any) => product.id)
-        .filter((id: number) => !this.selectedProducts.ids.includes(id));
-
-      // concat the ids of the selected products
-      this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
-    }
+    if (event.checked)
+      this.onSelectAll()
     else
-    {
-      this.selectedProducts.ids =
-        this.selectedProducts.ids.filter((id: number) => !this.selectedProducts.ids.includes(id));
-      this.selectedProducts.data = [];
-    }
+      this.onUnselectAll();
 
     console.log(this.selectedProducts);
+  }
 
+  onSelectAll()
+  {
+    // Can't select everything because the data of others pages are not loaded.
+    // We fake it by selecting everything of our page and adding the ids of the others pages.
+    // + on page change we update selectedProducts.data to keep the selected products.
+    this.selectedProducts.data = this.products.pageData;
+
+    // Get all ids that where unselected
+    const newIds = this.products.allId
+      .filter((id: number) => !this.selectedProducts.ids.includes(id));
+
+    // concat the ids of the selected products
+    this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
+  }
+
+  onUnselectAll()
+  {
+    this.selectedProducts.ids =
+      this.selectedProducts.ids.filter((id: number) => !this.selectedProducts.ids.includes(id));
+    this.selectedProducts.data = [];
   }
 }

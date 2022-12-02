@@ -34,16 +34,16 @@
 
 
 <!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
-<p-table (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+<p-table [value]="products.pageData" dataKey="id"
+         [totalRecords]="products.allId.length"
+         (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true" [loading]="loading"
          (selectAllChange)="onSelectAllChange($event)"
+         [selectAll]="selectedProducts.ids.length === products.allId.length"
          [paginator]="true" [resizableColumns]="true"
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
-         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true" [loading]="loading"
-         [tableStyle]="{'min-width': '50rem'}"
-         [rows]="2" [scrollable]="true" [showCurrentPageReport]="true"
-         [totalRecords]="totalRecords"
-         [selectAll]="selectedProducts.data.length === products.allId.length"
-         [value]="products.pageData" dataKey="id"
+         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="40vh"
+         [rows]="2" [showCurrentPageReport]="true"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
@@ -58,7 +58,7 @@
   <ng-template let-columns pTemplate="header">
     <tr>
       <!--  We display the photo differently because we need to add html markup-->
-      <th style="width: 4rem">
+      <th style="width: 4rem" pFrozenColumn>
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
       </th>
       <th>Photo</th>
@@ -68,8 +68,9 @@
     </tr>
   </ng-template>
   <ng-template let-columns="columns" let-product let-rowIndex="rowIndex" pTemplate="body">
-    <tr [pSelectableRowIndex]="rowIndex" [pSelectableRow]="product">
-      <td>
+    <tr>
+      <!--      [pSelectableRowIndex]="rowIndex" [pSelectableRow]="product"-->
+      <td pFrozenColumn>
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
       </td>
       <td style="width: 100px">
