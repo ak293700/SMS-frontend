@@ -54,6 +54,8 @@
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
     </p-multiSelect>
+    <span style="font-weight: lighter"> {{totalRecords}} produits trouvés</span>
+    <span style="font-weight: lighter"> | {{selectedProducts.ids.length}} produits sélectionnés</span>
   </ng-template>
 
   <ng-template let-columns pTemplate="header">

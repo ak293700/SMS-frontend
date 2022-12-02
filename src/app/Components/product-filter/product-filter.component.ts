@@ -159,7 +159,7 @@ export class ProductFilterComponent implements OnInit
   async ngOnInit(): Promise<void>
   {
     await this.fetchFilter();
-    this.totalRecords = this.products.allId.length;
+    await this.applyFilters();
 
     this.changeDetectorRef.detectChanges();
   }
@@ -262,13 +262,16 @@ export class ProductFilterComponent implements OnInit
     this.filters = tmp;
   }
 
-  applyFilters()
+  async applyFilters()
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-    // this.product.Id
-    //
-    // this.product.data
+    let response = await axios.post(`${api}/Product/filter/execute`, filters, {responseType: 'json'});
+    if (response.status !== 200)
+      return;
+
+    this.products.allId = response.data;
+
     this.totalRecords = this.products.allId.length;
   }
 
