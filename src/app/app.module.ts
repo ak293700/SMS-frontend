@@ -22,13 +22,15 @@ import {HttpClientModule} from "@angular/common/http";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ContextMenuModule} from "primeng/contextmenu";
 import {ToastModule} from "primeng/toast";
+import {PrettierPipe} from './Pipes/prettier.pipe';
 
 @NgModule({
   declarations: [
     RoutingAppComponent,
     LoginPageComponent,
     HomeComponent,
-    ProductFilterComponent
+    ProductFilterComponent,
+    PrettierPipe
   ],
   imports: [
     BrowserModule,

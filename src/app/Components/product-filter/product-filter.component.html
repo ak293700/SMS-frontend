@@ -92,7 +92,7 @@
       <td style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
       <td *ngFor="let col of columns">
-        {{ product[col.field] }}
+        {{ product[col.field] | prettier }}
       </td>
     </tr>
   </ng-template>
