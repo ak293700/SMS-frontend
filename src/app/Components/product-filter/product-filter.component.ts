@@ -2,6 +2,57 @@ import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {LazyLoadEvent} from "primeng/api";
 import axios from "axios";
 import {api} from "../../GlobalUsings";
+//  [
+//         {
+//           label: 'Référence produit',
+//           field: 'productReference',
+//         },
+//         {
+//           label: 'Nom ElecProShop',
+//           field: 'name',
+//         },
+//         {
+//           label: 'Id Prestashop',
+//           field: 'idPrestashop',
+//         },
+//         {
+//           label: 'Fabricant',
+//           field: 'manufacturer',
+//         },
+//         {
+//           label: 'Catégorie principale',
+//           field: 'mainCategory',
+//         },
+//         {
+//           label: 'Famille fabricant',
+//           field: 'manufacturerFamily',
+//         },
+//         {
+//           label: 'Actif',
+//           field: 'active',
+//         },
+//         {
+//           label: 'Popularité',
+//           field: 'popularity',
+//         },
+//         {
+//           label: 'Type de produit',
+//           field: 'productType',
+//         },
+//         {
+//           label: 'Prix de vente TTC',
+//           field: 'salePriceIt',
+//         },
+//         {
+//           label: 'Taux de marge',
+//           field: 'marginRate',
+//         },
+//         {
+//           label: 'Écart ElecPlusSimple',
+//           field: 'esDiff',
+//         },
+//       ]
+
 
 /*
   * This component is used to display the filter form.
@@ -31,56 +82,7 @@ export class ProductFilterComponent implements OnInit
   // The id of every product matching the filter.
   products: ProductTableVector =
     {
-      header: [
-        {
-          label: 'Référence produit',
-          field: 'productReference',
-        },
-        {
-          label: 'Nom ElecProShop',
-          field: 'name',
-        },
-        {
-          label: 'Id Prestashop',
-          field: 'idPrestashop',
-        },
-        {
-          label: 'Fabricant',
-          field: 'manufacturer',
-        },
-        {
-          label: 'Catégorie principale',
-          field: 'mainCategory',
-        },
-        {
-          label: 'Famille fabricant',
-          field: 'manufacturerFamily',
-        },
-        {
-          label: 'Actif',
-          field: 'active',
-        },
-        {
-          label: 'Popularité',
-          field: 'popularity',
-        },
-        {
-          label: 'Type de produit',
-          field: 'productType',
-        },
-        {
-          label: 'Prix de vente TTC',
-          field: 'salePriceIt',
-        },
-        {
-          label: 'Taux de marge',
-          field: 'marginRate',
-        },
-        {
-          label: 'Écart ElecPlusSimple',
-          field: 'esDiff',
-        },
-      ],
+      header: [],
       pageData: [], // The products of the current page.
       allId: [], // The id of every product matching the filter.
       // So product of every page of the tab
@@ -160,6 +162,7 @@ export class ProductFilterComponent implements OnInit
 
   async ngOnInit(): Promise<void>
   {
+    await this.fetchHeaders();
     await this.fetchFilter();
     await this.applyFilters();
 
@@ -178,6 +181,16 @@ export class ProductFilterComponent implements OnInit
     // restore original order
     this._displayedProductHeader = this.products.header
       .filter((col: any) => val.includes(col));
+  }
+
+  async fetchHeaders()
+  {
+    let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
+    if (response.status !== 200)
+      return;
+
+
+    this.products.header = response.data;
   }
 
   async fetchFilter()
@@ -250,7 +263,7 @@ export class ProductFilterComponent implements OnInit
       }
     ];*/
 
-    let response = await axios.get(`${api}/Product/filter`, {responseType: 'json'});
+    let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
     if (response.status !== 200)
       return;
 
@@ -272,7 +285,7 @@ export class ProductFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
-      let response = await axios.post(`${api}/Product/filter/execute`, filters, {responseType: 'json'});
+      let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
         return;
 
@@ -298,7 +311,7 @@ export class ProductFilterComponent implements OnInit
     const ids = this.products.allId.slice(begin, end);
     const joinedIds = ids.length > 0 ? "ids=" + ids.join("&ids=") : "";
 
-    const response = await axios.get(`${api}/Product/filter/values?${joinedIds}`, {responseType: 'json'});
+    const response = await axios.get(`${api}/SelectProduct/filter/values?${joinedIds}`, {responseType: 'json'});
     if (response.status !== 200)
       return;
 
@@ -382,9 +395,6 @@ export class ProductFilterComponent implements OnInit
 
   dropDownFilter(event: any, filter: any)
   {
-    console.log(event);
-    console.log(filter);
-
     filter.others =
       filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
   }
