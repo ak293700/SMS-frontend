@@ -20,6 +20,8 @@ import {CalendarModule} from "primeng/calendar";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {HttpClientModule} from "@angular/common/http";
 import {AutoCompleteModule} from "primeng/autocomplete";
+import {ContextMenuModule} from "primeng/contextmenu";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import {AutoCompleteModule} from "primeng/autocomplete";
     CalendarModule,
     TriStateCheckboxModule,
     HttpClientModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    ContextMenuModule,
+    ToastModule
   ],
   providers: [],
   bootstrap: [RoutingAppComponent]

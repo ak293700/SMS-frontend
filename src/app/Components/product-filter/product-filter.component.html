@@ -43,6 +43,8 @@
   <p-button (click)="applyFilters()" label="Appliquer" styleClass="btn-hover-main"></p-button>
 </div>
 
+<p-contextMenu #productCM [model]="contextMenuItems"></p-contextMenu>
+
 <p-table [value]="products.pageData" dataKey="id"
          [totalRecords]="products.allId.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
@@ -54,18 +56,20 @@
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
          [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="80vh"
          [rows]="rowsNumber" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 50, 100, 500]"
-         columnResizeMode="expand"
-         selectionMode="multiple"
+         columnResizeMode="expand" selectionMode="multiple" [contextMenu]="productCM"
+         [(contextMenuSelection)]="contextMenuSelectedProduct"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
-  <!-- Column toggle -->
-  <ng-template pTemplate="caption">
+  <ng-template id="table-header" pTemplate="caption">
+    <!-- Column toggle -->
     <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="products.header" [style]="{'min-width': '200px'}"
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
     </p-multiSelect>
-    <span style="font-weight: lighter"> {{totalRecords}} produits trouvés</span>
-    <span style="font-weight: lighter"> | {{selectedProducts.ids.length}} produits sélectionnés</span>
+    <span class="text-light">{{totalRecords}} produits trouvés</span>
+    <span class="text-light">{{selectedProducts.ids.length}} produits sélectionnés</span>
+    <p-button label="Désélectionner tous" styleClass="p-button-sm btn-hover-main" (onClick)="unselectAll()"></p-button>
+    <!--    add a little p-button -->
   </ng-template>
 
   <ng-template let-columns pTemplate="header">
@@ -81,7 +85,7 @@
     </tr>
   </ng-template>
   <ng-template let-columns="columns" let-product pTemplate="body">
-    <tr>
+    <tr [pContextMenuRow]="product">
       <td pFrozenColumn>
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
       </td>
@@ -93,4 +97,5 @@
     </tr>
   </ng-template>
 </p-table>
+<!--<p-toast></p-toast>-->
 

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {LazyLoadEvent} from "primeng/api";
+import {LazyLoadEvent, MenuItem} from "primeng/api";
 import axios from "axios";
 import {api} from "../../GlobalUsings";
 
@@ -107,8 +107,20 @@ export class ProductFilterComponent implements OnInit
   // Private we use getter and setter to manipulate it.
   _displayedProductHeader = this.products.header;
 
+  // Context menu for the product of the table
+  contextMenuItems: MenuItem[];
+  contextMenuSelectedProduct: any;
+
   constructor(private changeDetectorRef: ChangeDetectorRef)
-  {}
+  {
+    this.contextMenuItems = [
+      {
+        label: 'Edit',
+        icon: 'pi pi-fw pi-pencil',
+        command: () => this.editProduct(this.contextMenuSelectedProduct)
+      }
+    ];
+  }
 
   async ngOnInit(): Promise<void>
   {
@@ -118,7 +130,6 @@ export class ProductFilterComponent implements OnInit
 
     this.changeDetectorRef.detectChanges();
   }
-
 
   get displayedProductHeader(): any[]
   {
@@ -159,7 +170,27 @@ export class ProductFilterComponent implements OnInit
     })
     this.filters = tmp;
 
-    console.log(this.filters);
+    this.setDefaultFilterValue();
+  }
+
+  setDefaultFilterValue()
+  {
+    for (const filter of this.filters)
+    {
+      switch (filter.type)
+      {
+        case "range":
+          filter.value = [0, 0];
+          break;
+        case "checkbox":
+          filter.value = false;
+          break;
+        case "text":
+          filter.value = "";
+          break;
+      }
+
+    }
   }
 
   async applyFilters()
@@ -205,13 +236,20 @@ export class ProductFilterComponent implements OnInit
     this.selectedProducts.data = this.products.pageData
       .filter((product: any) => this.selectedProducts.ids.includes(product.id));
 
-    for (const product of this.products.pageData)
-    {
-      if (product.photo === "#")
-        product.photo = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930";
-    }
+    this.setDefaultPageData();
 
     this.loading = false;
+  }
+
+  // For each data of the page it will set default for some field
+  setDefaultPageData()
+  {
+    for (const product of this.products.pageData)
+    {
+      // if product.photo is null or empty, we set a default image
+      if (!product.photo || product.photo === "")
+        product.photo = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930";
+    }
   }
 
   onRowSelect(event: any)
@@ -280,5 +318,17 @@ export class ProductFilterComponent implements OnInit
   {
     filter.others =
       filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
+  }
+
+  editProduct(product: any)
+  {
+    console.log(product);
+  }
+
+  unselectAll()
+  {
+    this.selectedProducts.ids = [];
+    this.selectedProducts.data = [];
+    this.areAllSelected = false;
   }
 }

@@ -3,8 +3,6 @@
   min-height: 100vh;
   width: 100%;
   background-color: var(--main-color);
-
-  padding-bottom: 30px;
 }
 
 nav {
@@ -19,7 +17,6 @@ nav {
 
   margin-bottom: 50px;
 }
-
 
 :host ::ng-deep .p-button.backButton {
   background-color: var(--main-color);
@@ -96,4 +93,13 @@ p-slider {
 
 .half-width {
   max-width: 50%;
+}
+
+#table-header * {
+  color: red !important;
+}
+
+.text-light {
+  font-weight: lighter;
+  margin: 5px;
 }
