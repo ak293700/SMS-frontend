@@ -53,7 +53,8 @@
          [paginator]="true" [resizableColumns]="true"
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
          [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="80vh"
-         [rows]="rowsNumber" [showCurrentPageReport]="true"
+         [rows]="rowsNumber" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 50, 100, 500]"
+         columnResizeMode="expand"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
@@ -74,7 +75,7 @@
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
       </th>
       <th>Photo</th>
-      <th *ngFor="let col of columns">
+      <th pResizableColumn *ngFor="let col of columns">
         {{col.label}}
       </th>
     </tr>

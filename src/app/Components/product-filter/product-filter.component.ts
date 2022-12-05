@@ -1,57 +1,7 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LazyLoadEvent} from "primeng/api";
 import axios from "axios";
 import {api} from "../../GlobalUsings";
-//  [
-//         {
-//           label: 'Référence produit',
-//           field: 'productReference',
-//         },
-//         {
-//           label: 'Nom ElecProShop',
-//           field: 'name',
-//         },
-//         {
-//           label: 'Id Prestashop',
-//           field: 'idPrestashop',
-//         },
-//         {
-//           label: 'Fabricant',
-//           field: 'manufacturer',
-//         },
-//         {
-//           label: 'Catégorie principale',
-//           field: 'mainCategory',
-//         },
-//         {
-//           label: 'Famille fabricant',
-//           field: 'manufacturerFamily',
-//         },
-//         {
-//           label: 'Actif',
-//           field: 'active',
-//         },
-//         {
-//           label: 'Popularité',
-//           field: 'popularity',
-//         },
-//         {
-//           label: 'Type de produit',
-//           field: 'productType',
-//         },
-//         {
-//           label: 'Prix de vente TTC',
-//           field: 'salePriceIt',
-//         },
-//         {
-//           label: 'Taux de marge',
-//           field: 'marginRate',
-//         },
-//         {
-//           label: 'Écart ElecPlusSimple',
-//           field: 'esDiff',
-//         },
-//       ]
 
 
 /*
@@ -170,7 +120,7 @@ export class ProductFilterComponent implements OnInit
   }
 
 
-  @Input() get displayedProductHeader(): any[]
+  get displayedProductHeader(): any[]
   {
     // remove @Input() from function signature
     return this._displayedProductHeader;
@@ -191,78 +141,11 @@ export class ProductFilterComponent implements OnInit
 
 
     this.products.header = response.data;
+    this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
   }
 
   async fetchFilter()
   {
-    /*    this.filters = [
-      {
-        label: "Référence produit",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Id Prestashop",
-        value: null,
-        type: "number"
-      },
-      {
-        label: "Nom ElecProShop",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Marque",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Catégorie",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Famille fournisseur",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Actif",
-        value: null,
-        type: "checkbox"
-      },
-      {
-        label: "Type",
-        value: null,
-        type: "text"
-      },
-      {
-        label: "Promotion",
-        value: null,
-        type: "range"
-      },
-      {
-        label: "Date fin promotion",
-        value: null,
-        type: "date"
-      },
-      {
-        label: "Taux de marge",
-        value: null,
-        type: "range"
-      },
-      {
-        label: "Coefficient de marge",
-        value: null,
-        type: "range"
-      },
-      {
-        label: "Écart ElecPlusSimple",
-        value: null,
-        type: "range"
-      }
-    ];*/
-
     let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
     if (response.status !== 200)
       return;
