@@ -145,6 +145,7 @@ export class ProductFilterComponent implements OnInit
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
+  areAllSelected: boolean = false;
 
   totalRecords: number = 0;
 
@@ -261,20 +262,29 @@ export class ProductFilterComponent implements OnInit
         filter.value = [0, 0];
     })
     this.filters = tmp;
+
+    console.log(this.filters);
   }
 
   async applyFilters()
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-    let response = await axios.post(`${api}/Product/filter/execute`, filters, {responseType: 'json'});
-    if (response.status !== 200)
-      return;
+    try
+    {
+      let response = await axios.post(`${api}/Product/filter/execute`, filters, {responseType: 'json'});
+      if (response.status !== 200)
+        return;
 
-    this.products.allId = response.data;
-    this.totalRecords = this.products.allId.length;
+      this.products.allId = response.data;
+      this.totalRecords = this.products.allId.length;
 
-    await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
+      await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
+    } catch (e)
+    {
+      // @ts-ignore
+      console.log(e.response.data);
+    }
   }
 
   async loadProductsLazy(event: LazyLoadEvent)
@@ -308,15 +318,29 @@ export class ProductFilterComponent implements OnInit
     this.loading = false;
   }
 
-
   onRowSelect(event: any)
   {
     this.selectedProducts.ids.push(event.data.id);
+
+    // If there is at least enough product selected that product find
+    if (this.selectedProducts.ids.length >= this.products.allId.length)
+    {
+      // Need to check that all the product are selected
+      for (let i = 0; i < this.products.allId.length; i++)
+      {
+        if (!this.selectedProducts.ids.includes(this.products.allId[i]))
+          return;
+      }
+
+      this.areAllSelected = true;
+    }
+
   }
 
   onRowUnselect(event: any)
   {
     this.selectedProducts.ids = this.selectedProducts.ids.filter((id: number) => id !== event.data.id);
+    this.areAllSelected = false;
   }
 
   onSelectAllChange(event: any)
@@ -329,6 +353,8 @@ export class ProductFilterComponent implements OnInit
 
   onSelectAll()
   {
+    this.areAllSelected = true;
+
     // Can't select everything because the data of others pages are not loaded.
     // We fake it by selecting everything of our page and adding the ids of the others pages.
     // + on page change we update selectedProducts.data to keep the selected products.
@@ -340,12 +366,26 @@ export class ProductFilterComponent implements OnInit
 
     // concat the ids of the selected products
     this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
+
   }
 
   onUnselectAll()
   {
+    this.areAllSelected = false;
+
     this.selectedProducts.ids =
-      this.selectedProducts.ids.filter((id: number) => !this.selectedProducts.ids.includes(id));
+      this.selectedProducts.ids.filter((id: number) => !this.products.allId.includes(id));
+
+
     this.selectedProducts.data = [];
+  }
+
+  dropDownFilter(event: any, filter: any)
+  {
+    console.log(event);
+    console.log(filter);
+
+    filter.others =
+      filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
   }
 }

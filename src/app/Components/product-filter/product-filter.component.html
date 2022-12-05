@@ -14,7 +14,7 @@
       <input *ngSwitchCase="'text'" [(ngModel)]="filter.value" [disabled]="!filter.active" id="filter-{{filter.label}}"
              pInputText type="text">
       <p-inputNumber *ngSwitchCase="'number'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-                     id="filter-{{filter.label}}"
+                     id="filter-{{filter.label}}" [useGrouping]="false"
                      mode="decimal"></p-inputNumber>
       <p-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="filter.value" [binary]="true" [disabled]="!filter.active"
                   id="filter-{{filter.label}}"></p-checkbox>
@@ -27,23 +27,32 @@
       </div>
       <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value" [disabled]="!filter.active"
                   dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
+
+      <p-autoComplete *ngSwitchCase="'dropdown'" [(ngModel)]="filter.value" [disabled]="!filter.active"
+                      id="filter-{{filter.label}}" [suggestions]="filter.others"
+                      (completeMethod)="dropDownFilter($event, filter)"
+                      [dropdown]="true">
+        <ng-template let-suggestion pTemplate="item">
+          <div class="ui-helper-clearfix">
+            <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion}}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
     </li>
   </ul>
   <p-button (click)="applyFilters()" label="Appliquer" styleClass="btn-hover-main"></p-button>
 </div>
 
-
-<!-- [resizableColumns]="true" allow to have fix width but without being able to resize by hand -->
 <p-table [value]="products.pageData" dataKey="id"
          [totalRecords]="products.allId.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
          (onLazyLoad)="loadProductsLazy($event)" [lazy]="true"
-         [lazyLoadOnInit]="true" [loading]="loading"
+         [lazyLoadOnInit]="false" [loading]="loading"
          (selectAllChange)="onSelectAllChange($event)"
-         [selectAll]="selectedProducts.ids.length === products.allId.length"
+         [selectAll]="areAllSelected"
          [paginator]="true" [resizableColumns]="true"
          [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
-         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="50vh"
+         [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="80vh"
          [rows]="rowsNumber" [showCurrentPageReport]="true"
          selectionMode="multiple"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
