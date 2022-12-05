@@ -40,58 +40,6 @@ export class ProductFilterComponent implements OnInit
 
   rowsNumber: number = 50;
 
-  // There for test purposes.
-  // allProductsData: any[] = [
-  //   {
-  //     id: 6190,
-  //     photo: 'https://cdn3.elecproshop.com/36742-medium_default/interrupteur-commande-vmc-vitesse-1-vitesse-2.jpg',
-  //     productReference: "67001",
-  //     name: "Interrupteur Commande VMC - 2 Vitesse Céliane",
-  //     idPrestashop: "1226 | 1226",
-  //     mainCategory: "Appareillage Céliane à composer",
-  //     manufacturerFamily: "Non défini",
-  //     active: "Oui | Oui",
-  //     popularity: "Level4",
-  //     productType: "Simple",
-  //     manufacturer: "Legrand",
-  //     salePriceIt: "7.98€",
-  //     marginRate: "22%",
-  //     esDiff: "37.89%",
-  //   },
-  //   {
-  //     id: 6237,
-  //     photo: 'https://cdn3.elecproshop.com/35498-medium_default/double-va-et-vient.jpg',
-  //     productReference: "67001D",
-  //     name: "Double Interrupteur Va Et Vient Céliane",
-  //     idPrestashop: "10184 | 10184",
-  //     mainCategory: "Appareillage Céliane à composer",
-  //     manufacturerFamily: "Non défini",
-  //     active: "Oui | Oui",
-  //     popularity: "Level4",
-  //     productType: "Bundle",
-  //     manufacturer: "Legrand",
-  //     salePriceIt: "19.46€",
-  //     marginRate: "24%",
-  //     esDiff: "36.99%",
-  //   },
-  //   {
-  //     id: 1387,
-  //     photo: 'https://cdn2.elecproshop.com/32255-medium_default/radiateur-electrique-a-fluide-750-w-bilbao-3.jpg',
-  //     productReference: "T493821",
-  //     name: "Radiateur Bilbao 3 - 750W - Fluide Caloporteur",
-  //     idPrestashop: "9510 | 96193",
-  //     mainCategory: "Radiateurs à inertie fluide",
-  //     manufacturerFamily: "Non défini",
-  //     active: "Oui | Oui",
-  //     popularity: "Level1",
-  //     productType: "Simple",
-  //     manufacturer: "Thermor",
-  //     salePriceIt: "545.77€",
-  //     marginRate: "17%",
-  //     esDiff: "8.85%",
-  //   }
-  // ];
-
   // The products we did select. After it should be a list of ids.
   selectedProducts: any = {
     data: [], // the selected product (only the ones in the current page)
@@ -150,9 +98,10 @@ export class ProductFilterComponent implements OnInit
     if (response.status !== 200)
       return;
 
-
     this.products.header = response.data;
     this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
+
+    console.log(this.products.header);
   }
 
   async fetchFilter()

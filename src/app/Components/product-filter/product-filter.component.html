@@ -84,7 +84,7 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-product pTemplate="body">
+  <ng-template let-columns="columns" let-product pTemplate="body" let-rowIndex="rowIndex">
     <tr [pContextMenuRow]="product">
       <td pFrozenColumn>
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
@@ -92,7 +92,7 @@
       <td style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
       <td *ngFor="let col of columns">
-        {{ product[col.field] | prettier }}
+        {{ product[col.field] | prettier }}{{col.suffix}}
       </td>
     </tr>
   </ng-template>

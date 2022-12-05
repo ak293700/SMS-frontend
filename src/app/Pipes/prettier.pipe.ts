@@ -6,7 +6,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 export class PrettierPipe implements PipeTransform
 {
 
-  transform(value: unknown, ...args: unknown[]): unknown
+  transform(value: unknown): unknown
   {
     if (typeof value === 'number')
       return value.toLocaleString('fr-FR', {maximumFractionDigits: 2});
