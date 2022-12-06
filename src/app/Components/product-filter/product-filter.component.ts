@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {LazyLoadEvent, MenuItem} from "primeng/api";
-import axios from "axios";
+import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {api} from "../../GlobalUsings";
 
 
@@ -21,7 +21,8 @@ interface ProductTableVector
 @Component({
   selector: 'app-product-filter',
   templateUrl: './product-filter.component.html',
-  styleUrls: ['./product-filter.component.css']
+  styleUrls: ['./product-filter.component.css'],
+  // providers: [MessageService]
 })
 export class ProductFilterComponent implements OnInit
 {
@@ -59,7 +60,7 @@ export class ProductFilterComponent implements OnInit
   contextMenuItems: MenuItem[];
   contextMenuSelectedProduct: any;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef)
+  constructor(private changeDetectorRef: ChangeDetectorRef, private messageService: MessageService)
   {
     this.contextMenuItems = [
       {
@@ -68,15 +69,22 @@ export class ProductFilterComponent implements OnInit
         command: () => this.editProduct(this.contextMenuSelectedProduct)
       }
     ];
+
   }
 
   async ngOnInit(): Promise<void>
   {
-    await this.fetchHeaders();
-    await this.fetchFilter();
-    await this.applyFilters();
+    try
+    {
+      await this.fetchHeaders();
+      await this.fetchFilter();
+      await this.applyFilters();
+      this.changeDetectorRef.detectChanges();
+    } catch (e: any | AxiosError)
+    {
+      this.networkError(e.message);
+    }
 
-    this.changeDetectorRef.detectChanges();
   }
 
   get displayedProductHeader(): any[]
@@ -94,32 +102,42 @@ export class ProductFilterComponent implements OnInit
 
   async fetchHeaders()
   {
-    let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
-    if (response.status !== 200)
-      return;
+    try
+    {
+      let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
+      if (response.status !== 200)
+        return this.httpFail(response);
 
-    this.products.header = response.data;
-    this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
-
-    console.log(this.products.header);
+      this.products.header = response.data;
+      this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
+    } catch (e: any | AxiosError)
+    {
+      this.networkError(e.message);
+    }
   }
 
   async fetchFilter()
   {
-    let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
-    if (response.status !== 200)
-      return;
+    try
+    {
+      let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
+      if (response.status !== 200)
+        return this.httpFail(response);
 
-    let tmp: any[] = response.data;
-    tmp.forEach(filter => {
-      filter.active = false;
-      filter.value = null;
-      if (filter.type === "range")
-        filter.value = [0, 0];
-    })
-    this.filters = tmp;
+      let tmp: any[] = response.data;
+      tmp.forEach(filter => {
+        filter.active = false;
+        filter.value = null;
+        if (filter.type === "range")
+          filter.value = [0, 0];
+      })
+      this.filters = tmp;
 
-    this.setDefaultFilterValue();
+      this.setDefaultFilterValue();
+    } catch (e: any | AxiosError)
+    {
+      this.networkError(e.message);
+    }
   }
 
   setDefaultFilterValue()
@@ -150,16 +168,15 @@ export class ProductFilterComponent implements OnInit
     {
       let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
-        return;
+        return this.httpFail(response);
 
       this.products.allId = response.data;
       this.totalRecords = this.products.allId.length;
 
       await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
-    } catch (e)
+    } catch (e: any)
     {
-      // @ts-ignore
-      console.log(e.response.data);
+      this.networkError(e.message);
     }
   }
 
@@ -279,5 +296,16 @@ export class ProductFilterComponent implements OnInit
     this.selectedProducts.ids = [];
     this.selectedProducts.data = [];
     this.areAllSelected = false;
+  }
+
+  networkError(message: string)
+  {
+    this.messageService.add({severity: 'error', summary: 'Network error', detail: message});
+    this.loading = false;
+  }
+
+  httpFail(response: AxiosResponse)
+  {
+    this.messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
   }
 }
