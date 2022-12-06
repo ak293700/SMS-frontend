@@ -48,6 +48,7 @@ nav {
   min-height: 85vh;
 }
 
+
 aside {
   border-left: 2px solid black;
   background-color: var(--third-color);
@@ -58,6 +59,10 @@ aside {
   width: 100%;
   margin: 0;
   padding: 0;
+}
+
+main {
+
 }
 
 .other-product-item {
@@ -77,8 +82,11 @@ aside {
   font-size: var(--default-font-size);
   color: var(--third-color);
   transition: all .2s ease-in-out;
+  cursor: pointer;
 }
 
 .other-product-item *:hover {
   background-color: var(--secondary-color);
 }
+
+

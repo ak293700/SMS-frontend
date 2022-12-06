@@ -45,3 +45,30 @@ body, html {
   flex-direction: column;
 }
 
+.reset-button {
+  background: none;
+  border: none;
+  color: var(--third-color);
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+}
+
+.field-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  text-decoration: none;
+}
+
+.field-item {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 215px;
+}

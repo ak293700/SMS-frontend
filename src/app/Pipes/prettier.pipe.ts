@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {FieldType} from "../Enums/FieldType";
-import {HeaderDto} from "../Dtos/HeaderDto";
+import {FieldType} from "../../Enums/FieldType";
+import {HeaderDto} from "../../Dtos/HeaderDto";
 
 @Pipe({
   name: 'prettier'

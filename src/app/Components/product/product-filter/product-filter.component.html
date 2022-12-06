@@ -3,8 +3,8 @@
 </nav>
 
 <div class="filter-container">
-  <ul class="filter-item-container">
-    <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="filter-item">
+  <ul class="field-container">
+    <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="field-item">
       <div class="filter-label-container">
         <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
         <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>

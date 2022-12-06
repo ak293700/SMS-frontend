@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {api} from "../../../GlobalUsings";
-import {HeaderDto} from "../../../Dtos/HeaderDto";
+import {HeaderDto} from "../../../../Dtos/HeaderDto";
 import {ActivatedRoute, Router} from "@angular/router";
 
 /*
@@ -285,14 +285,11 @@ export class ProductFilterComponent implements OnInit
 
   dropDownFilter(event: any, filter: any)
   {
+    // Todo does not works
     filter.others =
       filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
   }
 
-  editProduct(product: any)
-  {
-    console.log(product);
-  }
 
   unselectAll()
   {
@@ -313,9 +310,14 @@ export class ProductFilterComponent implements OnInit
     this.messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
   }
 
+  async editProduct(product: any)
+  {
+    await this.router.navigate(['../edit/one'], {relativeTo: this.route});
+  }
+
   async editSelection()
   {
     // go to child route 'edit/multiple'
-    this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
+    await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
   }
 }

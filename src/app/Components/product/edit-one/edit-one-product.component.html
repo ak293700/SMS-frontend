@@ -1,10 +1,51 @@
 <nav>
+  <button class="reset-button"><i class="pi pi-arrow-left" style="float: left"></i></button>
   <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
+  <button class="reset-button"><i class="pi pi-arrow-right"></i></button>
 </nav>
 
 <div class="grid-container">
-  <main>main
+  <main>
+    <div id="common-field">
+      <ul class="field-container">
+        <li class="field-item">
+          <label for="field-productReference" class="text">Référence produit</label>
+          <input id="field-productReference" [placeholder]="product.productReference"
+                 [defaultValue]="product.productReference" pInputText type="text">
+        </li>
+
+        <li class="field-item">
+          <label for="field-ean13" class="text">Ean13</label>
+          <input id="field-ean13" [placeholder]="product.ean13"
+                 [defaultValue]="product.ean13" pInputText type="text">
+        </li>
+
+        <li class="field-item">
+          <label for="field-manufacturer" class="text">Fabricant</label>
+          <p-autoComplete id="field-manufacturer"
+                          field="name" [suggestions]="additionalInformationFilter.manufacturers"
+                          (completeMethod)="completeMethod($event, 'manufacturers')"
+                          [dropdown]="true">
+            <ng-template let-suggestion pTemplate="item">
+              <div class="ui-helper-clearfix">
+                <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion.name}}</div>
+              </div>
+            </ng-template>
+          </p-autoComplete>
+        </li>
+
+        <li class="field-item">
+          <label for="field-popularity" class="text">Popularité</label>
+          <input id="field-popularity" [placeholder]="additionalInformation.productPopularity[product.popularity]"
+                 [defaultValue]="additionalInformation.productPopularity[product.popularity]" pInputText type="text">
+        </li>
+      </ul>
+    </div>
+    <div id="shop-specific-field">
+
+    </div>
   </main>
+
   <aside>
     <ul class="other-product-container">
       <li *ngFor="let otherProduct of otherProducts" class="other-product-item">
