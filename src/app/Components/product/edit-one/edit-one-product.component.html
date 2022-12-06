@@ -1,16 +1,15 @@
 <nav>
-  <p-button label="Retour Filter" routerLink="../../filter" styleClass="backButton"></p-button>
+  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
 </nav>
 
 <div class="grid-container">
   <main>main
   </main>
-  <aside style="background: black">
+  <aside>
     <ul class="other-product-container">
       <li *ngFor="let otherProduct of otherProducts" class="other-product-item">
-        <button styleClass="btn-hover-main" style="width: 100%">{{otherProduct.productReference}}</button>
+        <button (click)="goToProduct(otherProduct.id)">{{otherProduct.productReference}}</button>
       </li>
     </ul>
-
   </aside>
 </div>

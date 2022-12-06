@@ -12,4 +12,9 @@ export class EditOneProductComponent
     {id: 2, productReference: "67001D"},
   ];
 
+  goToProduct(id: number)
+  {
+    console.log("Go to product " + id);
+  }
+
 }
