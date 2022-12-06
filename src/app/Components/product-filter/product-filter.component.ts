@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {api} from "../../GlobalUsings";
+import {HeaderDto} from "../../Dtos/HeaderDto";
 
 
 /*
@@ -13,7 +14,7 @@ import {api} from "../../GlobalUsings";
 // Store everything to manage a product show in the table
 interface ProductTableVector
 {
-  header: any[];
+  header: HeaderDto[];
   pageData: any[];
   allId: number[];
 }

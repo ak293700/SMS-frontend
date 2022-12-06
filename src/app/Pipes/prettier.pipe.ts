@@ -1,4 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
+import {FieldType} from "../Enums/FieldType";
+import {HeaderDto} from "../Dtos/HeaderDto";
 
 @Pipe({
   name: 'prettier'
@@ -6,12 +8,27 @@ import {Pipe, PipeTransform} from '@angular/core';
 export class PrettierPipe implements PipeTransform
 {
 
-  transform(value: unknown): unknown
+  transform(value: unknown, header: HeaderDto): unknown
   {
-    if (typeof value === 'number')
-      return value.toFixed(2);
+    if (value == null)
+      return `Pas de ${header.label}`;
 
-    return value;
+    if (typeof value === 'number')
+      value = value.toFixed(2);
+
+    switch (header.type)
+    {
+      case FieldType.Currency:
+        value = value + '€';
+        break;
+      case FieldType.Percentage: // @ts-ignore
+        value = `${(value * 100).toFixed()}%`;
+        break;
+      default:
+        break;
+    }
+
+    return value + header.suffix;
   }
 
 }
