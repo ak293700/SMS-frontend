@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {MessageService} from "primeng/api";
 
 @Component({
@@ -7,13 +7,7 @@ import {MessageService} from "primeng/api";
   styleUrls: ['./routing-app.component.css'],
   providers: [MessageService]
 })
-export class RoutingAppComponent implements OnInit
+export class RoutingAppComponent
 {
   constructor(private messageService: MessageService) {}
-
-  ngOnInit(): void
-  {
-    this.messageService.add({severity: 'success', summary: 'Welcome to the app'});
-    console.log('RoutingAppComponent.ngOnInit()');
-  }
 }

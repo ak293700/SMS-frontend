@@ -20,7 +20,6 @@ nav {
 
 :host ::ng-deep .p-button.backButton {
   background-color: var(--main-color);
-  /*border-color: 5px solid var(--third-color);*/
   border: none;
 
   color: var(--third-color);

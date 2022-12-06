@@ -8,7 +8,7 @@ import {LoginPageComponent} from './Components/login-page/login-page.component';
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HomeComponent} from './Components/home/home.component';
-import {ProductFilterComponent} from './Components/product-filter/product-filter.component';
+import {ProductFilterComponent} from './Components/product/product-filter/product-filter.component';
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -23,7 +23,10 @@ import {AutoCompleteModule} from "primeng/autocomplete";
 import {ContextMenuModule} from "primeng/contextmenu";
 import {ToastModule} from "primeng/toast";
 import {PrettierPipe} from './Pipes/prettier.pipe';
-import {EditMultipleProductsComponent} from './Components/edit-multiple-products/edit-multiple-products.component';
+import {
+  EditMultipleProductsComponent
+} from './Components/product/edit-multiple-products/edit-multiple-products.component';
+import {EditOneProductComponent} from './Components/product/edit-one/edit-one-product.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import {EditMultipleProductsComponent} from './Components/edit-multiple-products
     HomeComponent,
     ProductFilterComponent,
     PrettierPipe,
-    EditMultipleProductsComponent
+    EditMultipleProductsComponent,
+    EditOneProductComponent
   ],
   imports: [
     BrowserModule,

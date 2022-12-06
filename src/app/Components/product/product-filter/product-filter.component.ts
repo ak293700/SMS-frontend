@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {api} from "../../GlobalUsings";
-import {HeaderDto} from "../../Dtos/HeaderDto";
+import {api} from "../../../GlobalUsings";
+import {HeaderDto} from "../../../Dtos/HeaderDto";
 import {ActivatedRoute, Router} from "@angular/router";
 
 /*
@@ -23,7 +23,6 @@ interface ProductTableVector
   selector: 'app-product-filter',
   templateUrl: './product-filter.component.html',
   styleUrls: ['./product-filter.component.css'],
-  // providers: [MessageService]
 })
 export class ProductFilterComponent implements OnInit
 {

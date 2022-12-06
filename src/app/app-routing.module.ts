@@ -2,8 +2,11 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LoginPageComponent} from "./Components/login-page/login-page.component";
 import {HomeComponent} from "./Components/home/home.component";
-import {ProductFilterComponent} from "./Components/product-filter/product-filter.component";
-import {EditMultipleProductsComponent} from "./Components/edit-multiple-products/edit-multiple-products.component";
+import {ProductFilterComponent} from "./Components/product/product-filter/product-filter.component";
+import {
+  EditMultipleProductsComponent
+} from "./Components/product/edit-multiple-products/edit-multiple-products.component";
+import {EditOneProductComponent} from "./Components/product/edit-one/edit-one-product.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
@@ -16,6 +19,7 @@ const routes: Routes = [
         path: 'edit', children: [
           {path: '', redirectTo: '/home', pathMatch: 'full'},
           {path: 'multiple', component: EditMultipleProductsComponent},
+          {path: 'one', component: EditOneProductComponent},
         ]
       },
     ]

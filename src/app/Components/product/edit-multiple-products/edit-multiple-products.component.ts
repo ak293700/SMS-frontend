@@ -7,5 +7,8 @@ import {Component} from '@angular/core';
 })
 export class EditMultipleProductsComponent
 {
-
+  // otherProducts: {id: number, productReference: string}[] = [
+  //   {id: 1, productReference: "67001"},
+  //   {id: 2, productReference: "67001D"},
+  // ];
 }
