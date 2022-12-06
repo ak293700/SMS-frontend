@@ -41,7 +41,8 @@
         </li>
       </ul>
     </div>
-    <div id="shop-specific-field">
+    <div id="shop-specific-field" *ngFor="let shopSpecific of product.shopSpecifics">
+      {{shopSpecific.name}}
 
     </div>
   </main>

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Product} from "../../../../Entities/ProductEntities/Product";
+import {ProductDto} from "../../../../Dtos/ProductDtos/ProductDto";
 import {api} from "../../../GlobalUsings";
 import axios from "axios";
 import {MessageService} from "primeng/api";
@@ -46,7 +46,7 @@ export class EditOneProductComponent implements OnInit
   ];
 
   // @ts-ignore
-  product: Product;
+  product: ProductDto;
 
   // @ts-ignore
   additionalInformation: {
@@ -80,12 +80,6 @@ export class EditOneProductComponent implements OnInit
       if (!HttpTools.IsCode(response.status, 200))
         return MessageServiceTools.httpFail(this.messageService, response);
       this.product = response.data;
-
-      // Fetch the shop specifics
-      this.product.shopSpecifics = [];
-      for (let id of this.product.shopSpecificsId)
-        this.product.shopSpecifics.push(await this.fetchShopSpecific(id));
-
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -110,20 +104,6 @@ export class EditOneProductComponent implements OnInit
     }
   }
 
-  async fetchShopSpecific(id: number)
-  {
-    try
-    {
-      const response = await axios.get(`${api}/product/${id}/shopSpecifics`);
-      if (!HttpTools.IsCode(response.status, 200))
-        return MessageServiceTools.httpFail(this.messageService, response);
-
-      return response.data;
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
-  }
 
   // Look in additionalInformation
   completeMethod(event: any, fieldName: string)
