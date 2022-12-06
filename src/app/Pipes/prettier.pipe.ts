@@ -15,6 +15,8 @@ export class PrettierPipe implements PipeTransform
 
     if (typeof value === 'number')
       value = value.toFixed(2);
+    else if (typeof value === 'boolean')
+      value = value ? 'Oui' : 'Non';
 
     switch (header.type)
     {

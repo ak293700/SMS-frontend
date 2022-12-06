@@ -23,6 +23,7 @@ import {AutoCompleteModule} from "primeng/autocomplete";
 import {ContextMenuModule} from "primeng/contextmenu";
 import {ToastModule} from "primeng/toast";
 import {PrettierPipe} from './Pipes/prettier.pipe';
+import {EditMultipleProductsComponent} from './Components/edit-multiple-products/edit-multiple-products.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {PrettierPipe} from './Pipes/prettier.pipe';
     LoginPageComponent,
     HomeComponent,
     ProductFilterComponent,
-    PrettierPipe
+    PrettierPipe,
+    EditMultipleProductsComponent
   ],
   imports: [
     BrowserModule,

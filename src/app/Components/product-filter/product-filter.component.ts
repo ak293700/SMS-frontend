@@ -3,7 +3,7 @@ import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {api} from "../../GlobalUsings";
 import {HeaderDto} from "../../Dtos/HeaderDto";
-
+import {ActivatedRoute, Router} from "@angular/router";
 
 /*
   * This component is used to display the filter form.
@@ -61,7 +61,10 @@ export class ProductFilterComponent implements OnInit
   contextMenuItems: MenuItem[];
   contextMenuSelectedProduct: any;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, private messageService: MessageService)
+  constructor(private changeDetectorRef: ChangeDetectorRef,
+              private messageService: MessageService,
+              private router: Router,
+              private route: ActivatedRoute)
   {
     this.contextMenuItems = [
       {
@@ -307,6 +310,13 @@ export class ProductFilterComponent implements OnInit
 
   httpFail(response: AxiosResponse)
   {
+    console.log('HTTP error');
     this.messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
+  }
+
+  async editSelection()
+  {
+    // go to child route 'edit/multiple'
+    this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
   }
 }

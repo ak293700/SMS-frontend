@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {LoginPageComponent} from "./Components/login-page/login-page.component";
 import {HomeComponent} from "./Components/home/home.component";
 import {ProductFilterComponent} from "./Components/product-filter/product-filter.component";
+import {EditMultipleProductsComponent} from "./Components/edit-multiple-products/edit-multiple-products.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
@@ -11,6 +12,12 @@ const routes: Routes = [
     path: 'product', children: [
       {path: '', redirectTo: '/home', pathMatch: 'full'},
       {path: 'filter', component: ProductFilterComponent},
+      {
+        path: 'edit', children: [
+          {path: '', redirectTo: '/home', pathMatch: 'full'},
+          {path: 'multiple', component: EditMultipleProductsComponent},
+        ]
+      },
     ]
   },
   // {path: '**', redirectTo: 'login'}
