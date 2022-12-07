@@ -8,6 +8,7 @@ import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ProductType} from "../../../../Enums/ProductType";
 import {BundleDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleDto";
 import {SimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/SimpleProductDto";
+import {Operation} from "../../../../utils/Operation";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -20,6 +21,9 @@ export class EditOneProductComponent implements OnInit
 
   // @ts-ignore
   product: SimpleProductDto | BundleDto;
+  // Describe the product as it is at the moment in the db
+  // @ts-ignore
+  initialProduct: SimpleProductDto | BundleDto;
 
   // @ts-ignore
   additionalInformation: { manufacturers: IdNameDto[] } = {};
@@ -43,9 +47,27 @@ export class EditOneProductComponent implements OnInit
     await this.fetchManufacturers();
   }
 
-  goToProduct(id: number)
+  async goToProduct(id: number)
   {
-    console.log("Go to product " + id);
+    await this.fetchProduct(id);
+  }
+
+  async goToFollowingProduct(step: number)
+  {
+    let index = this.otherProducts.findIndex(x => x.id == this.product.id);
+    if (index == -1)
+    {
+      this.messageService.add({
+        severity: 'warn', summary: 'Oups une erreur est survenue',
+        detail: 'impossible de naviguer au prochain produit'
+      });
+      return;
+    }
+
+    index = Operation.modulo(index + step, this.otherProducts.length);
+    console.log(index);
+
+    await this.fetchProduct(this.otherProducts[index].id);
   }
 
   async fetchProduct(id: number)
@@ -56,13 +78,13 @@ export class EditOneProductComponent implements OnInit
       const response = await axios.get(`${api}/product/${id}`);
       if (!HttpTools.IsCode(response.status, 200))
         return MessageServiceTools.httpFail(this.messageService, response);
+
       this.product = response.data;
+      this.initialProduct = Operation.deepCopy(this.product);
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
-
-    console.log('this.product', this.product);
   }
 
   async fetchManufacturers()
@@ -110,6 +132,16 @@ export class EditOneProductComponent implements OnInit
   get bundle()
   {
     return this.Transform<BundleDto>(this.product);
+  }
+
+  get initialSimpleProduct()
+  {
+    return this.Transform<SimpleProductDto>(this.initialProduct);
+  }
+
+  get initialBundle()
+  {
+    return this.Transform<BundleDto>(this.initialProduct);
   }
 
   async fetchReferences(ids: number[])

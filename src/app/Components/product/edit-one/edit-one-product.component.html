@@ -1,7 +1,9 @@
 <nav>
-  <button class="reset-button"><i class="pi pi-arrow-left" style="float: left"></i></button>
+  <button class="reset-button" (click)="goToFollowingProduct(-1)">
+    <i class="pi pi-arrow-left" style="float: left"></i></button>
   <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
-  <button class="reset-button"><i class="pi pi-arrow-right"></i></button>
+  <button class="reset-button" (click)="goToFollowingProduct(1)">
+    <i class="pi pi-arrow-right"></i></button>
 </nav>
 
 <div class="grid-container">
@@ -10,14 +12,16 @@
       <ul class="field-container">
         <li class="field-item">
           <label for="field-productReference" class="text">Référence produit</label>
-          <input id="field-productReference" [placeholder]="product.productReference"
-                 [defaultValue]="product.productReference" pInputText type="text">
+          <input id="field-productReference" pInputText type="text"
+                 [placeholder]="initialProduct.productReference"
+                 [(ngModel)]="product.productReference">
         </li>
 
         <li class="field-item">
           <label for="field-ean13" class="text">Ean13</label>
-          <input id="field-ean13" [placeholder]="product.ean13"
-                 [defaultValue]="product.ean13" pInputText type="text">
+          <input id="field-ean13" pInputText type="text"
+                 [placeholder]="initialProduct.ean13"
+                 [(ngModel)]="product.ean13">
         </li>
 
         <li class="field-item">
@@ -45,35 +49,42 @@
       <ul class="field-container">
         <li class="field-item">
           <label for="field-supplierReference" class="text">Référence fabricant</label>
-          <input id="field-supplierReference" [placeholder]="simpleProduct.supplierReference"
-                 [defaultValue]="simpleProduct.supplierReference" pInputText type="text">
+          <input id="field-supplierReference" pInputText type="text"
+                 [placeholder]="initialSimpleProduct.supplierReference"
+                 [(ngModel)]="simpleProduct.supplierReference">
         </li>
         <li class="field-item">
           <label for="field-pureReference" class="text">Référence pure</label>
-          <input id="field-pureReference" [placeholder]="simpleProduct.pureReference"
-                 [defaultValue]="simpleProduct.pureReference" pInputText type="text">
+          <input id="field-pureReference" pInputText type="text"
+                 [placeholder]="initialSimpleProduct.pureReference"
+                 [(ngModel)]="simpleProduct.pureReference">
         </li>
         <li class="field-item">
           <label for="field-cataloguePrice" class="text">Prix tarif</label>
-          <p-inputNumber id="field-cataloguePrice" mode="currency"
-                         [placeholder]="simpleProduct.cataloguePrice.toString()"
-                         currency="EUR"></p-inputNumber>
+          <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
+                         [placeholder]="initialSimpleProduct.cataloguePrice.toString()"
+                         [(ngModel)]="simpleProduct.cataloguePrice">
+          </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-deee" class="text">Deee</label>
-          <p-inputNumber id="field-deee" mode="currency" [placeholder]="simpleProduct.deee.toString()"
-                         currency="EUR"></p-inputNumber>
+          <p-inputNumber id="field-deee" mode="currency" currency="EUR"
+                         [placeholder]="initialSimpleProduct.deee.toString()"
+                         [(ngModel)]="simpleProduct.deee">
+          </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-stock" class="text">Stock</label>
           <p-inputNumber id="field-stock" mode="decimal" inputId="integeronly"
-                         [placeholder]="simpleProduct.stock.toString()">
+                         [placeholder]="initialSimpleProduct.stock.toString()"
+                         [(ngModel)]="simpleProduct.stock">
           </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
           <p-inputNumber id="field-averageStockPrice" mode="decimal"
-                         [placeholder]="simpleProduct.averageStockPrice.toString()">
+                         [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
+                         [(ngModel)]="simpleProduct.averageStockPrice">
           </p-inputNumber>
         </li>
         <li class="field-item">
