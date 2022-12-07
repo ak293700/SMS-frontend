@@ -40,7 +40,7 @@ export class EditOneProductComponent implements OnInit
     console.log(routedData);
     if (routedData.selectedIds == undefined || routedData.selectedId == undefined)
     {
-      routedData.selectedIds = [6190, 6233, 6237]
+      routedData.selectedIds = [6190, 6233, 6237, 7257, 2863]
       routedData.selectedId = routedData.selectedIds[0];
     }
 
@@ -83,8 +83,8 @@ export class EditOneProductComponent implements OnInit
       if (!HttpTools.IsCode(response.status, 200))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.product = response.data;
-      this.initialProduct = Operation.deepCopy(this.product);
+      this.initialProduct = response.data;
+      this.product = Operation.deepCopy(this.initialProduct);
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);

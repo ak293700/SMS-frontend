@@ -97,7 +97,6 @@ aside {
 
 #shop-specific-field {
   display: grid;
-  grid-template-columns: 20% repeat(2, 1fr);
   grid-auto-flow: row;
   margin: 2rem 0;
 

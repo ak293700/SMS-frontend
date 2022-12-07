@@ -105,7 +105,8 @@
 
     </div>
 
-    <div id="shop-specific-field">
+    <div id="shop-specific-field"
+         [style.grid-template-columns]="'20% repeat('+ product.shopSpecifics.length.toString() +', 1fr)'">
 
       <h2></h2>
       <h2 *ngFor="let shopSpecific of product.shopSpecifics"
@@ -125,13 +126,25 @@
                      [(ngModel)]="initialProduct.shopSpecifics[i].idPrestaShop">
       </p-inputNumber>
 
+      <label class="text">Km</label>
+      <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                     [useGrouping]="false" mode="decimal"
+                     [placeholder]="shopSpecific.km.toString()"
+                     [(ngModel)]="initialProduct.shopSpecifics[i].km">
+      </p-inputNumber>
 
-      <div>4</div>
-      <div>5</div>
-      <div>6</div>
-      <div>7</div>
-      <div>8</div>
-      <div>9</div>
+      <label class="text">Promotion</label>
+      <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                     [useGrouping]="false" mode="decimal"
+                     [placeholder]="shopSpecific.promotion.toString()"
+                     [(ngModel)]="initialProduct.shopSpecifics[i].promotion">
+      </p-inputNumber>
+
+      <label class="text">Actif</label>
+      <p-checkbox *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                  [binary]="true"
+                  [(ngModel)]="initialProduct.shopSpecifics[i].active">
+      </p-checkbox>
 
 
       <!--   <span>{{shopSpecific.name}} - {{index}}</span>
