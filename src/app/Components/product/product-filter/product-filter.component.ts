@@ -4,6 +4,7 @@ import axios, {AxiosError, AxiosResponse} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HeaderDto} from "../../../../Dtos/HeaderDto";
 import {ActivatedRoute, Router} from "@angular/router";
+import {UrlBuilder} from "../../../../utils/UrlBuilder";
 
 /*
   * This component is used to display the filter form.
@@ -16,7 +17,7 @@ interface ProductTableVector
 {
   header: HeaderDto[];
   pageData: any[];
-  allId: number[];
+  filteredIds: number[];
 }
 
 @Component({
@@ -35,7 +36,7 @@ export class ProductFilterComponent implements OnInit
     {
       header: [],
       pageData: [], // The products of the current page.
-      allId: [], // The id of every product matching the filter.
+      filteredIds: [], // The id of every product matching the filter.
       // So product of every page of the tab
     };
 
@@ -172,8 +173,8 @@ export class ProductFilterComponent implements OnInit
       if (response.status !== 200)
         return this.httpFail(response);
 
-      this.products.allId = response.data;
-      this.totalRecords = this.products.allId.length;
+      this.products.filteredIds = response.data;
+      this.totalRecords = this.products.filteredIds.length;
 
       await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
@@ -190,10 +191,9 @@ export class ProductFilterComponent implements OnInit
     const end: number = begin + (event.rows ?? 0);
 
     // get the ids of the products of the page
-    const ids = this.products.allId.slice(begin, end);
-    const joinedIds = ids.length > 0 ? "ids=" + ids.join("&ids=") : "";
-
-    const response = await axios.get(`${api}/SelectProduct/filter/values?${joinedIds}`, {responseType: 'json'});
+    const ids = this.products.filteredIds.slice(begin, end);
+    const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
+    const response = await axios.get(url, {responseType: 'json'});
     if (response.status !== 200)
       return;
 
@@ -225,12 +225,12 @@ export class ProductFilterComponent implements OnInit
     this.selectedProducts.ids.push(event.data.id);
 
     // If there is at least enough product selected that product find
-    if (this.selectedProducts.ids.length >= this.products.allId.length)
+    if (this.selectedProducts.ids.length >= this.products.filteredIds.length)
     {
       // Need to check that all the product are selected
-      for (let i = 0; i < this.products.allId.length; i++)
+      for (let i = 0; i < this.products.filteredIds.length; i++)
       {
-        if (!this.selectedProducts.ids.includes(this.products.allId[i]))
+        if (!this.selectedProducts.ids.includes(this.products.filteredIds[i]))
           return;
       }
 
@@ -263,7 +263,7 @@ export class ProductFilterComponent implements OnInit
     this.selectedProducts.data = this.products.pageData;
 
     // Get all ids that where unselected
-    const newIds = this.products.allId
+    const newIds = this.products.filteredIds
       .filter((id: number) => !this.selectedProducts.ids.includes(id));
 
     // concat the ids of the selected products
@@ -276,7 +276,7 @@ export class ProductFilterComponent implements OnInit
     this.areAllSelected = false;
 
     this.selectedProducts.ids =
-      this.selectedProducts.ids.filter((id: number) => !this.products.allId.includes(id));
+      this.selectedProducts.ids.filter((id: number) => !this.products.filteredIds.includes(id));
 
 
     this.selectedProducts.data = [];
@@ -311,7 +311,10 @@ export class ProductFilterComponent implements OnInit
 
   async editProduct(product: any)
   {
-    await this.router.navigate(['../edit/one'], {relativeTo: this.route});
+    await this.router.navigate(['../edit/one'], {
+      relativeTo: this.route,
+      state: {filteredId: this.products.filteredIds, selectedId: product.id}
+    });
   }
 
   async editSelection()

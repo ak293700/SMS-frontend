@@ -55,28 +55,38 @@
         </li>
         <li class="field-item">
           <label for="field-cataloguePrice" class="text">Prix tarif</label>
-          <input id="field-cataloguePrice" [placeholder]="simpleProduct.cataloguePrice"
-                 [defaultValue]="simpleProduct.cataloguePrice" pInputText type="text">
+          <p-inputNumber id="field-cataloguePrice" mode="currency"
+                         [placeholder]="simpleProduct.cataloguePrice.toString()"
+                         currency="EUR"></p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-deee" class="text">Deee</label>
-          <input id="field-deee" [placeholder]="simpleProduct.deee"
-                 [defaultValue]="simpleProduct.deee" pInputText type="text">
+          <p-inputNumber id="field-deee" mode="currency" [placeholder]="simpleProduct.deee.toString()"
+                         currency="EUR"></p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-stock" class="text">Stock</label>
-          <input id="field-stock" [placeholder]="simpleProduct.stock"
-                 [defaultValue]="simpleProduct.stock" pInputText type="text">
+          <p-inputNumber id="field-stock" mode="decimal" inputId="integeronly"
+                         [placeholder]="simpleProduct.stock.toString()">
+          </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
-          <input id="field-averageStockPrice" [placeholder]="simpleProduct.averageStockPrice"
-                 [defaultValue]="simpleProduct.averageStockPrice" pInputText type="text">
+          <p-inputNumber id="field-averageStockPrice" mode="decimal"
+                         [placeholder]="simpleProduct.averageStockPrice.toString()">
+          </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-availability" class="text">Disponibilité</label>
-          <input id="field-availability" [placeholder]="simpleProduct.availability"
-                 [defaultValue]="simpleProduct.availability" pInputText type="text">
+          <p-autoComplete id="field-availability" [suggestions]="['Level0', 'Level1', 'Level2', 'Level3']"
+                          (completeMethod)="completeMethod($event, 'others')"
+                          [dropdown]="true">
+            <ng-template let-suggestion pTemplate="item">
+              <div class="ui-helper-clearfix">
+                <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion}}</div>
+              </div>
+            </ng-template>
+          </p-autoComplete>
         </li>
       </ul>
     </div>
@@ -86,19 +96,13 @@
     <div id="shop-specific-field" *ngFor="let shopSpecific of product.shopSpecifics">
       {{shopSpecific.name}}
     </div>
-
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. In, sequi.</p>
   </main>
 
   <aside>
     <ul class="other-product-container">
       <li *ngFor="let otherProduct of otherProducts" class="other-product-item">
-        <button (click)="goToProduct(otherProduct.id)">{{otherProduct.productReference}}</button>
+        <button (click)="goToProduct(otherProduct.id)" [disabled]="otherProduct.id === product.id">
+          {{otherProduct.name}}</button>
       </li>
     </ul>
   </aside>

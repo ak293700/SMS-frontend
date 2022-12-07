@@ -16,36 +16,7 @@ import {SimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/S
 })
 export class EditOneProductComponent implements OnInit
 {
-  otherProducts: { id: number, productReference: string }[] = [
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 1, productReference: "67001"},
-    {id: 2, productReference: "67001D"},
-    {id: 2, productReference: "1"},
-    {id: 1, productReference: "2"},
-    {id: 2, productReference: "3"},
-    {id: 1, productReference: "4"},
-    {id: 2, productReference: "5"},
-    {id: 1, productReference: "6"},
-    {id: 2, productReference: "7"},
-  ];
+  otherProducts: IdNameDto[] = [];
 
   // @ts-ignore
   product: SimpleProductDto | BundleDto;
@@ -60,7 +31,15 @@ export class EditOneProductComponent implements OnInit
 
   async ngOnInit()
   {
-    await this.fetchProduct(501);
+    let routedData = history.state;
+    if (routedData.filteredIds == undefined || routedData.selectedId == undefined)
+    {
+      routedData.filteredIds = [6190, 6233, 6237]
+      routedData.selectedId = routedData.filteredIds[0];
+    }
+
+    await this.fetchReferences(routedData.filteredIds);
+    await this.fetchProduct(routedData.selectedId);
     await this.fetchManufacturers();
   }
 
@@ -104,7 +83,6 @@ export class EditOneProductComponent implements OnInit
     }
   }
 
-
   // Look in additionalInformation
   completeMethod(event: any, fieldName: string)
   {
@@ -132,6 +110,20 @@ export class EditOneProductComponent implements OnInit
   get bundle()
   {
     return this.Transform<BundleDto>(this.product);
+  }
+
+  async fetchReferences(ids: number[])
+  {
+    try
+    {
+      const response = await axios.post(`${api}/product/references`, ids);
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
+      this.otherProducts = response.data;
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
   }
 
 }

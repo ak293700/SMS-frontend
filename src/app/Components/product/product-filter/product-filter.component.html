@@ -46,7 +46,7 @@
 <p-contextMenu #productCM [model]="contextMenuItems"></p-contextMenu>
 
 <p-table [value]="products.pageData" dataKey="id"
-         [totalRecords]="products.allId.length"
+         [totalRecords]="products.filteredIds.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
          (onLazyLoad)="loadProductsLazy($event)" [lazy]="true"
          [lazyLoadOnInit]="false" [loading]="loading"

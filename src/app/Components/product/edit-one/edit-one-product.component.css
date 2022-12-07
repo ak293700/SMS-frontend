@@ -56,6 +56,7 @@ nav {
 aside {
   border-left: 2px solid black;
   background-color: var(--third-color);
+
 }
 
 .other-product-container {
@@ -70,7 +71,7 @@ aside {
   list-style: none;
 }
 
-.other-product-item * {
+.other-product-item button {
   text-align: center;
   margin: 0;
   padding: 5px;
@@ -86,8 +87,12 @@ aside {
   cursor: pointer;
 }
 
-.other-product-item *:hover {
+.other-product-item button:hover {
   background-color: var(--secondary-color);
 }
 
-
+.other-product-item button:disabled {
+  background-color: var(--fourth-color);
+  opacity: .5;
+  cursor: auto;
+}

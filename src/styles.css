@@ -8,7 +8,7 @@ body, html {
   --main-color: #F8B464;
   --secondary-color: #db3d3d;
   --third-color: #333;
-  --fourth-color: #ddfdf4;
+  --fourth-color: rgb(221, 253, 244);
 
   --default-font-family: Arial, cursive;
   --default-font-weight: 400;
