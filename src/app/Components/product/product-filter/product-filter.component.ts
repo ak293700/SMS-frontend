@@ -313,7 +313,7 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {filteredIds: this.products.filteredIds, selectedId: product.id}
+      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
     });
   }
 

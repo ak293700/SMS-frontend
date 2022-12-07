@@ -35,15 +35,19 @@ export class EditOneProductComponent implements OnInit
 
   async ngOnInit()
   {
-    let routedData = history.state;
+    let routedData: { selectedIds: number[], selectedId: number } = history.state;
     console.log(routedData);
-    if (routedData.filteredIds == undefined || routedData.selectedId == undefined)
+    if (routedData.selectedIds == undefined || routedData.selectedId == undefined)
     {
-      routedData.filteredIds = [6190, 6233, 6237]
-      routedData.selectedId = routedData.filteredIds[0];
+      routedData.selectedIds = [6190, 6233, 6237]
+      routedData.selectedId = routedData.selectedIds[0];
     }
 
-    await this.fetchReferences(routedData.filteredIds);
+    // push at the beginning of the array
+    if (!routedData.selectedIds.includes(routedData.selectedId))
+      routedData.selectedIds.unshift(routedData.selectedId);
+
+    await this.fetchReferences(routedData.selectedIds);
     await this.fetchProduct(routedData.selectedId);
     await this.fetchManufacturers();
   }

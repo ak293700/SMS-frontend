@@ -45,7 +45,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean
   {
-    // console.log('shouldReuseRoute', future.routeConfig?.path, curr.routeConfig?.path);
+    console.log('shouldReuseRoute', future.routeConfig?.path, curr.routeConfig?.path);
 
     // Basic check
     // if just change the id of the product, we don't want to reuse the route

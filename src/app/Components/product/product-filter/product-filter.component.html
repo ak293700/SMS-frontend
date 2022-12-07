@@ -43,7 +43,9 @@
   <p-button (click)="applyFilters()" label="Appliquer" styleClass="btn-hover-main"></p-button>
 </div>
 
-<p-contextMenu #productCM [model]="contextMenuItems"></p-contextMenu>
+<p-contextMenu #productCM [model]="contextMenuItems"
+               [style]="{'transition': 'all 0s ease-out'}"
+></p-contextMenu>
 
 <p-table [value]="products.pageData" dataKey="id"
          [totalRecords]="products.filteredIds.length"
