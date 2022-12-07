@@ -27,6 +27,8 @@ import {
   EditMultipleProductsComponent
 } from './Components/product/edit-multiple-products/edit-multiple-products.component';
 import {EditOneProductComponent} from './Components/product/edit-one/edit-one-product.component';
+import {RouteReuseStrategy} from "@angular/router";
+import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
 
 @NgModule({
   declarations: [
@@ -59,7 +61,12 @@ import {EditOneProductComponent} from './Components/product/edit-one/edit-one-pr
     ContextMenuModule,
     ToastModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: RouteReuseStrategy,
+      useClass: CustomRouteReuseStrategy
+    }
+  ],
   bootstrap: [RoutingAppComponent]
 })
 export class AppModule {}

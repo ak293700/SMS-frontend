@@ -36,6 +36,7 @@ export class EditOneProductComponent implements OnInit
   async ngOnInit()
   {
     let routedData = history.state;
+    console.log(routedData);
     if (routedData.filteredIds == undefined || routedData.selectedId == undefined)
     {
       routedData.filteredIds = [6190, 6233, 6237]
@@ -65,8 +66,6 @@ export class EditOneProductComponent implements OnInit
     }
 
     index = Operation.modulo(index + step, this.otherProducts.length);
-    console.log(index);
-
     await this.fetchProduct(this.otherProducts[index].id);
   }
 
