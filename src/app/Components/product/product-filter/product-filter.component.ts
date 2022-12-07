@@ -72,7 +72,6 @@ export class ProductFilterComponent implements OnInit
         command: () => this.editProduct(this.contextMenuSelectedProduct)
       }
     ];
-
   }
 
   async ngOnInit(): Promise<void>

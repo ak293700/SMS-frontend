@@ -1,11 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ProductDto} from "../../../../Dtos/ProductDtos/ProductDto";
 import {api} from "../../../GlobalUsings";
 import axios from "axios";
 import {MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
+import {ProductType} from "../../../../Enums/ProductType";
+import {BundleDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleDto";
+import {SimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/SimpleProductDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -46,23 +48,19 @@ export class EditOneProductComponent implements OnInit
   ];
 
   // @ts-ignore
-  product: ProductDto;
+  product: SimpleProductDto | BundleDto;
 
   // @ts-ignore
-  additionalInformation: {
-    manufacturers: IdNameDto[]
-    productPopularity: any
-  } = {};
+  additionalInformation: { manufacturers: IdNameDto[] } = {};
   additionalInformationFilter = this.additionalInformation;
 
   constructor(private messageService: MessageService)
   {
-    this.additionalInformation.productPopularity = {0: "Level0", 1: "Level1", 2: "Level2", 3: "Level3", 4: "Level4"};
   }
 
   async ngOnInit()
   {
-    await this.fetchProduct(6190);
+    await this.fetchProduct(501);
     await this.fetchManufacturers();
   }
 
@@ -84,6 +82,8 @@ export class EditOneProductComponent implements OnInit
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
+
+    console.log('this.product', this.product);
   }
 
   async fetchManufacturers()
@@ -112,6 +112,26 @@ export class EditOneProductComponent implements OnInit
     // @ts-ignore
     this.additionalInformationFilter[fieldName] = this.additionalInformation[fieldName]
       .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+  }
+
+  get ProductType()
+  {
+    return ProductType;
+  }
+
+  Transform<T>(obj: any): T
+  {
+    return obj as T;
+  }
+
+  get simpleProduct()
+  {
+    return this.Transform<SimpleProductDto>(this.product);
+  }
+
+  get bundle()
+  {
+    return this.Transform<BundleDto>(this.product);
   }
 
 }

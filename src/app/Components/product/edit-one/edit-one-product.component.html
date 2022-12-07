@@ -36,14 +36,55 @@
 
         <li class="field-item">
           <label for="field-popularity" class="text">Popularité</label>
-          <input id="field-popularity" [placeholder]="additionalInformation.productPopularity[product.popularity]"
-                 [defaultValue]="additionalInformation.productPopularity[product.popularity]" pInputText type="text">
+          <input id="field-popularity" [placeholder]="product.popularity.toString()"
+                 [defaultValue]="product.popularity.toString()" pInputText type="text">
         </li>
       </ul>
     </div>
+    <div *ngIf="product.productType === ProductType.Simple" id="common-field-simple-product">
+      <ul class="field-container">
+        <li class="field-item">
+          <label for="field-supplierReference" class="text">Référence fabricant</label>
+          <input id="field-supplierReference" [placeholder]="simpleProduct.supplierReference"
+                 [defaultValue]="simpleProduct.supplierReference" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-pureReference" class="text">Référence pure</label>
+          <input id="field-pureReference" [placeholder]="simpleProduct.pureReference"
+                 [defaultValue]="simpleProduct.pureReference" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-cataloguePrice" class="text">Prix tarif</label>
+          <input id="field-cataloguePrice" [placeholder]="simpleProduct.cataloguePrice"
+                 [defaultValue]="simpleProduct.cataloguePrice" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-deee" class="text">Deee</label>
+          <input id="field-deee" [placeholder]="simpleProduct.deee"
+                 [defaultValue]="simpleProduct.deee" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-stock" class="text">Stock</label>
+          <input id="field-stock" [placeholder]="simpleProduct.stock"
+                 [defaultValue]="simpleProduct.stock" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
+          <input id="field-averageStockPrice" [placeholder]="simpleProduct.averageStockPrice"
+                 [defaultValue]="simpleProduct.averageStockPrice" pInputText type="text">
+        </li>
+        <li class="field-item">
+          <label for="field-availability" class="text">Disponibilité</label>
+          <input id="field-availability" [placeholder]="simpleProduct.availability"
+                 [defaultValue]="simpleProduct.availability" pInputText type="text">
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
+
+    </div>
     <div id="shop-specific-field" *ngFor="let shopSpecific of product.shopSpecifics">
       {{shopSpecific.name}}
-
     </div>
   </main>
 
