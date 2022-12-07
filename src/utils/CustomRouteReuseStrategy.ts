@@ -5,6 +5,8 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
 {
   private storedRoutes = new Map<string, DetachedRouteHandle>();
 
+  // TODO: optimized it to delete the oldest route when no need anymore
+
   shouldDetach(route: ActivatedRouteSnapshot): boolean
   {
     if (route.routeConfig == undefined)
@@ -28,6 +30,14 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
     if (route.routeConfig == undefined)
       return false;
     // console.log('shouldAttach', route.routeConfig.path);
+
+    /*if (route.routeConfig.component === HomeComponent)
+    {
+      this.storedRoutes.clear();
+      return false;
+      TODO: Perhaps it is not necessary to delete the stored routes.
+    }*/
+
 
     // @ts-ignore
     return !!route.routeConfig && !!this.storedRoutes.get(route.routeConfig.path);

@@ -75,7 +75,7 @@
         </li>
         <li class="field-item">
           <label for="field-stock" class="text">Stock</label>
-          <p-inputNumber id="field-stock" mode="decimal" inputId="integeronly"
+          <p-inputNumber id="field-stock"
                          [placeholder]="initialSimpleProduct.stock.toString()"
                          [(ngModel)]="simpleProduct.stock">
           </p-inputNumber>
@@ -104,11 +104,44 @@
     <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
 
     </div>
-    <div id="shop-specific-field" *ngFor="let shopSpecific of product.shopSpecifics">
-      {{shopSpecific.name}}
+
+    <div id="shop-specific-field">
+
+      <h2></h2>
+      <h2 *ngFor="let shopSpecific of product.shopSpecifics"
+          class="text">
+        {{Shop.toString(shopSpecific.shop)}}
+      </h2>
+
+      <label class="text">Nom</label>
+      <input *ngFor="let shopSpecific of product.shopSpecifics; let i=index" pInputText type="text"
+             [placeholder]="shopSpecific.name"
+             [(ngModel)]="initialProduct.shopSpecifics[i].name">
+
+      <label class="text">Id PrestaShop</label>
+      <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                     [useGrouping]="false"
+                     [placeholder]="shopSpecific.idPrestaShop?.toString() ?? ''"
+                     [(ngModel)]="initialProduct.shopSpecifics[i].idPrestaShop">
+      </p-inputNumber>
+
+
+      <div>4</div>
+      <div>5</div>
+      <div>6</div>
+      <div>7</div>
+      <div>8</div>
+      <div>9</div>
+
+
+      <!--   <span>{{shopSpecific.name}} - {{index}}</span>
+         <span>{{shopSpecific.name}} - {{index}}</span>
+         <span>{{shopSpecific.name}} - {{index}}</span>
+         <span>{{shopSpecific.name}} - {{index}}</span>
+         <span>{{shopSpecific.name}} - {{index}}</span>
+         <span>{{shopSpecific.name}} - {{index}}</span>-->
     </div>
   </main>
-
   <aside>
     <ul class="other-product-container">
       <li *ngFor="let otherProduct of otherProducts" class="other-product-item">

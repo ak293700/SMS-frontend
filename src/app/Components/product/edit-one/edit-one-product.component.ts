@@ -9,6 +9,7 @@ import {ProductType} from "../../../../Enums/ProductType";
 import {BundleDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleDto";
 import {SimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/SimpleProductDto";
 import {Operation} from "../../../../utils/Operation";
+import {Shop} from "../../../../Enums/Shop";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -159,6 +160,12 @@ export class EditOneProductComponent implements OnInit
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
+  }
+
+  // createGrid
+  get Shop()
+  {
+    return Shop;
   }
 
 }

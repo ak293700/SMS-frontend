@@ -52,7 +52,6 @@ nav {
   overflow-y: auto;
 }
 
-
 aside {
   border-left: 2px solid black;
   background-color: var(--third-color);
@@ -65,7 +64,6 @@ aside {
   margin: 0;
   padding: 0;
 }
-
 
 .other-product-item {
   list-style: none;
@@ -95,4 +93,20 @@ aside {
   background-color: var(--fourth-color);
   opacity: .5;
   cursor: auto;
+}
+
+#shop-specific-field {
+  display: grid;
+  grid-template-columns: 20% repeat(2, 1fr);
+  grid-auto-flow: row;
+  margin: 2rem 0;
+
+}
+
+#shop-specific-field * {
+  /*border: 2px solid #333;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
 }
