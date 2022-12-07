@@ -31,10 +31,11 @@ export class EditOneProductComponent implements OnInit
   additionalInformation: { manufacturers: IdNameDto[] } = {};
   additionalInformationFilter = this.additionalInformation;
 
+  listeners: any[] = [];
+
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService)
-  {
-  }
+  {}
 
   async ngOnInit()
   {
@@ -174,10 +175,8 @@ export class EditOneProductComponent implements OnInit
   confirmDialog(f: () => void, message: string)
   {
     this.confirmationService.confirm({
-      message: message, accept: () => {
-        // @ts-ignore
-        this[f.name]();
-      }
+      // @ts-ignore
+      message: message, accept: () => this[f.name]()
     });
   }
 

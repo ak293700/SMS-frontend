@@ -1,7 +1,9 @@
 <nav>
   <button class="reset-button" (click)="goToFollowingProduct(-1)">
     <i class="pi pi-arrow-left" style="float: left"></i></button>
+
   <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
+
   <button class="reset-button" (click)="goToFollowingProduct(1)">
     <i class="pi pi-arrow-right"></i></button>
 </nav>
@@ -119,7 +121,7 @@
              [placeholder]="shopSpecific.name"
              [(ngModel)]="initialProduct.shopSpecifics[i].name">
 
-      <label class="text">Id PrestaShop</label>
+      <label class="text">Id Prestashop</label>
       <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                      [useGrouping]="false"
                      [placeholder]="shopSpecific.idPrestaShop?.toString() ?? ''"
@@ -145,14 +147,6 @@
                   [binary]="true"
                   [(ngModel)]="initialProduct.shopSpecifics[i].active">
       </p-checkbox>
-
-
-      <!--   <span>{{shopSpecific.name}} - {{index}}</span>
-         <span>{{shopSpecific.name}} - {{index}}</span>
-         <span>{{shopSpecific.name}} - {{index}}</span>
-         <span>{{shopSpecific.name}} - {{index}}</span>
-         <span>{{shopSpecific.name}} - {{index}}</span>
-         <span>{{shopSpecific.name}} - {{index}}</span>-->
     </div>
 
     <div class="flex-center" style="gap: 100px">

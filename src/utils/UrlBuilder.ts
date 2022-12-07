@@ -20,6 +20,9 @@ export class UrlBuilder
 
   addParam(key: string, value: any): UrlBuilder
   {
+    if (value == undefined || Array.isArray(value) && value.length == 0)
+      return this;
+
     if (this.boolFirstParam)
       this.url += '?';
     else

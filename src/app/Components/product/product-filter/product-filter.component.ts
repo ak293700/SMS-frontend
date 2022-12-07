@@ -1,10 +1,11 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
-import axios, {AxiosError, AxiosResponse} from "axios";
+import axios, {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HeaderDto} from "../../../../Dtos/HeaderDto";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 
 /*
   * This component is used to display the filter form.
@@ -85,7 +86,7 @@ export class ProductFilterComponent implements OnInit
       this.changeDetectorRef.detectChanges();
     } catch (e: any | AxiosError)
     {
-      this.networkError(e.message);
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
 
   }
@@ -109,13 +110,13 @@ export class ProductFilterComponent implements OnInit
     {
       let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
       if (response.status !== 200)
-        return this.httpFail(response);
+        return MessageServiceTools.httpFail(this.messageService, response);
 
       this.products.header = response.data;
       this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
     } catch (e: any | AxiosError)
     {
-      this.networkError(e.message);
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
   }
 
@@ -125,7 +126,7 @@ export class ProductFilterComponent implements OnInit
     {
       let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
       if (response.status !== 200)
-        return this.httpFail(response);
+        return MessageServiceTools.httpFail(this.messageService, response);
 
       let tmp: any[] = response.data;
       tmp.forEach(filter => {
@@ -139,7 +140,7 @@ export class ProductFilterComponent implements OnInit
       this.setDefaultFilterValue();
     } catch (e: any | AxiosError)
     {
-      this.networkError(e.message);
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
   }
 
@@ -169,9 +170,10 @@ export class ProductFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
+      console.log(filters);
       let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
-        return this.httpFail(response);
+        return MessageServiceTools.httpFail(this.messageService, response);
 
       this.products.filteredIds = response.data;
       this.totalRecords = this.products.filteredIds.length;
@@ -179,7 +181,7 @@ export class ProductFilterComponent implements OnInit
       await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
     {
-      this.networkError(e.message);
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
   }
 
@@ -187,24 +189,30 @@ export class ProductFilterComponent implements OnInit
   {
     this.loading = true;
 
-    const begin: number = event.first ?? 0;
-    const end: number = begin + (event.rows ?? 0);
+    try
+    {
+      const begin: number = event.first ?? 0;
+      const end: number = begin + (event.rows ?? 0);
 
-    // get the ids of the products of the page
-    const ids = this.products.filteredIds.slice(begin, end);
-    const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
-    const response = await axios.get(url, {responseType: 'json'});
-    if (response.status !== 200)
-      return;
+      // get the ids of the products of the page
+      const ids = this.products.filteredIds.slice(begin, end);
+      const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
+      const response = await axios.get(url, {responseType: 'json'});
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
 
-    // Update the productsPageData
-    this.products.pageData = response.data;
+      // Update the productsPageData
+      this.products.pageData = response.data;
 
-    // Update the selected data
-    this.selectedProducts.data = this.products.pageData
-      .filter((product: any) => this.selectedProducts.ids.includes(product.id));
+      // Update the selected data
+      this.selectedProducts.data = this.products.pageData
+        .filter((product: any) => this.selectedProducts.ids.includes(product.id));
 
-    this.setDefaultPageData();
+      this.setDefaultPageData();
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.networkError(this.messageService, e.message);
+    }
 
     this.loading = false;
   }
@@ -297,7 +305,7 @@ export class ProductFilterComponent implements OnInit
     this.areAllSelected = false;
   }
 
-  networkError(message: string)
+  /*networkError(message: string)
   {
     this.messageService.add({severity: 'error', summary: 'Network error', detail: message});
     this.loading = false;
@@ -307,7 +315,7 @@ export class ProductFilterComponent implements OnInit
   {
     console.log('HTTP error');
     this.messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
-  }
+  }*/
 
   async editProduct(product: any)
   {
