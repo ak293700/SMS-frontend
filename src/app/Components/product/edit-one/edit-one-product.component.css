@@ -45,7 +45,11 @@ nav {
 .grid-container {
   display: grid;
   grid-template-columns: 1fr 150px;
-  min-height: 85vh;
+  height: 85vh;
+}
+
+.grid-container > * {
+  overflow-y: auto;
 }
 
 
@@ -61,9 +65,6 @@ aside {
   padding: 0;
 }
 
-main {
-
-}
 
 .other-product-item {
   list-style: none;
