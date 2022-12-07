@@ -19,7 +19,6 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
   {
     if (route.routeConfig == undefined)
       return;
-    console.log('store', route.routeConfig.path);
 
     // @ts-ignore
     this.storedRoutes.set(route.routeConfig.path, handle);
@@ -29,7 +28,6 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
   {
     if (route.routeConfig == undefined)
       return false;
-    // console.log('shouldAttach', route.routeConfig.path);
 
     /*if (route.routeConfig.component === HomeComponent)
     {
@@ -47,7 +45,6 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
   {
     if (route.routeConfig == undefined)
       return false;
-    // console.log('retrieve', route.routeConfig.path);
 
     // @ts-ignore
     return this.storedRoutes.get(route.routeConfig.path) ?? null;
@@ -55,8 +52,6 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean
   {
-    console.log('shouldReuseRoute', future.routeConfig?.path, curr.routeConfig?.path);
-
     // Basic check
     // if just change the id of the product, we don't want to reuse the route
     return future.routeConfig === curr.routeConfig;

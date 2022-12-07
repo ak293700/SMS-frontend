@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
 import axios from "axios";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
@@ -14,7 +14,8 @@ import {Shop} from "../../../../Enums/Shop";
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
-  styleUrls: ['./edit-one-product.component.css']
+  styleUrls: ['./edit-one-product.component.css'],
+  providers: [ConfirmationService]
 })
 export class EditOneProductComponent implements OnInit
 {
@@ -30,7 +31,8 @@ export class EditOneProductComponent implements OnInit
   additionalInformation: { manufacturers: IdNameDto[] } = {};
   additionalInformationFilter = this.additionalInformation;
 
-  constructor(private messageService: MessageService)
+  constructor(private messageService: MessageService,
+              private confirmationService: ConfirmationService)
   {
   }
 
@@ -166,6 +168,27 @@ export class EditOneProductComponent implements OnInit
   get Shop()
   {
     return Shop;
+  }
+
+  // Before doing a risky operation, ask for confirmation
+  confirmDialog(f: () => void, message: string)
+  {
+    this.confirmationService.confirm({
+      message: message, accept: () => {
+        // @ts-ignore
+        this[f.name]();
+      }
+    });
+  }
+
+  reset()
+  {
+    this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
+  }
+
+  save()
+  {
+    this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
   }
 
 }

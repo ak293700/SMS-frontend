@@ -154,6 +154,13 @@
          <span>{{shopSpecific.name}} - {{index}}</span>
          <span>{{shopSpecific.name}} - {{index}}</span>-->
     </div>
+
+    <div class="flex-center" style="gap: 100px">
+      <button pButton label="Annuler" class="p-button-danger"
+              (click)="confirmDialog(reset, 'Toutes les modifications seront oubliées')"></button>
+      <button pButton label="Enregistrer" class="p-button-success"
+              (click)="confirmDialog(save, 'Toute donnée modifiée ne pourra être retrouvé')"></button>
+    </div>
   </main>
   <aside>
     <ul class="other-product-container">
@@ -164,3 +171,5 @@
     </ul>
   </aside>
 </div>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

@@ -29,6 +29,7 @@ import {
 import {EditOneProductComponent} from './Components/product/edit-one/edit-one-product.component';
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
     HttpClientModule,
     AutoCompleteModule,
     ContextMenuModule,
-    ToastModule
+    ToastModule,
+    ConfirmDialogModule
   ],
   providers: [
     {

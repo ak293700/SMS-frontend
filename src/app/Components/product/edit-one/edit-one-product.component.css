@@ -52,6 +52,11 @@ nav {
   overflow-y: auto;
 }
 
+main {
+  padding: 2rem 0;
+}
+
+
 aside {
   border-left: 2px solid black;
   background-color: var(--third-color);
