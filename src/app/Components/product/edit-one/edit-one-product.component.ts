@@ -266,8 +266,12 @@ export class EditOneProductComponent implements OnInit
   private async _save(changes: { diffObj: any, count: number })
   {
     let namespace: any = PatchSimpleProductDto;
+    let endpoint = 'simpleproduct';
     if (this.product.productType === ProductType.Bundle)
+    {
       namespace = PatchBundleDto;
+      endpoint = 'bundle';
+    }
 
     console.log('diff', changes.diffObj.shopSpecifics);
 
@@ -288,7 +292,7 @@ export class EditOneProductComponent implements OnInit
       // Detect if patch is empty - more than 1 because of the id
       if (Operation.countProperties(patchProduct) > 1)
       {
-        const response: AxiosResponse = await axios.patch(`${api}/simpleproduct/`, patchProduct);
+        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
         if (response.status !== 200)
           return MessageServiceTools.httpFail(this.messageService, response);
       }
