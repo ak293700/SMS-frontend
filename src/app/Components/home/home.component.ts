@@ -14,7 +14,7 @@ export class HomeComponent
     },
     {
       label: 'Remises',
-      link: '/discount'
+      link: '/discount/filter'
     },
     {
       label: 'Paramètres',

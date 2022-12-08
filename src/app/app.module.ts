@@ -32,6 +32,7 @@ import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {FilterFieldsComponent} from './Components/filter/filter-fields/filter-fields.component';
 import {FilterTableComponent} from './Components/filter/filter-table/filter-table.component';
+import {DiscountFilterComponent} from './Components/discount/discount-filter/discount-filter.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import {FilterTableComponent} from './Components/filter/filter-table/filter-tabl
     EditMultipleProductsComponent,
     EditOneProductComponent,
     FilterFieldsComponent,
-    FilterTableComponent
+    FilterTableComponent,
+    DiscountFilterComponent
   ],
   imports: [
     BrowserModule,

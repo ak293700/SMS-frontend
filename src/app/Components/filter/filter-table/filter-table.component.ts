@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {MenuItem} from "primeng/api";
 import {HeaderDto} from "../../../../Dtos/HeaderDto";
 
-interface DataTableVector
+export interface DataTableVector
 {
   header: HeaderDto[];
   pageData: any[];
@@ -63,16 +63,19 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   ngOnInit()
   {
-    this._displayedHeader = this.datas.header;
-    this.totalRecords = this.datas.filteredIds.length;
+    this.initFields();
   }
 
   ngOnChanges(changes: SimpleChanges): void
   {
+    this.initFields();
+  }
+
+  initFields()
+  {
     this._displayedHeader = this.datas.header;
     this.totalRecords = this.datas.filteredIds.length;
   }
-
 
   onRowSelect(event: any)
   {

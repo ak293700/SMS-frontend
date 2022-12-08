@@ -8,6 +8,7 @@ import {
 } from "./Components/product/edit-multiple-products/edit-multiple-products.component";
 import {EditOneProductComponent} from "./Components/product/edit-one/edit-one-product.component";
 import {FilterFieldsComponent} from "./Components/filter/filter-fields/filter-fields.component";
+import {DiscountFilterComponent} from "./Components/discount/discount-filter/discount-filter.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
@@ -25,7 +26,19 @@ const routes: Routes = [
       },
     ]
   },
-  {path: 'discount', component: HomeComponent},
+  {
+    path: 'discount', children: [
+      {path: '', redirectTo: '/home', pathMatch: 'full'},
+      {path: 'filter', component: DiscountFilterComponent},
+      {
+        path: 'edit', children: [
+          {path: '', redirectTo: '/home', pathMatch: 'full'},
+          {path: 'multiple', component: DiscountFilterComponent},
+          {path: 'one', component: DiscountFilterComponent},
+        ]
+      },
+    ]
+  },
   {path: 'setting', component: HomeComponent},
   {path: 'filter', component: FilterFieldsComponent},
   // {path: '**', redirectTo: 'login'}
@@ -35,4 +48,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

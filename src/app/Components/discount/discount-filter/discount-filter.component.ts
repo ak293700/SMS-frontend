@@ -1,36 +1,22 @@
 import {Component, OnInit} from '@angular/core';
-import {LazyLoadEvent, MessageService} from "primeng/api";
-import axios, {AxiosError} from "axios";
-import {api} from "../../../GlobalUsings";
-import {ActivatedRoute, Router} from "@angular/router";
-import {UrlBuilder} from "../../../../utils/UrlBuilder";
-import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
-
-/*
-  * This component is used to display the filter form.
-  * It shows the results of the filter below it.
-  * The fields in the filter and the table can be different.
- */
-
-// Store everything to manage a product show in the table
+import {LazyLoadEvent, MessageService} from "primeng/api";
+import {ActivatedRoute, Router} from "@angular/router";
+import axios, {AxiosError} from "axios";
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
+import {api} from "../../../GlobalUsings";
+import {UrlBuilder} from "../../../../utils/UrlBuilder";
 
 @Component({
-  selector: 'app-product-filter',
-  templateUrl: './product-filter.component.html',
-  styleUrls: [
-    './product-filter.component.css',
-    '../../../../styles/button.css'
-  ],
+  selector: 'app-discount-filter',
+  templateUrl: './discount-filter.component.html',
+  styleUrls: ['./discount-filter.component.css', '../../../../styles/button.css']
 })
-export class ProductFilterComponent implements OnInit
+export class DiscountFilterComponent implements OnInit
 {
-  // initialize in the constructor
   filters: any[] = [];
 
-  // We do not add the photo field to use it with html markup.
-  // The id of every product matching the filter.
-  products: DataTableVector =
+  discounts: DataTableVector =
     {
       header: [],
       pageData: [], // The products of the current page.
@@ -41,7 +27,7 @@ export class ProductFilterComponent implements OnInit
   rowsNumber: number = 50;
 
   // The products we did select. After it should be a list of ids.
-  selectedProducts: any = {
+  selectedDiscounts: any = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
@@ -73,11 +59,11 @@ export class ProductFilterComponent implements OnInit
   {
     try
     {
-      let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
+      let response = await axios.get(`${api}/SelectDiscount/header`, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.products.header = response.data;
+      this.discounts.header = response.data;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -88,7 +74,7 @@ export class ProductFilterComponent implements OnInit
   {
     try
     {
-      let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
+      let response = await axios.get(`${api}/SelectDiscount/filter`, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
@@ -133,11 +119,12 @@ export class ProductFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
-      let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
+      console.log(filters);
+      let response = await axios.post(`${api}/SelectDiscount/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.products.filteredIds = response.data;
+      this.discounts.filteredIds = response.data;
 
       await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
@@ -149,52 +136,34 @@ export class ProductFilterComponent implements OnInit
   async loadProductsLazy(event: LazyLoadEvent)
   {
     this.loading = true;
-
     try
     {
       const begin: number = event.first ?? 0;
       const end: number = begin + (event.rows ?? 0);
 
       // get the ids of the products of the page
-      const ids = this.products.filteredIds.slice(begin, end);
-      const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
+      const ids = this.discounts.filteredIds.slice(begin, end);
+      const url = UrlBuilder.create(`${api}/SelectDiscount/filter/values`).addParam('ids', ids).build();
       const response = await axios.get(url, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
       // Update the productsPageData
-      this.products.pageData = response.data;
+      this.discounts.pageData = response.data;
 
       // Update the selected data
-      this.selectedProducts.data = this.products.pageData
-        .filter((product: any) => this.selectedProducts.ids.includes(product.id));
-
-      this.setDefaultPageData();
+      this.selectedDiscounts.data = this.discounts.pageData
+        .filter((product: any) => this.selectedDiscounts.ids.includes(product.id));
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
     }
-
     this.loading = false;
-  }
-
-  // For each data of the page it will set default for some field
-  setDefaultPageData()
-  {
-    for (const product of this.products.pageData)
-    {
-      // if product.photo is null or empty, we set a default image
-      if (!product.photo || product.photo === "")
-        product.photo = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930";
-    }
   }
 
   async editProduct(product: any)
   {
-    await this.router.navigate(['../edit/one'], {
-      relativeTo: this.route,
-      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
-    });
+
   }
 
   async editSelection()
