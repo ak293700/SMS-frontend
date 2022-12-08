@@ -257,33 +257,59 @@ export class EditOneProductComponent implements OnInit
 
     if (this.product.productType == ProductType.Simple)
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
+  }
 
-    console.log(this.product);
+  private _detectChanges(obj: any, initialObj: any): { pathObj: any, count: number }
+  {
+    let count = 0;
+    let diffObj: any = {};
+
+    for (const key in obj)
+    {
+      if (Operation.isPrimitive(obj[key]))
+      {
+        if (obj[key] !== initialObj[key])
+        {
+          diffObj[key] = obj[key];
+          count++;
+        }
+        continue;
+      }
+
+      if (Array.isArray(obj[key]))
+      {
+        diffObj[key] = [];
+        const initialCount = count;
+        for (let i = 0; i < obj[key].length; i++)
+        {
+          const changes = this._detectChanges(obj[key][i], initialObj[key][i]);
+          count += changes.count;
+          if (count > 0)
+            diffObj[key].push(changes.pathObj);
+        }
+        // We don't want to keep the array if there are no changes
+        if (initialCount === count)
+          delete diffObj[key];
+
+        continue
+      }
+
+      // Composed object
+      const changes = this._detectChanges(obj[key], initialObj[key]);
+      count += changes.count;
+      if (count > 0)
+        diffObj[key] = changes.pathObj;
+    }
+
+    return {pathObj: diffObj, count: count};
   }
 
   detectChanges(): { pathObj: any, count: number }
   {
     this.reformatProduct();
+    const tmp = this._detectChanges(this.product, this.initialProduct);
+    console.log(tmp);
 
-    // TODO: add detect in sub objects
-    let count = 0;
-    let pathObj: any = {};
-
-    const product = this.product as any;
-    const initialProduct = this.initialProduct as any;
-
-    for (const key in this.product)
-    {
-      if (!Operation.isPrimitive(product[key]))
-        continue;
-
-      if (product[key] !== initialProduct[key])
-      {
-        pathObj[key] = product[key];
-        count++;
-      }
-    }
-
-    return {pathObj: pathObj, count: count};
+    return tmp;
   }
 }
