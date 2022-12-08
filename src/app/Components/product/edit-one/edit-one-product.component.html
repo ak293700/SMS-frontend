@@ -1,15 +1,15 @@
 <nav>
   <button class="reset-button" (click)="goToFollowingProduct(-1)">
     <i class="pi pi-arrow-left" style="float: left"></i></button>
-
   <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
-
   <button class="reset-button" (click)="goToFollowingProduct(1)">
     <i class="pi pi-arrow-right"></i></button>
 </nav>
 
 <div class="grid-container" *ngIf="product !== undefined">
   <main>
+    <h2 class="text" style="margin-bottom: 3rem">{{ProductType.toString(product.productType)}}</h2>
+
     <div id="common-field">
       <ul class="field-container">
         <li class="field-item">

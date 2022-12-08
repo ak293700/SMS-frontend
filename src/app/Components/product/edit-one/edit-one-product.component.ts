@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -12,6 +12,7 @@ import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
 import {ProductPopularity} from "../../../../Enums/ProductPopularity";
 import {Availability} from "../../../../Enums/Availability";
+import {PatchSimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/PatchSimpleProductDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -259,11 +260,32 @@ export class EditOneProductComponent implements OnInit
   }
 
   // This function does the actual work of saving the changes to the database
-  private _save(changes: { diffObj: any, count: number })
+  private async _save(changes: { diffObj: any, count: number })
   {
     console.log('_save', changes);
+    if (this.product.productType !== ProductType.Simple)
+      return;
 
-    this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+    // build the PatchSimpleProductDto
+    const patch: PatchSimpleProductDto = {id: this.product.id};
+    for (const [key, value] of Object.entries(changes.diffObj))
+    {
+      // @ts-ignore
+      patch[key] = value;
+    }
+
+    try
+    {
+      const response: AxiosResponse = await axios.patch(`${api}/simpleproduct/`, patch);
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+      await this.fetchProduct(this.product.id);
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
   }
 
   save()
