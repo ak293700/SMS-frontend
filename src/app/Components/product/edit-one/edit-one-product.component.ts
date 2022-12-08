@@ -121,7 +121,6 @@ export class EditOneProductComponent implements OnInit
 
       this.initialProduct = response.data;
       this.product = Operation.deepCopy(this.initialProduct);
-
       this.initDummyStruct();
     } catch (e: any)
     {
@@ -237,6 +236,7 @@ export class EditOneProductComponent implements OnInit
 
   private _reset()
   {
+    console.log(this.initialProduct);
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
 
@@ -266,13 +266,14 @@ export class EditOneProductComponent implements OnInit
     if (this.product.productType !== ProductType.Simple)
       return;
 
-    // build the PatchSimpleProductDto
-    const patch: PatchSimpleProductDto = {id: this.product.id};
-    for (const [key, value] of Object.entries(changes.diffObj))
-    {
-      // @ts-ignore
-      patch[key] = value;
-    }
+    // get all properties of PatchSimpleProductDto interface
+
+    const patch: PatchSimpleProductDto = PatchSimpleProductDto.build(changes.diffObj);
+    patch.id = this.product.id;
+
+    console.log('patch', patch);
+
+    return;
 
     try
     {

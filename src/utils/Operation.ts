@@ -8,14 +8,14 @@ export class Operation
     if (Array.isArray(x))
     {
       let res = [];
-      for (let value of x)
+      for (const value of x)
         res.push(Operation.deepCopy(value));
 
       return res;
     }
 
     let res: any = {};
-    for (let key in x)
+    for (const key in x)
       res[key] = this.deepCopy(x[key]);
 
     return res;

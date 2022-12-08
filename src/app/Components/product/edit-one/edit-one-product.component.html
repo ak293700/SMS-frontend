@@ -122,34 +122,34 @@
 
       <label class="text">Nom</label>
       <input *ngFor="let shopSpecific of product.shopSpecifics; let i=index" pInputText type="text"
-             [placeholder]="shopSpecific.name" [pTooltip]="shopSpecific.name"
-             [(ngModel)]="initialProduct.shopSpecifics[i].name">
+             [placeholder]="initialProduct.shopSpecifics[i].name" [pTooltip]="shopSpecific.name"
+             [(ngModel)]="shopSpecific.name">
 
       <label class="text">Id Prestashop</label>
       <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                      [useGrouping]="false"
-                     [placeholder]="shopSpecific.idPrestaShop?.toString() ?? ''"
-                     [(ngModel)]="initialProduct.shopSpecifics[i].idPrestaShop">
+                     [placeholder]="initialProduct.shopSpecifics[i].idPrestaShop?.toString() ?? ''"
+                     [(ngModel)]="shopSpecific.idPrestaShop">
       </p-inputNumber>
 
       <label class="text">Km</label>
       <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                      [useGrouping]="false" mode="decimal"
-                     [placeholder]="shopSpecific.km.toString()"
-                     [(ngModel)]="initialProduct.shopSpecifics[i].km">
+                     [placeholder]=" initialProduct.shopSpecifics[i].km.toString()"
+                     [(ngModel)]="shopSpecific.km">
       </p-inputNumber>
 
       <label class="text">Promotion</label>
       <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                      [useGrouping]="false" mode="decimal"
-                     [placeholder]="shopSpecific.promotion.toString()"
-                     [(ngModel)]="initialProduct.shopSpecifics[i].promotion">
+                     [placeholder]="initialProduct.shopSpecifics[i].promotion.toString()"
+                     [(ngModel)]="shopSpecific.promotion">
       </p-inputNumber>
 
       <label class="text">Actif</label>
       <p-checkbox *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                   [binary]="true"
-                  [(ngModel)]="initialProduct.shopSpecifics[i].active">
+                  [(ngModel)]="shopSpecific.active">
       </p-checkbox>
     </div>
 
