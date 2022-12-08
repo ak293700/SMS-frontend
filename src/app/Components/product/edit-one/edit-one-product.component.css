@@ -53,7 +53,7 @@ nav {
 }
 
 main {
-  padding: 2rem 0;
+  padding-top: 2rem;
 }
 
 aside {
@@ -112,4 +112,14 @@ aside {
   justify-content: center;
   align-items: center;
   margin: 10px;
+}
+
+.changes-footer {
+  gap: 100px;
+  position: sticky;
+  bottom: 0;
+  padding: 1rem;
+
+  box-shadow: 0 1px 5px 0 var(--third-color) inset;
+  background-color: var(--main-color);
 }
