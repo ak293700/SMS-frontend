@@ -1,7 +1,6 @@
 import {PatchProductDto} from "../PatchProductDto";
 import {NullablePropertyWrapperDto} from "../../NullablePropertyWrapperDto";
 import {Availability} from "../../../Enums/Availability";
-import {StringEnumerableInterface} from "../../../Interfaces/StringEnumerableInterface";
 import {PatchDto} from "../../../Interfaces/PatchDto";
 
 export interface PatchSimpleProductDto extends PatchProductDto
@@ -20,9 +19,9 @@ export interface PatchSimpleProductDto extends PatchProductDto
 
 export namespace PatchSimpleProductDto
 {
-  export const NullablePropertyWrapperDtoProperties: string[] = ["selectedDiscountId", "manufacturerCategoryId"];
+  const NullablePropertyWrapperDtoProperties: string[] = ["selectedDiscountId", "manufacturerCategoryId"];
 
-  export function build<T extends StringEnumerableInterface>(obj: any): T
+  export function build(obj: any): PatchSimpleProductDto
   {
     return PatchDto.build(obj, NullablePropertyWrapperDtoProperties);
   }

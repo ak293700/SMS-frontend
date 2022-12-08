@@ -31,4 +31,9 @@ export class Operation
   {
     return ((a % b) + b) % b;
   }
+
+  static countProperties(obj: any): number
+  {
+    return Object.keys(obj).length;
+  }
 }

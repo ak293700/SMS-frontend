@@ -13,6 +13,9 @@ import {Shop} from "../../../../Enums/Shop";
 import {ProductPopularity} from "../../../../Enums/ProductPopularity";
 import {Availability} from "../../../../Enums/Availability";
 import {PatchSimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/PatchSimpleProductDto";
+import {PatchBundleDto} from "../../../../Dtos/ProductDtos/BundleDto/PatchBundleDto";
+import {PatchProductDto} from "../../../../Dtos/ProductDtos/PatchProductDto";
+import {PatchShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/PatchShopSpecificDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -262,24 +265,40 @@ export class EditOneProductComponent implements OnInit
   // This function does the actual work of saving the changes to the database
   private async _save(changes: { diffObj: any, count: number })
   {
-    console.log('_save', changes);
-    if (this.product.productType !== ProductType.Simple)
-      return;
+    let namespace: any = PatchSimpleProductDto;
+    if (this.product.productType === ProductType.Bundle)
+      namespace = PatchBundleDto;
+
+    console.log('diff', changes.diffObj.shopSpecifics);
 
     // get all properties of PatchSimpleProductDto interface
+    const shopSpecificChanges = changes.diffObj.shopSpecifics ?? [];
+    delete changes.diffObj.shopSpecifics;
 
-    const patch: PatchSimpleProductDto = PatchSimpleProductDto.build(changes.diffObj);
-    patch.id = this.product.id;
-
-    console.log('patch', patch);
-
-    return;
+    const patchProduct: PatchProductDto = namespace.build(changes.diffObj);
+    const shopSpecificPatches: PatchShopSpecificDto[] = [];
+    for (const shopSpecificChange of shopSpecificChanges)
+    {
+      if (Operation.countProperties(shopSpecificChange) > 1)
+        shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
+    }
 
     try
     {
-      const response: AxiosResponse = await axios.patch(`${api}/simpleproduct/`, patch);
-      if (response.status !== 200)
-        return MessageServiceTools.httpFail(this.messageService, response);
+      // Detect if patch is empty - more than 1 because of the id
+      if (Operation.countProperties(patchProduct) > 1)
+      {
+        const response: AxiosResponse = await axios.patch(`${api}/simpleproduct/`, patchProduct);
+        if (response.status !== 200)
+          return MessageServiceTools.httpFail(this.messageService, response);
+      }
+
+      for (const shopSpecificPatch of shopSpecificPatches)
+      {
+        const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
+        if (response.status !== 200)
+          return MessageServiceTools.httpFail(this.messageService, response);
+      }
 
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
       await this.fetchProduct(this.product.id);
@@ -314,13 +333,22 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
   }
 
-  private _detectChanges(obj: any, initialObj: any): { diffObj: any, count: number }
+  // keep is a list of properties that should not be compared
+  // should be keep in the diff
+  // shouldn't be counted in the diff
+  private _detectChanges(obj: any, initialObj: any, keep: string[]): { diffObj: any, count: number }
   {
     let count = 0;
     let diffObj: any = {};
 
     for (const key in obj)
     {
+      if (keep.includes(key))
+      {
+        diffObj[key] = obj[key];
+        continue;
+      }
+
       if (Operation.isPrimitive(obj[key]))
       {
         if (obj[key] !== initialObj[key])
@@ -337,7 +365,7 @@ export class EditOneProductComponent implements OnInit
         const initialCount = count;
         for (let i = 0; i < obj[key].length; i++)
         {
-          const changes = this._detectChanges(obj[key][i], initialObj[key][i]);
+          const changes = this._detectChanges(obj[key][i], initialObj[key][i], keep);
           count += changes.count;
           if (count > 0)
             diffObj[key].push(changes.diffObj);
@@ -350,7 +378,7 @@ export class EditOneProductComponent implements OnInit
       }
 
       // Composed object
-      const changes = this._detectChanges(obj[key], initialObj[key]);
+      const changes = this._detectChanges(obj[key], initialObj[key], keep);
       count += changes.count;
       if (count > 0)
         diffObj[key] = changes.diffObj;
@@ -362,6 +390,6 @@ export class EditOneProductComponent implements OnInit
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatProduct();
-    return this._detectChanges(this.product, this.initialProduct);
+    return this._detectChanges(this.product, this.initialProduct, ['id']);
   }
 }

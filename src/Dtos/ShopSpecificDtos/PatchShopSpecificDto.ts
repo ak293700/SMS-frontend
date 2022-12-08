@@ -16,7 +16,7 @@ export namespace PatchShopSpecificDto
 {
   export const NullablePropertyWrapperDtoProperties: string[] = ['idPrestashop'];
 
-  export function build<T extends StringEnumerableInterface>(obj: any): T
+  export function build(obj: any): PatchShopSpecificDto
   {
     return PatchDto.build(obj, NullablePropertyWrapperDtoProperties);
   }
