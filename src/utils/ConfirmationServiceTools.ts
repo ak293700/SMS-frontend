@@ -1,6 +1,6 @@
 import {ConfirmationService} from "primeng/api";
 
-export class ComfirmationServiceTools
+export class ConfirmationServiceTools
 {
   // Before doing a risky operation, ask for confirmation
   static new(confirmationService: ConfirmationService, f: (p: any) => any, message: string, ...params: any[])

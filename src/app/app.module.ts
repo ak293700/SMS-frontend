@@ -30,6 +30,7 @@ import {EditOneProductComponent} from './Components/product/edit-one/edit-one-pr
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {FilterFieldsComponent} from './Components/filter/filter-fieds/filter-fields.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     ProductFilterComponent,
     PrettierPipe,
     EditMultipleProductsComponent,
-    EditOneProductComponent
+    EditOneProductComponent,
+    FilterFieldsComponent
   ],
   imports: [
     BrowserModule,

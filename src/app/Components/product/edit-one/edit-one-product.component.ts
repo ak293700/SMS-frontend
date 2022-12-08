@@ -16,12 +16,15 @@ import {PatchSimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductD
 import {PatchBundleDto} from "../../../../Dtos/ProductDtos/BundleDto/PatchBundleDto";
 import {PatchProductDto} from "../../../../Dtos/ProductDtos/PatchProductDto";
 import {PatchShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/PatchShopSpecificDto";
-import {ComfirmationServiceTools} from "../../../../utils/ComfirmationServiceTools";
+import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
-  styleUrls: ['./edit-one-product.component.css']
+  styleUrls: [
+    '../../../../styles/button.css',
+    './edit-one-product.component.css',
+  ]
 })
 export class EditOneProductComponent implements OnInit
 {
@@ -91,7 +94,7 @@ export class EditOneProductComponent implements OnInit
         ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
         : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-      ComfirmationServiceTools.new(this.confirmationService, this.fetchProduct, message, id);
+      ConfirmationServiceTools.new(this.confirmationService, this.fetchProduct, message, id);
     }
     else
       await this.fetchProduct(id);
@@ -246,7 +249,7 @@ export class EditOneProductComponent implements OnInit
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    ComfirmationServiceTools.new(this.confirmationService, this._reset, message);
+    ConfirmationServiceTools.new(this.confirmationService, this._reset, message);
   }
 
   // This function does the actual work of saving the changes to the database
@@ -306,7 +309,7 @@ export class EditOneProductComponent implements OnInit
       return
     }
 
-    ComfirmationServiceTools.new(this.confirmationService,
+    ConfirmationServiceTools.new(this.confirmationService,
       this._save,
       `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
       changes);

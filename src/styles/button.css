@@ -1,0 +1,27 @@
+:host ::ng-deep .p-button.backButton {
+  background-color: var(--main-color);
+  border: none;
+
+  color: var(--third-color);
+  transition: all .2s ease-in-out;
+}
+
+:host ::ng-deep .p-button.backButton:hover {
+  background-color: var(--secondary-color);
+  border: 2px solid var(--third-color);
+}
+
+:host ::ng-deep .p-button.btn-hover-main {
+  background-color: var(--secondary-color);
+  border: 2px solid var(--secondary-color);
+
+  color: var(--third-color);
+  transition: all .2s ease-in-out;
+}
+
+:host ::ng-deep .p-button.btn-hover-main:hover {
+  background-color: var(--fourth-color);
+  border: 2px solid var(--third-color);
+}
+
+

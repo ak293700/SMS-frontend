@@ -13,7 +13,12 @@ export class HomeComponent
       link: '/product/filter'
     },
     {
+      label: 'Remises',
+      link: '/discount'
+    },
+    {
       label: 'Paramètres',
       link: '/settings'
-    }];
+    }
+  ];
 }

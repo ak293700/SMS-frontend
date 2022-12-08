@@ -72,3 +72,16 @@ body, html {
 
   width: 215px;
 }
+
+.nav {
+  height: 15vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: var(--secondary-color);
+
+  margin-bottom: 50px;
+}

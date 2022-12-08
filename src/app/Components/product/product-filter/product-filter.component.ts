@@ -24,7 +24,10 @@ interface ProductTableVector
 @Component({
   selector: 'app-product-filter',
   templateUrl: './product-filter.component.html',
-  styleUrls: ['./product-filter.component.css'],
+  styleUrls: [
+    './product-filter.component.css',
+    '../../../../styles/button.css'
+  ],
 })
 export class ProductFilterComponent implements OnInit
 {
@@ -297,25 +300,12 @@ export class ProductFilterComponent implements OnInit
       filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
   }
 
-
   unselectAll()
   {
     this.selectedProducts.ids = [];
     this.selectedProducts.data = [];
     this.areAllSelected = false;
   }
-
-  /*networkError(message: string)
-  {
-    this.messageService.add({severity: 'error', summary: 'Network error', detail: message});
-    this.loading = false;
-  }
-
-  httpFail(response: AxiosResponse)
-  {
-    console.log('HTTP error');
-    this.messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
-  }*/
 
   async editProduct(product: any)
   {
