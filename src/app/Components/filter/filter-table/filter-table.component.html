@@ -1,12 +1,6 @@
-<nav class="nav">
-  <p-button label="Retour Écran Principal" routerLink="/home" styleClass="backButton"></p-button>
-</nav>
-
-<app-filter-fields [filters]="filters" (applyFilters)="applyFilters()"></app-filter-fields>
-
-<!--<p-contextMenu #productCM [model]="contextMenuItems"
-               [style]="{'transition': 'all 0s ease-out'}">
-</p-contextMenu>
+<p-contextMenu #productCM [model]="contextMenuItems"
+               [style]="{'transition': 'all 0s ease-out'}"
+></p-contextMenu>
 
 <p-table [value]="products.pageData" dataKey="id"
          [totalRecords]="products.filteredIds.length"
@@ -24,7 +18,7 @@
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped">
 
   <ng-template id="table-header" pTemplate="caption">
-    &lt;!&ndash; Column toggle &ndash;&gt;
+    <!-- Column toggle -->
     <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="products.header" [style]="{'min-width': '200px'}"
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
@@ -36,7 +30,7 @@
 
   <ng-template let-columns pTemplate="header">
     <tr>
-      &lt;!&ndash;  We display the photo differently because we need to add html markup&ndash;&gt;
+      <!--  We display the photo differently because we need to add html markup-->
       <th style="width: 4rem" pFrozenColumn>
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
       </th>
@@ -58,14 +52,4 @@
       </td>
     </tr>
   </ng-template>
-</p-table>-->
-
-
-<app-filter-table (onEditData)="editProduct($event)" (onLazyLoad)="loadProductsLazy($event)"
-                  [loading]="loading" [products]="products">
-</app-filter-table>
-
-<div class="flex-center">
-  <p-button (click)="editSelection()" label="Modifier la sélection" styleClass="btn-hover-main"
-            [style.margin.px]="40"></p-button>
-</div>
+</p-table>

@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {LazyLoadEvent, MenuItem, MessageService} from "primeng/api";
+import {Component, OnInit} from '@angular/core';
+import {LazyLoadEvent, MessageService} from "primeng/api";
 import axios, {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HeaderDto} from "../../../../Dtos/HeaderDto";
@@ -62,21 +62,12 @@ export class ProductFilterComponent implements OnInit
   _displayedProductHeader = this.products.header;
 
   // Context menu for the product of the table
-  contextMenuItems: MenuItem[];
   contextMenuSelectedProduct: any;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private messageService: MessageService,
+  constructor(private messageService: MessageService,
               private router: Router,
               private route: ActivatedRoute)
   {
-    this.contextMenuItems = [
-      {
-        label: 'Edit',
-        icon: 'pi pi-fw pi-pencil',
-        command: () => this.editProduct(this.contextMenuSelectedProduct)
-      }
-    ];
   }
 
   async ngOnInit(): Promise<void>
@@ -86,12 +77,10 @@ export class ProductFilterComponent implements OnInit
       await this.fetchHeaders();
       await this.fetchFilter();
       await this.applyFilters();
-      this.changeDetectorRef.detectChanges();
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
     }
-
   }
 
   get displayedProductHeader(): any[]
@@ -163,7 +152,6 @@ export class ProductFilterComponent implements OnInit
           filter.value = "";
           break;
       }
-
     }
   }
 
@@ -309,6 +297,7 @@ export class ProductFilterComponent implements OnInit
 
   async editProduct(product: any)
   {
+    console.log(product);
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
       state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}

@@ -30,7 +30,8 @@ import {EditOneProductComponent} from './Components/product/edit-one/edit-one-pr
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {FilterFieldsComponent} from './Components/filter/filter-fieds/filter-fields.component';
+import {FilterFieldsComponent} from './Components/filter/filter-fields/filter-fields.component';
+import {FilterTableComponent} from './Components/filter/filter-table/filter-table.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import {FilterFieldsComponent} from './Components/filter/filter-fieds/filter-fie
     PrettierPipe,
     EditMultipleProductsComponent,
     EditOneProductComponent,
-    FilterFieldsComponent
+    FilterFieldsComponent,
+    FilterTableComponent
   ],
   imports: [
     BrowserModule,

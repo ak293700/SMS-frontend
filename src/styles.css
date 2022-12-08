@@ -85,3 +85,8 @@ body, html {
 
   margin-bottom: 50px;
 }
+
+.text-light {
+  font-weight: lighter;
+  margin: 5px;
+}

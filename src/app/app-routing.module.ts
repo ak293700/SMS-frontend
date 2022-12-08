@@ -7,7 +7,7 @@ import {
   EditMultipleProductsComponent
 } from "./Components/product/edit-multiple-products/edit-multiple-products.component";
 import {EditOneProductComponent} from "./Components/product/edit-one/edit-one-product.component";
-import {FilterFieldsComponent} from "./Components/filter/filter-fieds/filter-fields.component";
+import {FilterFieldsComponent} from "./Components/filter/filter-fields/filter-fields.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},

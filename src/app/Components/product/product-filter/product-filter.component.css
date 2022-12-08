@@ -12,12 +12,3 @@
 .half-width {
   max-width: 50%;
 }
-
-#table-header * {
-  color: red !important;
-}
-
-.text-light {
-  font-weight: lighter;
-  margin: 5px;
-}
