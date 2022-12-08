@@ -51,18 +51,10 @@ export class ProductFilterComponent implements OnInit
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
-  areAllSelected: boolean = false;
-
-  totalRecords: number = 0;
 
   // boolean
   loading: boolean = true;
 
-  // Private we use getter and setter to manipulate it.
-  _displayedProductHeader = this.products.header;
-
-  // Context menu for the product of the table
-  contextMenuSelectedProduct: any;
 
   constructor(private messageService: MessageService,
               private router: Router,
@@ -83,19 +75,6 @@ export class ProductFilterComponent implements OnInit
     }
   }
 
-  get displayedProductHeader(): any[]
-  {
-    // remove @Input() from function signature
-    return this._displayedProductHeader;
-  }
-
-  set displayedProductHeader(val: any[])
-  {
-    // restore original order
-    this._displayedProductHeader = this.products.header
-      .filter((col: any) => val.includes(col));
-  }
-
   async fetchHeaders()
   {
     try
@@ -105,7 +84,6 @@ export class ProductFilterComponent implements OnInit
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.products.header = response.data;
-      this._displayedProductHeader = this.products.header; // Allow to have everything selected at the beginning.
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -167,7 +145,6 @@ export class ProductFilterComponent implements OnInit
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.products.filteredIds = response.data;
-      this.totalRecords = this.products.filteredIds.length;
 
       await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
@@ -219,85 +196,8 @@ export class ProductFilterComponent implements OnInit
     }
   }
 
-  onRowSelect(event: any)
-  {
-    this.selectedProducts.ids.push(event.data.id);
-
-    // If there is at least enough product selected that product find
-    if (this.selectedProducts.ids.length >= this.products.filteredIds.length)
-    {
-      // Need to check that all the product are selected
-      for (let i = 0; i < this.products.filteredIds.length; i++)
-      {
-        if (!this.selectedProducts.ids.includes(this.products.filteredIds[i]))
-          return;
-      }
-
-      this.areAllSelected = true;
-    }
-
-  }
-
-  onRowUnselect(event: any)
-  {
-    this.selectedProducts.ids = this.selectedProducts.ids.filter((id: number) => id !== event.data.id);
-    this.areAllSelected = false;
-  }
-
-  onSelectAllChange(event: any)
-  {
-    if (event.checked)
-      this.onSelectAll()
-    else
-      this.onUnselectAll();
-  }
-
-  onSelectAll()
-  {
-    this.areAllSelected = true;
-
-    // Can't select everything because the data of others pages are not loaded.
-    // We fake it by selecting everything of our page and adding the ids of the others pages.
-    // + on page change we update selectedProducts.data to keep the selected products.
-    this.selectedProducts.data = this.products.pageData;
-
-    // Get all ids that where unselected
-    const newIds = this.products.filteredIds
-      .filter((id: number) => !this.selectedProducts.ids.includes(id));
-
-    // concat the ids of the selected products
-    this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
-
-  }
-
-  onUnselectAll()
-  {
-    this.areAllSelected = false;
-
-    this.selectedProducts.ids =
-      this.selectedProducts.ids.filter((id: number) => !this.products.filteredIds.includes(id));
-
-
-    this.selectedProducts.data = [];
-  }
-
-  dropDownFilter(event: any, filter: any)
-  {
-    // Todo does not works
-    filter.others =
-      filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
-  }
-
-  unselectAll()
-  {
-    this.selectedProducts.ids = [];
-    this.selectedProducts.data = [];
-    this.areAllSelected = false;
-  }
-
   async editProduct(product: any)
   {
-    console.log(product);
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
       state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}

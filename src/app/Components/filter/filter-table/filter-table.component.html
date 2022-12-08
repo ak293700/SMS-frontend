@@ -1,16 +1,16 @@
 <p-contextMenu #productCM [model]="contextMenuItems"
-               [style]="{'transition': 'all 0s ease-out'}"
-></p-contextMenu>
+               [style]="{'transition': 'all 0s ease-out'}">
+</p-contextMenu>
 
-<p-table [value]="products.pageData" dataKey="id"
-         [totalRecords]="products.filteredIds.length"
+<p-table [value]="datas.pageData" dataKey="id"
+         [totalRecords]="datas.filteredIds.length"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
-         (onLazyLoad)="loadProductsLazy($event)" [lazy]="true"
+         (onLazyLoad)="lazyLoadEvent.emit($event)" [lazy]="true"
          [lazyLoadOnInit]="false" [loading]="loading"
          (selectAllChange)="onSelectAllChange($event)"
          [selectAll]="areAllSelected"
          [paginator]="true" [resizableColumns]="true"
-         [(selection)]="selectedProducts.data" [columns]="displayedProductHeader"
+         [(selection)]="selectedDatas.data" [columns]="displayedHeader"
          [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="80vh"
          [rows]="rowsNumber" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 50, 100, 500]"
          columnResizeMode="expand" selectionMode="multiple" [contextMenu]="productCM"
@@ -19,12 +19,12 @@
 
   <ng-template id="table-header" pTemplate="caption">
     <!-- Column toggle -->
-    <p-multiSelect [(ngModel)]="displayedProductHeader" [options]="products.header" [style]="{'min-width': '200px'}"
+    <p-multiSelect [(ngModel)]="displayedHeader" [options]="datas.header" [style]="{'min-width': '200px'}"
                    optionLabel="label" placeholder="Choose Columns"
                    selectedItemsLabel="{0} columns selected">
     </p-multiSelect>
     <span class="text-light">{{totalRecords}} produits trouvés</span>
-    <span class="text-light">{{selectedProducts.ids.length}} produits sélectionnés</span>
+    <span class="text-light">{{selectedDatas.ids.length}} produits sélectionnés</span>
     <p-button label="Désélectionner tous" styleClass="p-button-sm btn-hover-main" (onClick)="unselectAll()"></p-button>
   </ng-template>
 

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {LazyLoadEvent, MenuItem} from "primeng/api";
+import {MenuItem} from "primeng/api";
 import {HeaderDto} from "../../../../Dtos/HeaderDto";
 
 interface DataTableVector
@@ -26,7 +26,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   contextMenuSelectedProduct: any;
 
-  @Input() products: DataTableVector =
+  @Input() datas: DataTableVector =
     {
       header: [],
       pageData: [], // The data of the current page.
@@ -36,7 +36,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   rowsNumber: number = 50;
 
-  selectedProducts: any = {
+  selectedDatas: any = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
@@ -48,7 +48,7 @@ export class FilterTableComponent implements OnInit, OnChanges
   @Input() loading: boolean = true;
 
   // Private we use getter and setter to manipulate it.
-  _displayedProductHeader = this.products.header;
+  _displayedHeader = this.datas.header;
 
   constructor()
   {
@@ -63,30 +63,28 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   ngOnInit()
   {
-    this._displayedProductHeader = this.products.header;
-    this.totalRecords = this.products.filteredIds.length;
+    this._displayedHeader = this.datas.header;
+    this.totalRecords = this.datas.filteredIds.length;
   }
 
   ngOnChanges(changes: SimpleChanges): void
   {
-    console.log(changes);
-    this._displayedProductHeader = this.products.header;
-    this.totalRecords = this.products.filteredIds.length;
-
+    this._displayedHeader = this.datas.header;
+    this.totalRecords = this.datas.filteredIds.length;
   }
 
 
   onRowSelect(event: any)
   {
-    this.selectedProducts.ids.push(event.data.id);
+    this.selectedDatas.ids.push(event.data.id);
 
     // If there is at least enough product selected that product find
-    if (this.selectedProducts.ids.length >= this.products.filteredIds.length)
+    if (this.selectedDatas.ids.length >= this.datas.filteredIds.length)
     {
       // Need to check that all the product are selected
-      for (let i = 0; i < this.products.filteredIds.length; i++)
+      for (let i = 0; i < this.datas.filteredIds.length; i++)
       {
-        if (!this.selectedProducts.ids.includes(this.products.filteredIds[i]))
+        if (!this.selectedDatas.ids.includes(this.datas.filteredIds[i]))
           return;
       }
 
@@ -96,13 +94,8 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   onRowUnselect(event: any)
   {
-    this.selectedProducts.ids = this.selectedProducts.ids.filter((id: number) => id !== event.data.id);
+    this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== event.data.id);
     this.areAllSelected = false;
-  }
-
-  async loadProductsLazy(event: LazyLoadEvent)
-  {
-    this.lazyLoadEvent.emit(event);
   }
 
   onSelectAllChange(event: any)
@@ -120,14 +113,14 @@ export class FilterTableComponent implements OnInit, OnChanges
     // Can't select everything because the data of others pages are not loaded.
     // We fake it by selecting everything of our page and adding the ids of the others pages.
     // + on page change we update selectedProducts.data to keep the selected products.
-    this.selectedProducts.data = this.products.pageData;
+    this.selectedDatas.data = this.datas.pageData;
 
     // Get all ids that where unselected
-    const newIds = this.products.filteredIds
-      .filter((id: number) => !this.selectedProducts.ids.includes(id));
+    const newIds = this.datas.filteredIds
+      .filter((id: number) => !this.selectedDatas.ids.includes(id));
 
     // concat the ids of the selected products
-    this.selectedProducts.ids = this.selectedProducts.ids.concat(newIds);
+    this.selectedDatas.ids = this.selectedDatas.ids.concat(newIds);
 
   }
 
@@ -135,30 +128,30 @@ export class FilterTableComponent implements OnInit, OnChanges
   {
     this.areAllSelected = false;
 
-    this.selectedProducts.ids =
-      this.selectedProducts.ids.filter((id: number) => !this.products.filteredIds.includes(id));
+    this.selectedDatas.ids =
+      this.selectedDatas.ids.filter((id: number) => !this.datas.filteredIds.includes(id));
 
 
-    this.selectedProducts.data = [];
+    this.selectedDatas.data = [];
   }
 
-  get displayedProductHeader(): any[]
+  get displayedHeader(): any[]
   {
     // remove @Input() from function signature
-    return this._displayedProductHeader;
+    return this._displayedHeader;
   }
 
-  set displayedProductHeader(val: any[])
+  set displayedHeader(val: any[])
   {
     // restore original order
-    this._displayedProductHeader = this.products.header
+    this._displayedHeader = this.datas.header
       .filter((col: any) => val.includes(col));
   }
 
   unselectAll()
   {
-    this.selectedProducts.ids = [];
-    this.selectedProducts.data = [];
+    this.selectedDatas.ids = [];
+    this.selectedDatas.data = [];
     this.areAllSelected = false;
   }
 
