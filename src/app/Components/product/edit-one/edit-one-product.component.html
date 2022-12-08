@@ -155,10 +155,9 @@
 
     <div class="flex-center" style="gap: 100px">
       <button pButton label="Annuler" class="p-button-danger"
-              (click)="confirmDialog(reset, 'Toutes les modifications seront oubliées')"></button>
+              (click)="reset()"></button>
       <button pButton label="Enregistrer" class="p-button-success"
-              (click)="confirmDialog(save, 'Toute donnée modifiée ne pourra être retrouvé.',
-              detectChanges().count,'modifications.')"></button>
+              (click)="save()"></button>
     </div>
   </main>
   <aside>

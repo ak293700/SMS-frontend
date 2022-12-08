@@ -220,17 +220,32 @@ export class EditOneProductComponent implements OnInit
     });
   }
 
+  private _reset()
+  {
+    this.product = Operation.deepCopy(this.initialProduct);
+    this.initDummyStruct();
+
+    this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
+  }
+
   reset()
   {
-    this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
+    const changes = this.detectChanges();
+    this.confirmDialog(this._reset, 'Toutes les modifications seront oubliées.',
+      changes.count, 'modifications.');
+  }
+
+  // This function does the actual work of saving the changes to the database
+  private _save()
+  {
+    this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
   }
 
   save()
   {
-    this.reformatProduct();
-    console.log(this.detectChanges());
-    console.log('product', this.product);
-    this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+    const changes = this.detectChanges();
+    this.confirmDialog(this._save, 'Toute donnée modifiée ne pourra être retrouvé.',
+      changes.count, 'modifications.');
   }
 
   // Some product fields are not directly model
@@ -242,10 +257,14 @@ export class EditOneProductComponent implements OnInit
 
     if (this.product.productType == ProductType.Simple)
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
+
+    console.log(this.product);
   }
 
   detectChanges(): { pathObj: any, count: number }
   {
+    this.reformatProduct();
+
     // TODO: add detect in sub objects
     let count = 0;
     let pathObj: any = {};
