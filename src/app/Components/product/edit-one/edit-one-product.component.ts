@@ -80,7 +80,17 @@ export class EditOneProductComponent implements OnInit
 
   async goToProduct(id: number)
   {
-    await this.fetchProduct(id);
+    const changes = this.detectChanges();
+    if (changes.count > 0)
+    {
+      const message = changes.count == 1
+        ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
+        : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
+
+      this.confirmDialog(this.fetchProduct, message, id);
+    }
+    else
+      await this.fetchProduct(id);
   }
 
   async goToFollowingProduct(step: number)
@@ -96,7 +106,7 @@ export class EditOneProductComponent implements OnInit
     }
 
     index = Operation.modulo(index + step, this.otherProducts.length);
-    await this.fetchProduct(this.otherProducts[index].id);
+    await this.goToProduct(this.otherProducts[index].id);
   }
 
   async fetchProduct(id: number)
@@ -211,13 +221,17 @@ export class EditOneProductComponent implements OnInit
   }
 
   // Before doing a risky operation, ask for confirmation
-  confirmDialog(f: () => void, ...params: any[])
+  confirmDialog(f: (p: any) => any, message: string, ...params: any[])
   {
-    const message = params.map(x => x.toString()).join(' ');
     this.confirmationService.confirm({
-      // @ts-ignore
-      message: message, accept: () => this[f.name]()
+      message: message, accept: async () =>
+      {
+        // if it returns a promise, wait for it to finish
+        // @ts-ignore
+        await this[f.name](...params);
+      }
     });
+
   }
 
   private _reset()
@@ -231,21 +245,39 @@ export class EditOneProductComponent implements OnInit
   reset()
   {
     const changes = this.detectChanges();
-    this.confirmDialog(this._reset, 'Toutes les modifications seront oubliées.',
-      changes.count, 'modifications.');
+    if (changes.count == 0)
+    {
+      this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Aucune modification'});
+      return
+    }
+
+    const message = changes.count == 1
+      ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
+      : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
+
+    this.confirmDialog(this._reset, message);
   }
 
   // This function does the actual work of saving the changes to the database
-  private _save()
+  private _save(changes: { diffObj: any, count: number })
   {
+    console.log('_save', changes);
+
     this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
   }
 
   save()
   {
     const changes = this.detectChanges();
-    this.confirmDialog(this._save, 'Toute donnée modifiée ne pourra être retrouvé.',
-      changes.count, 'modifications.');
+    if (changes.count == 0)
+    {
+      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
+      return
+    }
+
+    this.confirmDialog(this._save,
+      `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
+      changes);
   }
 
   // Some product fields are not directly model
@@ -259,7 +291,7 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
   }
 
-  private _detectChanges(obj: any, initialObj: any): { pathObj: any, count: number }
+  private _detectChanges(obj: any, initialObj: any): { diffObj: any, count: number }
   {
     let count = 0;
     let diffObj: any = {};
@@ -285,7 +317,7 @@ export class EditOneProductComponent implements OnInit
           const changes = this._detectChanges(obj[key][i], initialObj[key][i]);
           count += changes.count;
           if (count > 0)
-            diffObj[key].push(changes.pathObj);
+            diffObj[key].push(changes.diffObj);
         }
         // We don't want to keep the array if there are no changes
         if (initialCount === count)
@@ -298,18 +330,15 @@ export class EditOneProductComponent implements OnInit
       const changes = this._detectChanges(obj[key], initialObj[key]);
       count += changes.count;
       if (count > 0)
-        diffObj[key] = changes.pathObj;
+        diffObj[key] = changes.diffObj;
     }
 
-    return {pathObj: diffObj, count: count};
+    return {diffObj: diffObj, count: count};
   }
 
-  detectChanges(): { pathObj: any, count: number }
+  detectChanges(): { diffObj: any, count: number }
   {
     this.reformatProduct();
-    const tmp = this._detectChanges(this.product, this.initialProduct);
-    console.log(tmp);
-
-    return tmp;
+    return this._detectChanges(this.product, this.initialProduct);
   }
 }

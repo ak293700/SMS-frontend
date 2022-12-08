@@ -15,14 +15,11 @@ export class MessageServiceTools
       messageService.add({severity: 'warn', summary: 'Request issue', detail: 'Error during request to the server'});
     else
       messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
-
-    console.log('response', response)
   }
 
   static axiosFail(messageService: MessageService, axiosError: AxiosError)
   {
-    // @ts-ignore
-    if (HttpTools.IsCode(axiosError.response.status, 400)) // @ts-ignore
+    if (axiosError.response && HttpTools.IsCode(axiosError.response.status, 400)) // @ts-ignore
       MessageServiceTools.httpFail(messageService, axiosError.response);
     else
       MessageServiceTools.networkError(messageService, axiosError.message);
