@@ -10,6 +10,8 @@ import {BundleDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleDto";
 import {SimpleProductDto} from "../../../../Dtos/ProductDtos/SimpleProductDtos/SimpleProductDto";
 import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
+import {ProductPopularity} from "../../../../Enums/ProductPopularity";
+import {Availability} from "../../../../Enums/Availability";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -27,20 +29,40 @@ export class EditOneProductComponent implements OnInit
   // @ts-ignore
   initialProduct: SimpleProductDto | BundleDto;
 
-  // @ts-ignore
-  additionalInformation: { manufacturers: IdNameDto[] } = {};
-  additionalInformationFilter = this.additionalInformation;
+  additionalInformation: {
+    manufacturers: IdNameDto[],
+    popularities: IdNameDto[],
+    availabilities: IdNameDto[]
+  } = {manufacturers: [], popularities: [], availabilities: []};
 
-  listeners: any[] = [];
+  initialAdditionalInformation: {
+    manufacturers: IdNameDto[],
+    popularities: IdNameDto[],
+    availabilities: IdNameDto[]
+  } = {
+    manufacturers: [],
+    popularities: [],
+    availabilities: []
+  };
+
+  // Use to ngModel some product fields
+  dummyStruct: { manufacturer: IdNameDto, popularity: IdNameDto, availability: IdNameDto } = {
+    manufacturer: {id: 0, name: ""},
+    popularity: {id: 0, name: ""},
+    availability: {id: 0, name: ""}
+  }
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService)
-  {}
+  {
+    this.additionalInformation.popularities = ProductPopularity.toIdNameDto();
+    this.additionalInformation.availabilities = Availability.toIdNameDto();
+    this.initialAdditionalInformation = Operation.deepCopy(this.additionalInformation);
+  }
 
   async ngOnInit()
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
-    console.log(routedData);
     if (routedData.selectedIds == undefined || routedData.selectedId == undefined)
     {
       routedData.selectedIds = [6190, 6233, 6237, 7257, 2863]
@@ -51,9 +73,9 @@ export class EditOneProductComponent implements OnInit
     if (!routedData.selectedIds.includes(routedData.selectedId))
       routedData.selectedIds.unshift(routedData.selectedId);
 
+    await this.fetchManufacturers(); // Do it first so the dummy struct is well initialized
     await this.fetchReferences(routedData.selectedIds);
     await this.fetchProduct(routedData.selectedId);
-    await this.fetchManufacturers();
   }
 
   async goToProduct(id: number)
@@ -88,9 +110,27 @@ export class EditOneProductComponent implements OnInit
 
       this.initialProduct = response.data;
       this.product = Operation.deepCopy(this.initialProduct);
+
+      this.initDummyStruct();
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+  // Initialize dummy struct with the product data
+  initDummyStruct()
+  {
+    this.dummyStruct.manufacturer = this.additionalInformation.manufacturers
+      .find(x => x.id == this.product.manufacturerId)!;
+
+    this.dummyStruct.popularity = this.additionalInformation.popularities
+      .find(x => x.id == this.product.popularity)!;
+
+    if (this.product.productType == ProductType.Simple)
+    {
+      this.dummyStruct.availability = this.additionalInformation.availabilities
+        .find(x => x.id == this.simpleProduct.availability)!;
     }
   }
 
@@ -105,7 +145,7 @@ export class EditOneProductComponent implements OnInit
 
       this.additionalInformation.manufacturers = response.data;
       // deep copy this.additionalInformation.manufacturers
-      this.additionalInformationFilter.manufacturers = [...response.data];
+      this.initialAdditionalInformation.manufacturers = [...response.data];
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -115,9 +155,8 @@ export class EditOneProductComponent implements OnInit
   // Look in additionalInformation
   completeMethod(event: any, fieldName: string)
   {
-    // TODO: Make this work
     // @ts-ignore
-    this.additionalInformationFilter[fieldName] = this.additionalInformation[fieldName]
+    this.additionalInformation[fieldName] = this.initialAdditionalInformation[fieldName]
       .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
   }
 
@@ -172,8 +211,9 @@ export class EditOneProductComponent implements OnInit
   }
 
   // Before doing a risky operation, ask for confirmation
-  confirmDialog(f: () => void, message: string)
+  confirmDialog(f: () => void, ...params: any[])
   {
+    const message = params.map(x => x.toString()).join(' ');
     this.confirmationService.confirm({
       // @ts-ignore
       message: message, accept: () => this[f.name]()
@@ -187,7 +227,44 @@ export class EditOneProductComponent implements OnInit
 
   save()
   {
+    this.reformatProduct();
+    console.log(this.detectChanges());
+    console.log('product', this.product);
     this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
   }
 
+  // Some product fields are not directly model
+  // This function does the bridge between the model and the product
+  reformatProduct()
+  {
+    this.product.manufacturerId = this.dummyStruct.manufacturer.id; // manufacturer
+    this.product.popularity = this.dummyStruct.popularity.id; // popularity
+
+    if (this.product.productType == ProductType.Simple)
+      this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
+  }
+
+  detectChanges(): { pathObj: any, count: number }
+  {
+    // TODO: add detect in sub objects
+    let count = 0;
+    let pathObj: any = {};
+
+    const product = this.product as any;
+    const initialProduct = this.initialProduct as any;
+
+    for (const key in this.product)
+    {
+      if (!Operation.isPrimitive(product[key]))
+        continue;
+
+      if (product[key] !== initialProduct[key])
+      {
+        pathObj[key] = product[key];
+        count++;
+      }
+    }
+
+    return {pathObj: pathObj, count: count};
+  }
 }

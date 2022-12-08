@@ -28,22 +28,29 @@
 
         <li class="field-item">
           <label for="field-manufacturer" class="text">Fabricant</label>
-          <p-autoComplete id="field-manufacturer"
-                          field="name" [suggestions]="additionalInformationFilter.manufacturers"
+          <p-autoComplete id="field-manufacturer" dataKey="id"
+                          field="name" [suggestions]="additionalInformation.manufacturers"
                           (completeMethod)="completeMethod($event, 'manufacturers')"
-                          [dropdown]="true">
-            <ng-template let-suggestion pTemplate="item">
-              <div class="ui-helper-clearfix">
-                <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion.name}}</div>
-              </div>
-            </ng-template>
+                          [(ngModel)]="dummyStruct.manufacturer"
+                          [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
           </p-autoComplete>
         </li>
 
         <li class="field-item">
           <label for="field-popularity" class="text">Popularité</label>
-          <input id="field-popularity" [placeholder]="product.popularity.toString()"
-                 [defaultValue]="product.popularity.toString()" pInputText type="text">
+          <p-autoComplete id="field-popularity" dataKey="id"
+                          field="name" [suggestions]="additionalInformation.popularities"
+                          (completeMethod)="completeMethod($event, 'popularities')"
+                          [(ngModel)]="dummyStruct.popularity"
+                          [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+          </p-autoComplete>
+        </li>
+
+        <li class="field-item">
+          <label for="field-imageLink" class="text">Lien de l'image</label>
+          <input id="field-imageLink" pInputText type="text"
+                 [placeholder]="initialProduct.imageLink"
+                 [(ngModel)]="product.imageLink" [pTooltip]="product.imageLink">
         </li>
       </ul>
     </div>
@@ -84,21 +91,18 @@
         </li>
         <li class="field-item">
           <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
-          <p-inputNumber id="field-averageStockPrice" mode="decimal"
+          <p-inputNumber id="field-averageStockPrice" mode="currency" currency="EUR"
                          [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
                          [(ngModel)]="simpleProduct.averageStockPrice">
           </p-inputNumber>
         </li>
         <li class="field-item">
           <label for="field-availability" class="text">Disponibilité</label>
-          <p-autoComplete id="field-availability" [suggestions]="['Level0', 'Level1', 'Level2', 'Level3']"
-                          (completeMethod)="completeMethod($event, 'others')"
-                          [dropdown]="true">
-            <ng-template let-suggestion pTemplate="item">
-              <div class="ui-helper-clearfix">
-                <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion}}</div>
-              </div>
-            </ng-template>
+          <p-autoComplete id="field-availability" dataKey="id"
+                          field="name" [suggestions]="additionalInformation.availabilities"
+                          (completeMethod)="completeMethod($event, 'availabilities')"
+                          [(ngModel)]="dummyStruct.availability"
+                          [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
           </p-autoComplete>
         </li>
       </ul>
@@ -118,7 +122,7 @@
 
       <label class="text">Nom</label>
       <input *ngFor="let shopSpecific of product.shopSpecifics; let i=index" pInputText type="text"
-             [placeholder]="shopSpecific.name"
+             [placeholder]="shopSpecific.name" [pTooltip]="shopSpecific.name"
              [(ngModel)]="initialProduct.shopSpecifics[i].name">
 
       <label class="text">Id Prestashop</label>
@@ -153,7 +157,8 @@
       <button pButton label="Annuler" class="p-button-danger"
               (click)="confirmDialog(reset, 'Toutes les modifications seront oubliées')"></button>
       <button pButton label="Enregistrer" class="p-button-success"
-              (click)="confirmDialog(save, 'Toute donnée modifiée ne pourra être retrouvé')"></button>
+              (click)="confirmDialog(save, 'Toute donnée modifiée ne pourra être retrouvé.',
+              detectChanges().count,'modifications.')"></button>
     </div>
   </main>
   <aside>
