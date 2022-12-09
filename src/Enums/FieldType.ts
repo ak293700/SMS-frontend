@@ -3,5 +3,6 @@ export enum FieldType
   None = 0,
   Currency,
   Percentage,
-  Date
+  Date,
+  Integer,
 }

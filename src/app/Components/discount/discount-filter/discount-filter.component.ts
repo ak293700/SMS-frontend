@@ -83,6 +83,12 @@ export class DiscountFilterComponent implements OnInit
         field: 'distributor',
         type: FieldType.None,
         suffix: '',
+      },
+      {
+        label: "Nombre de produits l'utilisant",
+        field: 'numberOfProducts',
+        type: FieldType.Integer,
+        suffix: '',
       }
     ];
     /*try
@@ -199,7 +205,10 @@ export class DiscountFilterComponent implements OnInit
     {
       for (const header of this.discounts.header)
       {
-        discount[header.field] = ITableData.build(discount[header.field]);
+        const field = header.field;
+        discount[field] = ITableData.build(discount[field]);
+        if (field === 'numberOfProducts')
+          discount[field].tooltip = discount.productReferences;
       }
     }
 
