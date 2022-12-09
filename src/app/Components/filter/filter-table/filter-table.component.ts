@@ -80,6 +80,9 @@ export class FilterTableComponent implements OnInit, OnChanges
   {
     this._displayedHeader = this.datas.header;
     this.totalRecords = this.datas.filteredIds.length;
+
+    this.areAllSelected = false;
+    this.checkAreAllSelected();
   }
 
   onRowSelect(event: any)
@@ -87,7 +90,31 @@ export class FilterTableComponent implements OnInit, OnChanges
     const selectedId = event.data.id;
     this.selectedDatas.ids.push(selectedId);
 
-    // If there is at least enough product selected that product find
+    this.checkAreAllSelected();
+
+    /*// If there is at least enough product selected that product find
+    if (this.selectedDatas.ids.length >= this.datas.filteredIds.length)
+    {
+      // Need to check that all the product are selected
+      for (let i = 0; i < this.datas.filteredIds.length; i++)
+      {
+        if (!this.selectedDatas.ids.includes(this.datas.filteredIds[i]))
+          return;
+      }
+
+      this.areAllSelected = true;
+    }*/
+  }
+
+  onRowUnselect(event: any)
+  {
+    const unselectedId = event.data.id;
+    this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== unselectedId);
+    this.areAllSelected = false;
+  }
+
+  checkAreAllSelected()
+  {
     if (this.selectedDatas.ids.length >= this.datas.filteredIds.length)
     {
       // Need to check that all the product are selected
@@ -99,13 +126,6 @@ export class FilterTableComponent implements OnInit, OnChanges
 
       this.areAllSelected = true;
     }
-  }
-
-  onRowUnselect(event: any)
-  {
-    const unselectedId = event.data.id;
-    this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== unselectedId);
-    this.areAllSelected = false;
   }
 
   onSelectAllChange(event: any)
