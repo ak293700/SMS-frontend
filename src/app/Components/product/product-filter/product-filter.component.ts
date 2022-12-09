@@ -238,11 +238,9 @@ export class ProductFilterComponent implements OnInit
   // For each data of the page it will set default for some field
   formatData(datas: FilterTableProductDto[]): { [prop: string]: ITableData }[]
   {
-    // console.log(datas);
     const res: { [prop: string]: ITableData }[] = []; // row1, row2, ...
     for (const data of datas)
     {
-      console.log(data);
       let row: { [prop: string]: ITableData } = {}; // id, name, ...
       for (const header of this.products.header)
       {
@@ -251,7 +249,6 @@ export class ProductFilterComponent implements OnInit
       }
       row['photo'] = ITableData.build(data.photo !== "" ? data.photo : defaultImage);
       res.push(row);
-      break;
     }
 
     return res;
@@ -276,7 +273,9 @@ export class ProductFilterComponent implements OnInit
         data = firstShop?.mainCategory;
         break;
       case 'active':
-        data = shopSpecific.map((ss) => ss.active);
+        data = shopSpecific.map((ss) => ss.active).includes(true);
+        tooltip = shopSpecific.map((ss) => `${Shop.toString(ss.shop)}: ${ss.active}`)
+          .join("\n");
         break;
       case 'popularity':
         data = ProductPopularity.toString(data);
@@ -292,15 +291,22 @@ export class ProductFilterComponent implements OnInit
         }
         break;
       case 'marginRate':
-        if (firstShop !== undefined)
+        if (firstShop !== undefined)  // (pVht - pAht) / pVht
         {
-          // (pVht - pAht) / pVht
-          data = (firstShop.salePriceIt / 1.2 - product.purchasePrice) / product.purchasePrice;
-          tooltip = Shop.toString(firstShop.shop);
+          const salePriceEt: number = firstShop.salePriceIt / 1.2;
+          data = (salePriceEt - product.purchasePrice) / salePriceEt;
         }
         break;
       case 'esDiff':
-        // data = firstShop?.esDiff;
+        const eps = shopSpecific[0];
+        const es = shopSpecific[1];
+        if (shopSpecific.length > 1) // there is a diff
+        {
+          data = (eps.salePriceIt - es.salePriceIt) / es.salePriceIt;
+          tooltip = `Prix de vente ElecPlusSimple: ${es.salePriceIt}`;
+        }
+        else
+          data = undefined
         break;
     }
 

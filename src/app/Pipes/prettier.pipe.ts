@@ -27,8 +27,7 @@ export class PrettierPipe implements PipeTransform
         value = `${(value * 100).toFixed()}%`;
         break;
       case FieldType.Integer:
-        console.log()
-        value = value.toFixed();
+        value = Number(value).toFixed();
         break
       default:
         break;
