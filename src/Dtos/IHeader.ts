@@ -1,9 +1,9 @@
 import {FieldType} from "../Enums/FieldType";
 
-export interface HeaderDto
+export interface IHeader
 {
   label: string;
   field: string;
   type: FieldType;
-  suffix: string;
+  suffix?: string;
 }

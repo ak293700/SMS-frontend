@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {MenuItem} from "primeng/api";
-import {HeaderDto} from "../../../../Dtos/HeaderDto";
+import {IHeader} from "../../../../Dtos/IHeader";
 import {ITableData} from "../../../../Interfaces/ITableData";
 
 export interface DataTableVector
 {
-  header: HeaderDto[];
+  header: IHeader[];
   pageData: ITableData[];
   filteredIds: number[];
 }

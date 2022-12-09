@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {FieldType} from "../../Enums/FieldType";
-import {HeaderDto} from "../../Dtos/HeaderDto";
+import {IHeader} from "../../Dtos/IHeader";
 
 @Pipe({
   name: 'prettier'
@@ -8,7 +8,7 @@ import {HeaderDto} from "../../Dtos/HeaderDto";
 export class PrettierPipe implements PipeTransform
 {
 
-  transform(value: any, header: HeaderDto): unknown
+  transform(value: any, header: IHeader): unknown
   {
     if (value == null)
       return `Pas de ${header.label}`;
@@ -33,6 +33,6 @@ export class PrettierPipe implements PipeTransform
     else if (typeof value === 'boolean')
       value = value ? 'Oui' : 'Non';
 
-    return value + header.suffix;
+    return value + (header.suffix ?? '');
   }
 }

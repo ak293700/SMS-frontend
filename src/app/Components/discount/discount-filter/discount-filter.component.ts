@@ -48,7 +48,7 @@ export class DiscountFilterComponent implements OnInit
   {
     try
     {
-      await this.fetchHeaders();
+      this.fetchHeaders();
       await this.fetchFilter();
       await this.applyFilters();
     } catch (e: any | AxiosError)
@@ -57,7 +57,7 @@ export class DiscountFilterComponent implements OnInit
     }
   }
 
-  async fetchHeaders(): Promise<void>
+  fetchHeaders(): void
   {
     this.discounts.header = [
       {
@@ -91,17 +91,6 @@ export class DiscountFilterComponent implements OnInit
         suffix: '',
       }
     ];
-    /*try
-    {
-      let response = await axios.get(`${api}/SelectDiscount/header`, {responseType: 'json'});
-      if (response.status !== 200)
-        return MessageServiceTools.httpFail(this.messageService, response);
-
-      this.discounts.header = response.data;
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }*/
   }
 
   async fetchFilter()
@@ -200,7 +189,6 @@ export class DiscountFilterComponent implements OnInit
   // data being the raw data fetch from the server
   formatData(data: any[]): ITableData[]
   {
-    console.log(data);
     for (const discount of data)
     {
       for (const header of this.discounts.header)

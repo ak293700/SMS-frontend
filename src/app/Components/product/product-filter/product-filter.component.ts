@@ -1,4 +1,13 @@
 import {Component, OnInit} from '@angular/core';
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
+import axios, {AxiosError} from "axios";
+import {UrlBuilder} from "../../../../utils/UrlBuilder";
+import {api} from "../../../GlobalUsings";
+import {LazyLoadEvent, MessageService} from "primeng/api";
+import {ActivatedRoute, Router} from "@angular/router";
+import {DataTableVector} from "../../filter/filter-table/filter-table.component";
+import {ITableData} from "../../../../Interfaces/ITableData";
+import {FieldType} from "../../../../Enums/FieldType";
 
 /*
   * This component is used to display the filter form.
@@ -18,11 +27,7 @@ import {Component, OnInit} from '@angular/core';
 })
 export class ProductFilterComponent implements OnInit
 {
-  ngOnInit(): void
-  {
-  }
-
-  /*  // initialize in the constructor
+  // initialize in the constructor
     filters: any[] = [];
 
     // We do not add the photo field to use it with html markup.
@@ -57,7 +62,7 @@ export class ProductFilterComponent implements OnInit
     {
       try
       {
-        await this.fetchHeaders();
+        this.fetchHeaders();
         await this.fetchFilter();
         await this.applyFilters();
       } catch (e: any | AxiosError)
@@ -66,20 +71,72 @@ export class ProductFilterComponent implements OnInit
       }
     }
 
-    async fetchHeaders()
-    {
-      try
-      {
-        let response = await axios.get(`${api}/SelectProduct/header`, {responseType: 'json'});
-        if (response.status !== 200)
-          return MessageServiceTools.httpFail(this.messageService, response);
-
-        this.products.header = response.data;
-      } catch (e: any | AxiosError)
-      {
-        MessageServiceTools.networkError(this.messageService, e.message);
-      }
-    }
+  fetchHeaders(): void
+  {
+    this.products.header =
+      [
+        {
+          label: 'Référence produit',
+          field: 'productReference',
+          type: FieldType.None
+        },
+        {
+          label: 'Nom',
+          field: 'name',
+          type: FieldType.None
+        },
+        {
+          label: 'Id Prestashop',
+          field: 'idPrestaShop',
+          type: FieldType.None
+        },
+        {
+          label: 'Fabricant',
+          field: 'manufacturer',
+          type: FieldType.None
+        },
+        {
+          label: 'Catégorie principale',
+          field: 'mainCategory',
+          type: FieldType.None
+        },
+        {
+          label: 'Famille fabricant',
+          field: 'manufacturerFamily',
+          type: FieldType.None
+        },
+        {
+          label: 'Actif',
+          field: 'active',
+          type: FieldType.None
+        },
+        {
+          label: 'Popularité',
+          field: 'popularity',
+          type: FieldType.None
+        },
+        {
+          label: 'Type de produit',
+          field: 'productType',
+          type: FieldType.None
+        },
+        {
+          label: 'Prix de vente',
+          field: 'salePriceIt',
+          type: FieldType.Currency
+        },
+        {
+          label: 'Taux de marge',
+          field: 'marginRate',
+          type: FieldType.Percentage
+        },
+        {
+          label: 'Différence ElecPlusSimple',
+          field: 'esDiff',
+          type: FieldType.Percentage
+        },
+      ];
+  }
 
     async fetchFilter()
     {
@@ -136,37 +193,35 @@ export class ProductFilterComponent implements OnInit
 
         this.products.filteredIds = response.data;
 
-        await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
+        await this.loadLazy({first: 0, rows: this.rowsNumber});
       } catch (e: any)
       {
         MessageServiceTools.networkError(this.messageService, e.message);
       }
     }
 
-    async loadProductsLazy(event: LazyLoadEvent)
+  async loadLazy(event: LazyLoadEvent)
+  {
+    this.loading = true;
+
+    try
     {
-      this.loading = true;
+      const begin: number = event.first ?? 0;
+      const end: number = begin + (event.rows ?? 0);
 
-      try
-      {
-        const begin: number = event.first ?? 0;
-        const end: number = begin + (event.rows ?? 0);
-
-        // get the ids of the products of the page
-        const ids = this.products.filteredIds.slice(begin, end);
+      // get the ids of the products of the page
+      const ids = this.products.filteredIds.slice(begin, end);
         const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
         const response = await axios.get(url, {responseType: 'json'});
         if (response.status !== 200)
           return MessageServiceTools.httpFail(this.messageService, response);
 
         // Update the productsPageData
-        this.products.pageData = response.data;
+      this.products.pageData = this.formatData(response.data);
 
         // Update the selected data
         this.selectedProducts.data = this.products.pageData
           .filter((product: any) => this.selectedProducts.ids.includes(product.id));
-
-        this.setDefaultPageData();
       } catch (e: any | AxiosError)
       {
         MessageServiceTools.networkError(this.messageService, e.message);
@@ -176,21 +231,24 @@ export class ProductFilterComponent implements OnInit
     }
 
     // For each data of the page it will set default for some field
-    formatData()
+  formatData(data: any[]): ITableData[]
+  {
+    console.log(data);
+    for (const discount of data)
     {
-      for (const product of this.products.pageData)
+      for (const header of this.products.header)
       {
-        // for (const header of this.discounts.header)
-        //   discount[header.field] = ITableData.build(discount[header.field]);
+        const field = header.field;
+        const data = discount[field];
+        discount[field] = ITableData.build(data);
 
-        // if product.photo is null or empty, we set a default image
-        if (!product.photo || product.photo === "")
-        {
-          product.photo = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg?20200913095930";
-
-        }
+        if (field === 'photo' && data == "")
+          discount[field].tooltip = discount.productReferences;
       }
     }
+
+    return data;
+  }
 
     async editProduct(product: any)
     {
@@ -204,5 +262,5 @@ export class ProductFilterComponent implements OnInit
     {
       // go to child route 'edit/multiple'
       await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
-    }*/
+    }
 }
