@@ -36,4 +36,13 @@ export class Operation
   {
     return Object.keys(obj).length;
   }
+
+  static firstOrDefault<T>(array: T[], predicate: (value: T) => boolean = () => true)
+    : T | undefined
+  {
+    for (const value of array)
+      if (predicate(value))
+        return value;
+    return undefined;
+  }
 }

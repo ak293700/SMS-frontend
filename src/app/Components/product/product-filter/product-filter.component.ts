@@ -2,12 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import axios, {AxiosError} from "axios";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
-import {api} from "../../../GlobalUsings";
+import {api, defaultImage} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {ITableData} from "../../../../Interfaces/ITableData";
 import {FieldType} from "../../../../Enums/FieldType";
+import {FilterTableProductDto} from "../../../../Dtos/ProductDtos/FilterTableProductDto";
+import {FilterTableShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/FilterTableShopSpecificDto";
+import {ProductType} from "../../../../Enums/ProductType";
+import {ProductPopularity} from "../../../../Enums/ProductPopularity";
+import {Operation} from "../../../../utils/Operation";
+import {Shop} from "../../../../Enums/Shop";
 
 /*
   * This component is used to display the filter form.
@@ -28,48 +34,47 @@ import {FieldType} from "../../../../Enums/FieldType";
 export class ProductFilterComponent implements OnInit
 {
   // initialize in the constructor
-    filters: any[] = [];
+  filters: any[] = [];
 
-    // We do not add the photo field to use it with html markup.
-    // The id of every product matching the filter.
-    products: DataTableVector =
-      {
-        header: [],
-        pageData: [], // The products of the current page.
-        filteredIds: [], // The id of every product matching the filter.
-        // So product of every page of the tab
-      };
-
-    rowsNumber: number = 50;
-
-    // The products we did select. After it should be a list of ids.
-    selectedProducts: any = {
-      data: [], // the selected product (only the ones in the current page)
-      ids: [] // al the selected product (including the ones not in the curent filter)
+  // We do not add the photo field to use it with html markup.
+  // The id of every product matching the filter.
+  products: DataTableVector =
+    {
+      header: [],
+      pageData: [], // The products of the current page.
+      filteredIds: [], // The id of every product matching the filter.
+      // So product of every page of the tab
     };
 
-    // boolean
-    loading: boolean = true;
+  rowsNumber: number = 50;
 
+  // The products we did select. After it should be a list of ids.
+  selectedProducts: any = {
+    data: [], // the selected product (only the ones in the current page)
+    ids: [] // al the selected product (including the ones not in the curent filter)
+  };
 
-    constructor(private messageService: MessageService,
-                private router: Router,
-                private route: ActivatedRoute)
+  // boolean
+  loading: boolean = true;
+
+  constructor(private messageService: MessageService,
+              private router: Router,
+              private route: ActivatedRoute)
+  {
+  }
+
+  async ngOnInit(): Promise<void>
+  {
+    try
     {
-    }
-
-    async ngOnInit(): Promise<void>
+      this.fetchHeaders();
+      await this.fetchFilter();
+      await this.applyFilters();
+    } catch (e: any | AxiosError)
     {
-      try
-      {
-        this.fetchHeaders();
-        await this.fetchFilter();
-        await this.applyFilters();
-      } catch (e: any | AxiosError)
-      {
-        MessageServiceTools.networkError(this.messageService, e.message);
-      }
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
+  }
 
   fetchHeaders(): void
   {
@@ -87,8 +92,8 @@ export class ProductFilterComponent implements OnInit
         },
         {
           label: 'Id Prestashop',
-          field: 'idPrestaShop',
-          type: FieldType.None
+          field: 'idPrestashop',
+          type: FieldType.Integer
         },
         {
           label: 'Fabricant',
@@ -138,67 +143,67 @@ export class ProductFilterComponent implements OnInit
       ];
   }
 
-    async fetchFilter()
+  async fetchFilter()
+  {
+    try
     {
-      try
-      {
-        let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
-        if (response.status !== 200)
-          return MessageServiceTools.httpFail(this.messageService, response);
+      let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
 
-        let tmp: any[] = response.data;
-        tmp.forEach(filter => {
-          filter.active = false;
-          filter.value = null;
-          if (filter.type === "range")
-            filter.value = [0, 0];
-        })
-        this.filters = tmp;
+      let tmp: any[] = response.data;
+      tmp.forEach(filter => {
+        filter.active = false;
+        filter.value = null;
+        if (filter.type === "range")
+          filter.value = [0, 0];
+      })
+      this.filters = tmp;
 
-        this.setDefaultFilterValue();
-      } catch (e: any | AxiosError)
+      this.setDefaultFilterValue();
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.networkError(this.messageService, e.message);
+    }
+  }
+
+  setDefaultFilterValue()
+  {
+    for (const filter of this.filters)
+    {
+      switch (filter.type)
       {
-        MessageServiceTools.networkError(this.messageService, e.message);
+        case "range":
+          filter.value = [0, 0];
+          break;
+        case "checkbox":
+          filter.value = false;
+          break;
+        case "text":
+          filter.value = "";
+          break;
       }
     }
+  }
 
-    setDefaultFilterValue()
+  async applyFilters()
+  {
+    // keep only the active filters
+    let filters = this.filters.filter(filter => filter.active);
+    try
     {
-      for (const filter of this.filters)
-      {
-        switch (filter.type)
-        {
-          case "range":
-            filter.value = [0, 0];
-            break;
-          case "checkbox":
-            filter.value = false;
-            break;
-          case "text":
-            filter.value = "";
-            break;
-        }
-      }
-    }
+      let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
 
-    async applyFilters()
+      this.products.filteredIds = response.data;
+
+      await this.loadLazy({first: 0, rows: this.rowsNumber});
+    } catch (e: any)
     {
-      // keep only the active filters
-      let filters = this.filters.filter(filter => filter.active);
-      try
-      {
-        let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
-        if (response.status !== 200)
-          return MessageServiceTools.httpFail(this.messageService, response);
-
-        this.products.filteredIds = response.data;
-
-        await this.loadLazy({first: 0, rows: this.rowsNumber});
-      } catch (e: any)
-      {
-        MessageServiceTools.networkError(this.messageService, e.message);
-      }
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
+  }
 
   async loadLazy(event: LazyLoadEvent)
   {
@@ -211,56 +216,108 @@ export class ProductFilterComponent implements OnInit
 
       // get the ids of the products of the page
       const ids = this.products.filteredIds.slice(begin, end);
-        const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
-        const response = await axios.get(url, {responseType: 'json'});
-        if (response.status !== 200)
-          return MessageServiceTools.httpFail(this.messageService, response);
+      const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
+      const response = await axios.get(url, {responseType: 'json'});
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
 
-        // Update the productsPageData
+      // Update the productsPageData
       this.products.pageData = this.formatData(response.data);
 
-        // Update the selected data
-        this.selectedProducts.data = this.products.pageData
-          .filter((product: any) => this.selectedProducts.ids.includes(product.id));
-      } catch (e: any | AxiosError)
-      {
-        MessageServiceTools.networkError(this.messageService, e.message);
-      }
-
-      this.loading = false;
+      // Update the selected data
+      this.selectedProducts.data = this.products.pageData
+        .filter((product: any) => this.selectedProducts.ids.includes(product.id));
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.networkError(this.messageService, e.message);
     }
 
-    // For each data of the page it will set default for some field
-  formatData(data: any[]): ITableData[]
+    this.loading = false;
+  }
+
+  // For each data of the page it will set default for some field
+  formatData(datas: FilterTableProductDto[]): { [prop: string]: ITableData }[]
   {
-    console.log(data);
-    for (const discount of data)
+    // console.log(datas);
+    const res: { [prop: string]: ITableData }[] = []; // row1, row2, ...
+    for (const data of datas)
     {
+      console.log(data);
+      let row: { [prop: string]: ITableData } = {}; // id, name, ...
       for (const header of this.products.header)
       {
         const field = header.field;
-        const data = discount[field];
-        discount[field] = ITableData.build(data);
-
-        if (field === 'photo' && data == "")
-          discount[field].tooltip = discount.productReferences;
+        row[field] = this._formatOneData(data, field);
       }
+      row['photo'] = ITableData.build(data.photo !== "" ? data.photo : defaultImage);
+      res.push(row);
+      break;
     }
 
-    return data;
+    return res;
   }
 
-    async editProduct(product: any)
+  private _formatOneData(product: FilterTableProductDto, field: string): ITableData
+  {
+    let data: any = product[field];
+    const shopSpecific: FilterTableShopSpecificDto[] = product.shopSpecifics;
+    const firstShop: FilterTableShopSpecificDto | undefined = Operation.firstOrDefault(shopSpecific);
+    let tooltip: string = "";
+
+    switch (field)
     {
-      await this.router.navigate(['../edit/one'], {
-        relativeTo: this.route,
-        state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
-      });
+      case 'name':
+        data = firstShop?.name;
+        break;
+      case 'idPrestashop':
+        data = firstShop?.idPrestaShop;
+        break;
+      case 'mainCategory':
+        data = firstShop?.mainCategory;
+        break;
+      case 'active':
+        data = shopSpecific.map((ss) => ss.active);
+        break;
+      case 'popularity':
+        data = ProductPopularity.toString(data);
+        break;
+      case 'productType':
+        data = ProductType.toString(data);
+        break;
+      case 'salePriceIt':
+        if (firstShop !== undefined)
+        {
+          data = firstShop.salePriceIt;
+          tooltip = Shop.toString(firstShop.shop);
+        }
+        break;
+      case 'marginRate':
+        if (firstShop !== undefined)
+        {
+          // (pVht - pAht) / pVht
+          data = (firstShop.salePriceIt / 1.2 - product.purchasePrice) / product.purchasePrice;
+          tooltip = Shop.toString(firstShop.shop);
+        }
+        break;
+      case 'esDiff':
+        // data = firstShop?.esDiff;
+        break;
     }
 
-    async editSelection()
-    {
-      // go to child route 'edit/multiple'
-      await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
-    }
+    return ITableData.build(data, tooltip);
+  }
+
+  async editProduct(product: any)
+  {
+    await this.router.navigate(['../edit/one'], {
+      relativeTo: this.route,
+      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
+    });
+  }
+
+  async editSelection()
+  {
+    // go to child route 'edit/multiple'
+    await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
+  }
 }

@@ -13,6 +13,11 @@ export class PrettierPipe implements PipeTransform
     if (value == null)
       return `Pas de ${header.label}`;
 
+    if (typeof value === 'number')
+      value = value.toFixed(2);
+    else if (typeof value === 'boolean')
+      value = value ? 'Oui' : 'Non';
+
     switch (header.type)
     {
       case FieldType.Currency:
@@ -22,16 +27,12 @@ export class PrettierPipe implements PipeTransform
         value = `${(value * 100).toFixed()}%`;
         break;
       case FieldType.Integer:
-        value = (value as number).toFixed();
+        console.log()
+        value = value.toFixed();
         break
       default:
         break;
     }
-
-    if (typeof value === 'number')
-      value = value.toFixed(2);
-    else if (typeof value === 'boolean')
-      value = value ? 'Oui' : 'Non';
 
     return value + (header.suffix ?? '');
   }

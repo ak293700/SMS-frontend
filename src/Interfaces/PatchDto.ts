@@ -1,9 +1,9 @@
-import {StringEnumerableInterface} from "./StringEnumerableInterface";
+import {IEnumerableByString} from "./IEnumerableByString";
 import {NullablePropertyWrapperDto} from "../Dtos/NullablePropertyWrapperDto";
 
 export namespace PatchDto
 {
-  export function build<T extends StringEnumerableInterface>(obj: any, nullablePropertyWrapperDtoProperties: string[]): T
+  export function build<T extends IEnumerableByString>(obj: any, nullablePropertyWrapperDtoProperties: string[]): T
   {
     // @ts-ignore
     const patch: T = {};

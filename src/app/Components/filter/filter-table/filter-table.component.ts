@@ -6,7 +6,7 @@ import {ITableData} from "../../../../Interfaces/ITableData";
 export interface DataTableVector
 {
   header: IHeader[];
-  pageData: ITableData[];
+  pageData: { [prop: string]: ITableData }[]; // ex: pageData['id'] = {value: 1, tooltip: 'tooltip'}
   filteredIds: number[];
 }
 

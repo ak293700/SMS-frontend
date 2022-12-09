@@ -1,8 +1,8 @@
-import {StringEnumerableInterface} from "../../Interfaces/StringEnumerableInterface";
+import {IEnumerableByString} from "../../Interfaces/IEnumerableByString";
 import {NullablePropertyWrapperDto} from "../NullablePropertyWrapperDto";
 import {PatchDto} from "../../Interfaces/PatchDto";
 
-export interface PatchShopSpecificDto extends StringEnumerableInterface
+export interface PatchShopSpecificDto extends IEnumerableByString
 {
   id: number;
   name?: string;

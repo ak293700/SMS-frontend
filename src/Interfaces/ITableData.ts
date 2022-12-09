@@ -1,6 +1,6 @@
-import {StringEnumerableInterface} from "./StringEnumerableInterface";
+import {IEnumerableByString} from "./IEnumerableByString";
 
-export interface ITableData extends StringEnumerableInterface
+export interface ITableData extends IEnumerableByString
 {
   value: any;
   tooltip?: string;
@@ -8,14 +8,9 @@ export interface ITableData extends StringEnumerableInterface
 
 export namespace ITableData
 {
-  export function is(value: any): value is ITableData
-  {
-    return value && value.value !== undefined;
-  }
-
   // take an object and wrap it into a ITableData
-  export function build(value: any): ITableData
+  export function build(value: any, tooltip: string = ''): ITableData
   {
-    return {value: value};
+    return {value: value, tooltip: tooltip ?? ''};
   }
 }

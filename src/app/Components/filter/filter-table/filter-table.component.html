@@ -41,15 +41,15 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-product pTemplate="body" let-rowIndex="rowIndex">
-    <tr [pContextMenuRow]="product">
+  <ng-template let-columns="columns" let-data pTemplate="body" let-rowIndex="rowIndex">
+    <tr [pContextMenuRow]="data">
       <td pFrozenColumn>
-        <p-tableCheckbox [value]="product"></p-tableCheckbox>
+        <p-tableCheckbox [value]="data"></p-tableCheckbox>
       </td>
       <td *ngIf="isPhoto" style="width: 100px">
-        <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
-      <td *ngFor="let col of columns" [pTooltip]="product[col.field].tooltip">
-        {{ product[col.field].value | prettier: col }}
+        <img [src]="data.photo.value" class="shadow-4" width="100%" alt="Miniature"/>
+      <td *ngFor="let col of columns" [pTooltip]="data[col.field].tooltip">
+        {{ data[col.field].value | prettier: col }}
       </td>
     </tr>
   </ng-template>

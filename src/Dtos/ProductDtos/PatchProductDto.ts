@@ -1,7 +1,7 @@
 import {ProductPopularity} from "../../Enums/ProductPopularity";
-import {StringEnumerableInterface} from "../../Interfaces/StringEnumerableInterface";
+import {IEnumerableByString} from "../../Interfaces/IEnumerableByString";
 
-export interface PatchProductDto extends StringEnumerableInterface
+export interface PatchProductDto extends IEnumerableByString
 {
   id: number;
   productReference?: string;

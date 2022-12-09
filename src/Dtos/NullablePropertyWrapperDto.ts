@@ -1,4 +1,4 @@
-import {StringEnumerableInterface} from "../Interfaces/StringEnumerableInterface";
+import {IEnumerableByString} from "../Interfaces/IEnumerableByString";
 
 export interface NullablePropertyWrapperDto<T>
 {
@@ -13,7 +13,7 @@ export namespace NullablePropertyWrapperDto
   }
 
   // replace the given value by a NullablePropertyWrapperDto if it is not undefined
-  export function replace<T extends StringEnumerableInterface>(obj: T, properties: string[]): T
+  export function replace<T extends IEnumerableByString>(obj: T, properties: string[]): T
   {
     for (const property of properties)
     {
