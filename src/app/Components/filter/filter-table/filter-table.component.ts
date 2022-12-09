@@ -19,6 +19,7 @@ export interface DataTableVector
 })
 export class FilterTableComponent implements OnInit, OnChanges
 {
+  @Input() isPhoto: boolean = false;
   @Input() contextMenuItems: MenuItem[] = [];
   @Output('onLazyLoad') lazyLoadEvent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -36,7 +37,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   rowsNumber: number = 50;
 
-  selectedDatas: any = {
+  @Input() selectedDatas: any = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };

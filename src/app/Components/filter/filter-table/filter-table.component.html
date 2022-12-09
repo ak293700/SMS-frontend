@@ -30,11 +30,12 @@
 
   <ng-template let-columns pTemplate="header">
     <tr>
-      <!--  We display the photo differently because we need to add html markup-->
       <th style="width: 4rem" pFrozenColumn>
         <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
       </th>
-      <th>Photo</th>
+      <!--  We display the photo differently because we need to add html markup-->
+
+      <th *ngIf="isPhoto">Photo</th>
       <th pResizableColumn *ngFor="let col of columns">
         {{col.label}}
       </th>
@@ -45,7 +46,7 @@
       <td pFrozenColumn>
         <p-tableCheckbox [value]="product"></p-tableCheckbox>
       </td>
-      <td style="width: 100px">
+      <td *ngIf="isPhoto" style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
       <td *ngFor="let col of columns">
         {{ product[col.field] | prettier: col }}

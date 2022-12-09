@@ -4,7 +4,7 @@
 
 <app-filter-fields [filters]="filters" (applyFilters)="applyFilters()"></app-filter-fields>
 
-<app-filter-table (onEditData)="editProduct($event)" (onLazyLoad)="loadProductsLazy($event)"
+<app-filter-table (onEditData)="editDiscount($event)" (onLazyLoad)="loadProductsLazy($event)"
                   [loading]="loading" [datas]="discounts"></app-filter-table>
 
 <div class="flex-center">

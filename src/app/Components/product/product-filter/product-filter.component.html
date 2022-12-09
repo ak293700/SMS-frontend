@@ -5,7 +5,8 @@
 <app-filter-fields [filters]="filters" (applyFilters)="applyFilters()"></app-filter-fields>
 
 <app-filter-table (onEditData)="editProduct($event)" (onLazyLoad)="loadProductsLazy($event)"
-                  [loading]="loading" [datas]="products"></app-filter-table>
+                  [loading]="loading" [datas]="products" [selectedDatas]="selectedProducts"
+                  [isPhoto]="true"></app-filter-table>
 
 <div class="flex-center">
   <p-button (click)="editSelection()" label="Modifier la sélection" styleClass="btn-hover-main"

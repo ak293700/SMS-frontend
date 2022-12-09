@@ -94,7 +94,7 @@ export class EditOneProductComponent implements OnInit
         ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
         : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-      ConfirmationServiceTools.new(this.confirmationService, this.fetchProduct, message, id);
+      ConfirmationServiceTools.new(this.confirmationService, this, this.fetchProduct, message, id);
     }
     else
       await this.fetchProduct(id);
@@ -249,7 +249,7 @@ export class EditOneProductComponent implements OnInit
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    ConfirmationServiceTools.new(this.confirmationService, this._reset, message);
+    ConfirmationServiceTools.new(this.confirmationService, this, this._reset, message);
   }
 
   // This function does the actual work of saving the changes to the database
@@ -310,6 +310,7 @@ export class EditOneProductComponent implements OnInit
     }
 
     ConfirmationServiceTools.new(this.confirmationService,
+      this,
       this._save,
       `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
       changes);

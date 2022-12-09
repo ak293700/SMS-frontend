@@ -161,7 +161,7 @@ export class DiscountFilterComponent implements OnInit
     this.loading = false;
   }
 
-  async editProduct(product: any)
+  async editDiscount(product: any)
   {
 
   }
