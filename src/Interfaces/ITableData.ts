@@ -14,3 +14,8 @@ export namespace ITableData
     return {value: value, tooltip: tooltip ?? ''};
   }
 }
+
+export interface IEnumerableToITableData
+{
+  [prop: string]: ITableData;
+}

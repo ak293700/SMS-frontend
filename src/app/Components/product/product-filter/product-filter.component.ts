@@ -6,7 +6,7 @@ import {api, defaultImage} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
-import {ITableData} from "../../../../Interfaces/ITableData";
+import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {FieldType} from "../../../../Enums/FieldType";
 import {FilterTableProductDto} from "../../../../Dtos/ProductDtos/FilterTableProductDto";
 import {FilterTableShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/FilterTableShopSpecificDto";
@@ -198,6 +198,7 @@ export class ProductFilterComponent implements OnInit
 
       this.products.filteredIds = response.data;
 
+
       await this.loadLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
     {
@@ -226,7 +227,7 @@ export class ProductFilterComponent implements OnInit
 
       // Update the selected data
       this.selectedProducts.data = this.products.pageData
-        .filter((product: any) => this.selectedProducts.ids.includes(product.id));
+        .filter((product: IEnumerableToITableData) => this.selectedProducts.ids.includes(product['id'].value));
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -236,17 +237,18 @@ export class ProductFilterComponent implements OnInit
   }
 
   // For each data of the page it will set default for some field
-  formatData(datas: FilterTableProductDto[]): { [prop: string]: ITableData }[]
+  formatData(datas: FilterTableProductDto[]): IEnumerableToITableData[]
   {
-    const res: { [prop: string]: ITableData }[] = []; // row1, row2, ...
+    const res: IEnumerableToITableData[] = []; // row1, row2, ...
     for (const data of datas)
     {
-      let row: { [prop: string]: ITableData } = {}; // id, name, ...
+      let row: IEnumerableToITableData = {}; // id, name, ...
       for (const header of this.products.header)
       {
         const field = header.field;
         row[field] = this._formatOneData(data, field);
       }
+      row['id'] = ITableData.build(data.id);
       row['photo'] = ITableData.build(data.photo !== "" ? data.photo : defaultImage);
       res.push(row);
     }
@@ -268,14 +270,17 @@ export class ProductFilterComponent implements OnInit
         break;
       case 'idPrestashop':
         data = firstShop?.idPrestaShop;
+        tooltip = shopSpecific
+          .map((ss) => `${Shop.toString(ss.shop)}: ${ss.idPrestaShop}`)
+          .join("\n");
         break;
       case 'mainCategory':
         data = firstShop?.mainCategory;
         break;
       case 'active':
         data = shopSpecific.map((ss) => ss.active).includes(true);
-        tooltip = shopSpecific.map((ss) => `${Shop.toString(ss.shop)}: ${ss.active}`)
-          .join("\n");
+        tooltip = shopSpecific
+          .map((ss) => `${Shop.toString(ss.shop)}: ${ss.active}`).join("\n");
         break;
       case 'popularity':
         data = ProductPopularity.toString(data);
@@ -313,11 +318,11 @@ export class ProductFilterComponent implements OnInit
     return ITableData.build(data, tooltip);
   }
 
-  async editProduct(product: any)
+  async editProduct(product: IEnumerableToITableData)
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
+      state: {selectedIds: this.selectedProducts.ids, selectedId: product['id'].value}
     });
   }
 

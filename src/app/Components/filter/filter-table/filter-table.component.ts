@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {IHeader} from "../../../../Dtos/IHeader";
-import {ITableData} from "../../../../Interfaces/ITableData";
+import {IEnumerableToITableData} from "../../../../Interfaces/ITableData";
 
 export interface DataTableVector
 {
   header: IHeader[];
-  pageData: { [prop: string]: ITableData }[]; // ex: pageData['id'] = {value: 1, tooltip: 'tooltip'}
+  pageData: IEnumerableToITableData[]; // ex: pageData['id'] = {value: 1, tooltip: 'tooltip'}
   filteredIds: number[];
 }
 
@@ -61,6 +61,8 @@ export class FilterTableComponent implements OnInit, OnChanges
         command: () => this.editProduct(this.contextMenuSelectedProduct)
       }
     ];
+
+    this.selectedDatas = {header: [], pageData: [], filteredIds: []}
   }
 
   ngOnInit()
@@ -70,6 +72,10 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   ngOnChanges(changes: SimpleChanges): void
   {
+    // console.log(this.selectedDatas);
+    console.log(this.selectedDatas.data.length);
+    console.log(this.selectedDatas.ids.length);
+
     this.initFields();
   }
 
@@ -81,6 +87,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   onRowSelect(event: any)
   {
+    console.log(event.data.id);
     this.selectedDatas.ids.push(event.data.id);
 
     // If there is at least enough product selected that product find
@@ -99,6 +106,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   onRowUnselect(event: any)
   {
+    console.log(event.data.id);
     this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== event.data.id);
     this.areAllSelected = false;
   }
@@ -162,6 +170,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   editProduct(product: any)
   {
+    console.log('edit product', product);
     this.editDataEvent.emit(product);
   }
 }

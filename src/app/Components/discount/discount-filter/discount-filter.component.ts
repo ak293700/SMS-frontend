@@ -7,7 +7,7 @@ import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {FieldType} from "../../../../Enums/FieldType";
-import {ITableData} from "../../../../Interfaces/ITableData";
+import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 
 @Component({
   selector: 'app-discount-filter',
@@ -187,20 +187,40 @@ export class DiscountFilterComponent implements OnInit
 
   // reformat the data received from the server
   // data being the raw data fetch from the server
-  formatData(data: any[]): ITableData[]
+  formatData(datas: any[]): IEnumerableToITableData[]
   {
-    for (const discount of data)
+    const res: IEnumerableToITableData[] = []; // row1, row2, ...
+    for (const data of datas)
     {
+      let row: IEnumerableToITableData = {}; // id, name, ...
       for (const header of this.discounts.header)
       {
         const field = header.field;
-        discount[field] = ITableData.build(discount[field]);
-        if (field === 'numberOfProducts')
-          discount[field].tooltip = discount.productReferences;
+        row[field] = this._formatOneData(data, field);
       }
+      row['id'] = ITableData.build(data.id);
+      res.push(row);
     }
 
-    return data;
+    return res;
+  }
+
+  private _formatOneData(discount: any, field: string): ITableData
+  {
+    let data: any = discount[field];
+    let tooltip: string = "";
+
+    switch (field)
+    {
+      case 'numberOfProducts':
+        tooltip = discount.productReferences;
+        break;
+      case 'value':
+        tooltip = `${(discount.value * 100).toFixed(3)}%`;
+        break;
+    }
+
+    return ITableData.build(data, tooltip);
   }
 
   async editDiscount(discount: any)

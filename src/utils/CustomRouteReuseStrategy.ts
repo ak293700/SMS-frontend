@@ -1,5 +1,6 @@
 import {ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy} from "@angular/router";
 import {ProductFilterComponent} from "../app/Components/product/product-filter/product-filter.component";
+import {DiscountFilterComponent} from "../app/Components/discount/discount-filter/discount-filter.component";
 
 export class CustomRouteReuseStrategy implements RouteReuseStrategy
 {
@@ -9,19 +10,19 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
 
   shouldDetach(route: ActivatedRouteSnapshot): boolean
   {
-    if (route.routeConfig == undefined)
+    if (route.routeConfig == undefined || route.routeConfig.component == undefined)
       return false;
 
-    return route.routeConfig.component === ProductFilterComponent;
+    const store = [ProductFilterComponent, DiscountFilterComponent];
+    return store.includes(route.routeConfig.component);
   }
 
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void
   {
-    if (route.routeConfig == undefined)
+    if (route.routeConfig == undefined || handle == null)
       return;
 
-    // @ts-ignore
-    this.storedRoutes.set(route.routeConfig.path, handle);
+    this.storedRoutes.set(this.getResolvedUrl(route), handle);
   }
 
   shouldAttach(route: ActivatedRouteSnapshot): boolean
@@ -29,16 +30,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
     if (route.routeConfig == undefined)
       return false;
 
-    /*if (route.routeConfig.component === HomeComponent)
-    {
-      this.storedRoutes.clear();
-      return false;
-      TODO: Perhaps it is not necessary to delete the stored routes.
-    }*/
-
-
-    // @ts-ignore
-    return !!route.routeConfig && !!this.storedRoutes.get(route.routeConfig.path);
+    return !!route.routeConfig && !!this.storedRoutes.get(this.getResolvedUrl(route));
   }
 
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null
@@ -46,15 +38,21 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
     if (route.routeConfig == undefined)
       return false;
 
-    // @ts-ignore
-    return this.storedRoutes.get(route.routeConfig.path) ?? null;
+    return this.storedRoutes.get(this.getResolvedUrl(route)) ?? null;
   }
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean
   {
     // Basic check
-    // if just change the id of the product, we don't want to reuse the route
+    // if just change the params of the product, we don't want to reuse the route
     return future.routeConfig === curr.routeConfig;
+  }
+
+  private getResolvedUrl(route: ActivatedRouteSnapshot): string
+  {
+    return route.pathFromRoot
+      .map(v => v.url.map(segment => segment.toString()).join('/'))
+      .join('/');
   }
 
 }

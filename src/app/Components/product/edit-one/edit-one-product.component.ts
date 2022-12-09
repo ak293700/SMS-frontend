@@ -70,11 +70,11 @@ export class EditOneProductComponent implements OnInit
   async ngOnInit()
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
-    if (routedData.selectedIds == undefined || routedData.selectedId == undefined)
-    {
+    if (routedData.selectedIds == undefined)
       routedData.selectedIds = [6190, 6233, 6237, 7257, 2863]
-      routedData.selectedId = routedData.selectedIds[0];
-    }
+
+    if (routedData.selectedId == undefined)
+      routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
 
     // push at the beginning of the array
     if (!routedData.selectedIds.includes(routedData.selectedId))
@@ -213,7 +213,11 @@ export class EditOneProductComponent implements OnInit
       const response = await axios.post(`${api}/product/references`, ids);
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
+
+      // reorder otherProducts by as 'ids'
       this.otherProducts = response.data;
+      // .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
+
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -229,7 +233,7 @@ export class EditOneProductComponent implements OnInit
 
   private _reset()
   {
-    console.log(this.initialProduct);
+    // console.log(this.initialProduct);
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
 
