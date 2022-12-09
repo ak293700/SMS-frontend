@@ -6,6 +6,8 @@ import axios, {AxiosError} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
+import {FieldType} from "../../../../Enums/FieldType";
+import {ITableData} from "../../../../Interfaces/ITableData";
 
 @Component({
   selector: 'app-discount-filter',
@@ -29,7 +31,7 @@ export class DiscountFilterComponent implements OnInit
   // The products we did select. After it should be a list of ids.
   selectedDiscounts: any = {
     data: [], // the selected product (only the ones in the current page)
-    ids: [] // al the selected product (including the ones not in the curent filter)
+    ids: [] // all the selected product (including the ones not in the current filter)
   };
 
   // boolean
@@ -55,9 +57,35 @@ export class DiscountFilterComponent implements OnInit
     }
   }
 
-  async fetchHeaders()
+  async fetchHeaders(): Promise<void>
   {
-    try
+    this.discounts.header = [
+      {
+        label: 'Type de remise',
+        field: 'discountType',
+        type: FieldType.None,
+        suffix: '',
+      },
+      {
+        label: 'Valeur',
+        field: 'value',
+        type: FieldType.Percentage,
+        suffix: '',
+      },
+      {
+        label: 'Fabricant',
+        field: 'manufacturer',
+        type: FieldType.None,
+        suffix: '',
+      },
+      {
+        label: 'Distributeur',
+        field: 'distributor',
+        type: FieldType.None,
+        suffix: '',
+      }
+    ];
+    /*try
     {
       let response = await axios.get(`${api}/SelectDiscount/header`, {responseType: 'json'});
       if (response.status !== 200)
@@ -67,7 +95,7 @@ export class DiscountFilterComponent implements OnInit
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
-    }
+    }*/
   }
 
   async fetchFilter()
@@ -126,14 +154,14 @@ export class DiscountFilterComponent implements OnInit
 
       this.discounts.filteredIds = response.data;
 
-      await this.loadProductsLazy({first: 0, rows: this.rowsNumber});
+      await this.loadLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
     }
   }
 
-  async loadProductsLazy(event: LazyLoadEvent)
+  async loadLazy(event: LazyLoadEvent)
   {
     this.loading = true;
     try
@@ -149,11 +177,12 @@ export class DiscountFilterComponent implements OnInit
         return MessageServiceTools.httpFail(this.messageService, response);
 
       // Update the productsPageData
-      this.discounts.pageData = response.data;
+      this.discounts.pageData = this.formatData(response.data);
 
       // Update the selected data
       this.selectedDiscounts.data = this.discounts.pageData
         .filter((product: any) => this.selectedDiscounts.ids.includes(product.id));
+
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -161,7 +190,23 @@ export class DiscountFilterComponent implements OnInit
     this.loading = false;
   }
 
-  async editDiscount(product: any)
+  // reformat the data received from the server
+  // data being the raw data fetch from the server
+  formatData(data: any[]): ITableData[]
+  {
+    console.log(data);
+    for (const discount of data)
+    {
+      for (const header of this.discounts.header)
+      {
+        discount[header.field] = ITableData.build(discount[header.field]);
+      }
+    }
+
+    return data;
+  }
+
+  async editDiscount(discount: any)
   {
 
   }

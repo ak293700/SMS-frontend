@@ -3,7 +3,7 @@
 </p-contextMenu>
 
 <p-table [value]="datas.pageData" dataKey="id"
-         [totalRecords]="datas.filteredIds.length"
+         [totalRecords]="totalRecords"
          (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
          (onLazyLoad)="lazyLoadEvent.emit($event)" [lazy]="true"
          [lazyLoadOnInit]="false" [loading]="loading"
@@ -48,8 +48,8 @@
       </td>
       <td *ngIf="isPhoto" style="width: 100px">
         <img [src]="product.photo" class="shadow-4" width="100%" alt="Miniature"/>
-      <td *ngFor="let col of columns">
-        {{ product[col.field] | prettier: col }}
+      <td *ngFor="let col of columns" [pTooltip]="product[col.field].tooltip">
+        {{ product[col.field].value | prettier: col }}
       </td>
     </tr>
   </ng-template>
