@@ -142,7 +142,7 @@ export class DiscountFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
-      console.log(filters);
+      // console.log(filters);
       let response = await axios.post(`${api}/SelectDiscount/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
