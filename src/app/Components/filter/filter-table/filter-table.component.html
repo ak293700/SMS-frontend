@@ -41,7 +41,7 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-data pTemplate="body" let-rowIndex="rowIndex">
+  <ng-template let-columns="columns" let-data pTemplate="body">
     <tr [pContextMenuRow]="data">
       <td pFrozenColumn>
         <p-tableCheckbox [value]="data"></p-tableCheckbox>

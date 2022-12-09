@@ -227,7 +227,7 @@ export class ProductFilterComponent implements OnInit
 
       // Update the selected data
       this.selectedProducts.data = this.products.pageData
-        .filter((product: IEnumerableToITableData) => this.selectedProducts.ids.includes(product['id'].value));
+        .filter((product: IEnumerableToITableData) => this.selectedProducts.ids.includes(product.id));
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -242,13 +242,12 @@ export class ProductFilterComponent implements OnInit
     const res: IEnumerableToITableData[] = []; // row1, row2, ...
     for (const data of datas)
     {
-      let row: IEnumerableToITableData = {}; // id, name, ...
+      let row: IEnumerableToITableData = {id: data.id}; // id, name, ...
       for (const header of this.products.header)
       {
         const field = header.field;
         row[field] = this._formatOneData(data, field);
       }
-      row['id'] = ITableData.build(data.id);
       row['photo'] = ITableData.build(data.photo !== "" ? data.photo : defaultImage);
       res.push(row);
     }
@@ -322,7 +321,7 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedProducts.ids, selectedId: product['id'].value}
+      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
     });
   }
 

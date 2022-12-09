@@ -142,7 +142,6 @@ export class DiscountFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
-      // console.log(filters);
       let response = await axios.post(`${api}/SelectDiscount/filter/execute`, filters, {responseType: 'json'});
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -192,13 +191,12 @@ export class DiscountFilterComponent implements OnInit
     const res: IEnumerableToITableData[] = []; // row1, row2, ...
     for (const data of datas)
     {
-      let row: IEnumerableToITableData = {}; // id, name, ...
+      let row: IEnumerableToITableData = {id: data.id}; // id, name, ...
       for (const header of this.discounts.header)
       {
         const field = header.field;
         row[field] = this._formatOneData(data, field);
       }
-      row['id'] = ITableData.build(data.id);
       res.push(row);
     }
 

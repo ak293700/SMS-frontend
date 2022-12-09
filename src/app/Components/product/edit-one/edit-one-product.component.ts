@@ -233,7 +233,6 @@ export class EditOneProductComponent implements OnInit
 
   private _reset()
   {
-    // console.log(this.initialProduct);
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
 

@@ -41,7 +41,10 @@ export class FilterTableComponent implements OnInit, OnChanges
   @Input() selectedDatas: any = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
-  };
+  } = {data: [], ids: []};
+  /*@Output()*/
+  selectedDatasChange: EventEmitter<any> = new EventEmitter<any>();
+
   areAllSelected: boolean = false;
 
   totalRecords: number = 0;
@@ -61,8 +64,6 @@ export class FilterTableComponent implements OnInit, OnChanges
         command: () => this.editProduct(this.contextMenuSelectedProduct)
       }
     ];
-
-    this.selectedDatas = {header: [], pageData: [], filteredIds: []}
   }
 
   ngOnInit()
@@ -83,7 +84,8 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   onRowSelect(event: any)
   {
-    this.selectedDatas.ids.push(event.data.id);
+    const selectedId = event.data.id;
+    this.selectedDatas.ids.push(selectedId);
 
     // If there is at least enough product selected that product find
     if (this.selectedDatas.ids.length >= this.datas.filteredIds.length)
@@ -101,8 +103,8 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   onRowUnselect(event: any)
   {
-    // console.log(event.data.id);
-    this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== event.data.id);
+    const unselectedId = event.data.id;
+    this.selectedDatas.ids = this.selectedDatas.ids.filter((id: number) => id !== unselectedId);
     this.areAllSelected = false;
   }
 
@@ -165,7 +167,6 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   editProduct(product: any)
   {
-    // console.log('edit product', product);
     this.editDataEvent.emit(product);
   }
 }
