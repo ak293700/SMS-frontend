@@ -1,0 +1,10 @@
+<nav class="nav">
+  <button class="reset-button" (click)="goToFollowingToDiscount(-1)">
+    <i class="pi pi-arrow-left" style="float: left"></i></button>
+  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
+  <button class="reset-button" (click)="goToFollowingToDiscount(1)">
+    <i class="pi pi-arrow-right"></i></button>
+</nav>
+
+<div class="grid-container" *ngIf="discount !== undefined">
+</div>

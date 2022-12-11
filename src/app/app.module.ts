@@ -26,13 +26,15 @@ import {PrettierPipe} from './Pipes/prettier.pipe';
 import {
   EditMultipleProductsComponent
 } from './Components/product/edit-multiple-products/edit-multiple-products.component';
-import {EditOneProductComponent} from './Components/product/edit-one/edit-one-product.component';
+import {EditOneProductComponent} from './Components/product/edit-one-product/edit-one-product.component';
 import {RouteReuseStrategy} from "@angular/router";
 import {CustomRouteReuseStrategy} from "../utils/CustomRouteReuseStrategy";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {FilterFieldsComponent} from './Components/filter/filter-fields/filter-fields.component';
 import {FilterTableComponent} from './Components/filter/filter-table/filter-table.component';
 import {DiscountFilterComponent} from './Components/discount/discount-filter/discount-filter.component';
+import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/edit-one-discount.component';
+import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import {DiscountFilterComponent} from './Components/discount/discount-filter/dis
     EditOneProductComponent,
     FilterFieldsComponent,
     FilterTableComponent,
-    DiscountFilterComponent
+    DiscountFilterComponent,
+    EditOneDiscountComponent,
+    EditOneBaseComponent
   ],
   imports: [
     BrowserModule,

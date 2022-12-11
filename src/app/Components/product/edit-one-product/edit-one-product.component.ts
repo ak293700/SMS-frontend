@@ -21,10 +21,7 @@ import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceToo
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
-  styleUrls: [
-    '../../../../styles/button.css',
-    './edit-one-product.component.css',
-  ]
+  styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css']
 })
 export class EditOneProductComponent implements OnInit
 {
@@ -71,7 +68,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [6190, 6233, 6237, 7257, 2863]
+      routedData.selectedIds = [6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;

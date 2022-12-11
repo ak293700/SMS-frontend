@@ -42,8 +42,6 @@ export class FilterTableComponent implements OnInit, OnChanges
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   } = {data: [], ids: []};
-  /*@Output()*/
-  selectedDatasChange: EventEmitter<any> = new EventEmitter<any>();
 
   areAllSelected: boolean = false;
 
@@ -91,19 +89,6 @@ export class FilterTableComponent implements OnInit, OnChanges
     this.selectedDatas.ids.push(selectedId);
 
     this.checkAreAllSelected();
-
-    /*// If there is at least enough product selected that product find
-    if (this.selectedDatas.ids.length >= this.datas.filteredIds.length)
-    {
-      // Need to check that all the product are selected
-      for (let i = 0; i < this.datas.filteredIds.length; i++)
-      {
-        if (!this.selectedDatas.ids.includes(this.datas.filteredIds[i]))
-          return;
-      }
-
-      this.areAllSelected = true;
-    }*/
   }
 
   onRowUnselect(event: any)
@@ -167,7 +152,6 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   get displayedHeader(): any[]
   {
-    // remove @Input() from function signature
     return this._displayedHeader;
   }
 

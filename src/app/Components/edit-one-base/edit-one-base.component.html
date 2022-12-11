@@ -1,0 +1,21 @@
+<nav class="nav">
+  <button class="reset-button" (click)="goToFollowingData(-1)">
+    <i class="pi pi-arrow-left" style="float: left"></i></button>
+  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
+  <button class="reset-button" (click)="goToFollowingData(1)">
+    <i class="pi pi-arrow-right"></i></button>
+</nav>
+
+<div class="grid-container">
+  <main>
+    <ng-content></ng-content>
+  </main>
+  <aside>
+    <ul class="other-data-container">
+      <li *ngFor="let otherProduct of otherDatas" class="other-data-item">
+        <button (click)="goToData(otherProduct.id)" [disabled]="otherProduct.id === data.id">
+          {{otherProduct.name}}</button>
+      </li>
+    </ul>
+  </aside>
+</div>

@@ -29,18 +29,18 @@ aside {
 
 }
 
-.other-product-container {
+.other-data-container {
   display: block;
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
-.other-product-item {
+.other-data-item {
   list-style: none;
 }
 
-.other-product-item button {
+.other-data-item button {
   text-align: center;
   margin: 0;
   padding: 5px;
@@ -56,11 +56,11 @@ aside {
   cursor: pointer;
 }
 
-.other-product-item button:hover {
+.other-data-item button:hover {
   background-color: var(--secondary-color);
 }
 
-.other-product-item button:disabled {
+.other-data-item button:disabled {
   background-color: var(--fourth-color);
   opacity: .5;
   cursor: auto;

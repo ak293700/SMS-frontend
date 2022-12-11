@@ -6,9 +6,10 @@ import {ProductFilterComponent} from "./Components/product/product-filter/produc
 import {
   EditMultipleProductsComponent
 } from "./Components/product/edit-multiple-products/edit-multiple-products.component";
-import {EditOneProductComponent} from "./Components/product/edit-one/edit-one-product.component";
+import {EditOneProductComponent} from "./Components/product/edit-one-product/edit-one-product.component";
 import {FilterFieldsComponent} from "./Components/filter/filter-fields/filter-fields.component";
 import {DiscountFilterComponent} from "./Components/discount/discount-filter/discount-filter.component";
+import {EditOneDiscountComponent} from "./Components/discount/edit-one-discount/edit-one-discount.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
@@ -34,7 +35,7 @@ const routes: Routes = [
         path: 'edit', children: [
           {path: '', redirectTo: '/home', pathMatch: 'full'},
           {path: 'multiple', component: DiscountFilterComponent},
-          {path: 'one', component: DiscountFilterComponent},
+          {path: 'one', component: EditOneDiscountComponent},
         ]
       },
     ]
