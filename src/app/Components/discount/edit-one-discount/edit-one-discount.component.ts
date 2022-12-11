@@ -68,4 +68,10 @@ export class EditOneDiscountComponent implements OnInit
 
   }
 
+  reset()
+  {}
+
+  save()
+  {}
+
 }

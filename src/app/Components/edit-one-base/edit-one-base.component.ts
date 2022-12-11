@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
 import {Operation} from "../../../utils/Operation";
@@ -9,7 +9,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
   templateUrl: './edit-one-base.component.html',
   styleUrls: ['./edit-one-base.component.css']
 })
-export class EditOneBaseComponent implements OnInit
+export class EditOneBaseComponent
 {
   @Input() otherDatas: IdNameDto[] = [];
   @Input() data: { id: number } = {id: 0};
@@ -18,14 +18,12 @@ export class EditOneBaseComponent implements OnInit
 
   @Output('newSelection') newSelectionEvent = new EventEmitter<number>();
 
+  @Output('reset') resetEvent = new EventEmitter();
+  @Output('save') saveEvent = new EventEmitter();
+
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService)
   {}
-
-  ngOnInit(): void
-  {
-    console.log('data', this.data);
-  }
 
   async goToData(id: number)
   {
@@ -58,5 +56,15 @@ export class EditOneBaseComponent implements OnInit
 
     index = Operation.modulo(index + step, this.otherDatas.length);
     await this.goToData(this.otherDatas[index].id);
+  }
+
+  reset()
+  {
+    this.resetEvent.emit();
+  }
+
+  save()
+  {
+    this.saveEvent.emit();
   }
 }

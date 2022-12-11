@@ -66,21 +66,6 @@ aside {
   cursor: auto;
 }
 
-#shop-specific-field {
-  display: grid;
-  grid-auto-flow: row;
-  margin: 2rem 0;
-
-}
-
-#shop-specific-field * {
-  /*border: 2px solid #333;*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-}
-
 .changes-footer {
   gap: 100px;
   position: sticky;

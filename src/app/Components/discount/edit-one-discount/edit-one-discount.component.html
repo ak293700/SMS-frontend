@@ -1,10 +1,148 @@
-<nav class="nav">
-  <button class="reset-button" (click)="goToFollowingToDiscount(-1)">
-    <i class="pi pi-arrow-left" style="float: left"></i></button>
-  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
-  <button class="reset-button" (click)="goToFollowingToDiscount(1)">
-    <i class="pi pi-arrow-right"></i></button>
-</nav>
+<app-edit-one-base *ngIf="discount !== undefined"
+                   [otherDatas]="otherDiscounts" [data]="discount" [parent]="this"
+                   (newSelection)="fetchDiscount($event)" (reset)="reset()" (save)="save()">
+  <!-- <h2 class="text" style="margin-bottom: 3rem">{{Discount.toString(discount.discountType)}}</h2>
 
-<div class="grid-container" *ngIf="discount !== undefined">
-</div>
+   <div id="common-field">
+     <ul class="field-container">
+       <li class="field-item">
+         <label for="field-productReference" class="text">Référence produit</label>
+         <input id="field-productReference" pInputText type="text"
+                [placeholder]="initialProduct.productReference"
+                [(ngModel)]="product.productReference">
+       </li>
+
+       <li class="field-item">
+         <label for="field-ean13" class="text">Ean13</label>
+         <input id="field-ean13" pInputText type="text"
+                [placeholder]="initialProduct.ean13"
+                [(ngModel)]="product.ean13">
+       </li>
+
+       <li class="field-item">
+         <label for="field-manufacturer" class="text">Fabricant</label>
+         <p-autoComplete id="field-manufacturer" dataKey="id"
+                         field="name" [suggestions]="additionalInformation.manufacturers"
+                         (completeMethod)="completeMethod($event, 'manufacturers')"
+                         [(ngModel)]="dummyStruct.manufacturer"
+                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+         </p-autoComplete>
+       </li>
+
+       <li class="field-item">
+         <label for="field-popularity" class="text">Popularité</label>
+         <p-autoComplete id="field-popularity" dataKey="id"
+                         field="name" [suggestions]="additionalInformation.popularities"
+                         (completeMethod)="completeMethod($event, 'popularities')"
+                         [(ngModel)]="dummyStruct.popularity"
+                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+         </p-autoComplete>
+       </li>
+
+       <li class="field-item">
+         <label for="field-imageLink" class="text">Lien de l'image</label>
+         <input id="field-imageLink" pInputText type="text"
+                [placeholder]="initialProduct.imageLink"
+                [(ngModel)]="product.imageLink" [pTooltip]="product.imageLink">
+       </li>
+     </ul>
+   </div>
+   &lt;!&ndash;<div *ngIf="discount.productType === ProductType.Simple" id="common-field-simple-product">
+     <ul class="field-container">
+       <li class="field-item">
+         <label for="field-supplierReference" class="text">Référence fabricant</label>
+         <input id="field-supplierReference" pInputText type="text"
+                [placeholder]="initialSimpleProduct.supplierReference"
+                [(ngModel)]="simpleProduct.supplierReference">
+       </li>
+       <li class="field-item">
+         <label for="field-pureReference" class="text">Référence pure</label>
+         <input id="field-pureReference" pInputText type="text"
+                [placeholder]="initialSimpleProduct.pureReference"
+                [(ngModel)]="simpleProduct.pureReference">
+       </li>
+       <li class="field-item">
+         <label for="field-cataloguePrice" class="text">Prix tarif</label>
+         <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
+                        [placeholder]="initialSimpleProduct.cataloguePrice.toString()"
+                        [(ngModel)]="simpleProduct.cataloguePrice">
+         </p-inputNumber>
+       </li>
+       <li class="field-item">
+         <label for="field-deee" class="text">Deee</label>
+         <p-inputNumber id="field-deee" mode="currency" currency="EUR"
+                        [placeholder]="initialSimpleProduct.deee.toString()"
+                        [(ngModel)]="simpleProduct.deee">
+         </p-inputNumber>
+       </li>
+       <li class="field-item">
+         <label for="field-stock" class="text">Stock</label>
+         <p-inputNumber id="field-stock"
+                        [placeholder]="initialSimpleProduct.stock.toString()"
+                        [(ngModel)]="simpleProduct.stock">
+         </p-inputNumber>
+       </li>
+       <li class="field-item">
+         <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
+         <p-inputNumber id="field-averageStockPrice" mode="currency" currency="EUR"
+                        [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
+                        [(ngModel)]="simpleProduct.averageStockPrice">
+         </p-inputNumber>
+       </li>
+       <li class="field-item">
+         <label for="field-availability" class="text">Disponibilité</label>
+         <p-autoComplete id="field-availability" dataKey="id"
+                         field="name" [suggestions]="additionalInformation.availabilities"
+                         (completeMethod)="completeMethod($event, 'availabilities')"
+                         [(ngModel)]="dummyStruct.availability"
+                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+         </p-autoComplete>
+       </li>
+     </ul>
+   </div>
+   <div *ngIf="discount.productType === ProductType.Bundle" id="common-field-bundle">
+
+   </div>&ndash;&gt;
+
+   <div id="shop-specific-field"
+        [style.grid-template-columns]="'20% repeat('+ product.shopSpecifics.length.toString() +', 1fr)'">
+
+     <h2></h2>
+     <h2 *ngFor="let shopSpecific of product.shopSpecifics"
+         class="text">
+       {{Shop.toString(shopSpecific.shop)}}
+     </h2>
+
+     <label class="text">Nom</label>
+     <input *ngFor="let shopSpecific of product.shopSpecifics; let i=index" pInputText type="text"
+            [placeholder]="initialProduct.shopSpecifics[i].name" [pTooltip]="shopSpecific.name"
+            [(ngModel)]="shopSpecific.name">
+
+     <label class="text">Id Prestashop</label>
+     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                    [useGrouping]="false"
+                    [placeholder]="initialProduct.shopSpecifics[i].idPrestaShop?.toString() ?? ''"
+                    [(ngModel)]="shopSpecific.idPrestaShop">
+     </p-inputNumber>
+
+     <label class="text">Km</label>
+     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                    [useGrouping]="false" mode="decimal"
+                    [placeholder]=" initialProduct.shopSpecifics[i].km.toString()"
+                    [(ngModel)]="shopSpecific.km">
+     </p-inputNumber>
+
+     <label class="text">Promotion</label>
+     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                    [useGrouping]="false" mode="decimal"
+                    [placeholder]="initialProduct.shopSpecifics[i].promotion.toString()"
+                    [(ngModel)]="shopSpecific.promotion">
+     </p-inputNumber>
+
+     <label class="text">Actif</label>
+     <p-checkbox *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                 [binary]="true"
+                 [(ngModel)]="shopSpecific.active">
+     </p-checkbox>
+   </div>-->
+</app-edit-one-base>

@@ -9,6 +9,13 @@
 <div class="grid-container">
   <main>
     <ng-content></ng-content>
+
+    <div class="flex-center changes-footer">
+      <button pButton label="Annuler" class="p-button-danger"
+              (click)="reset()"></button>
+      <button pButton label="Enregistrer" class="p-button-success"
+              (click)="save()"></button>
+    </div>
   </main>
   <aside>
     <ul class="other-data-container">
