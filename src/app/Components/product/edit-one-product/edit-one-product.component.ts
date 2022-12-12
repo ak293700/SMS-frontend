@@ -82,37 +82,6 @@ export class EditOneProductComponent implements OnInit
     await this.fetchProduct(routedData.selectedId);
   }
 
-  async goToProduct(id: number)
-  {
-    const changes = this.detectChanges();
-    if (changes.count > 0)
-    {
-      const message = changes.count == 1
-        ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
-        : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
-
-      ConfirmationServiceTools.new(this.confirmationService, this, this.fetchProduct, message, id);
-    }
-    else
-      await this.fetchProduct(id);
-  }
-
-  async goToFollowingProduct(step: number)
-  {
-    let index = this.otherProducts.findIndex(x => x.id == this.product.id);
-    if (index == -1)
-    {
-      this.messageService.add({
-        severity: 'warn', summary: 'Oups une erreur est survenue',
-        detail: 'impossible de naviguer au prochain produit'
-      });
-      return;
-    }
-
-    index = Operation.modulo(index + step, this.otherProducts.length);
-    await this.goToProduct(this.otherProducts[index].id);
-  }
-
   async fetchProduct(id: number)
   {
     try

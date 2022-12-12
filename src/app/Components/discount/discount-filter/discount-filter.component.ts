@@ -85,6 +85,12 @@ export class DiscountFilterComponent implements OnInit
         suffix: '',
       },
       {
+        label: 'Prix net',
+        field: 'isNetPrice',
+        type: FieldType.None,
+        suffix: '',
+      },
+      {
         label: "Nombre de produits l'utilisant",
         field: 'numberOfProducts',
         type: FieldType.Integer,
@@ -210,6 +216,9 @@ export class DiscountFilterComponent implements OnInit
 
     switch (field)
     {
+      case 'discountType':
+        tooltip = discount.id;
+        break;
       case 'numberOfProducts':
         tooltip = discount.productReferences;
         break;

@@ -2,6 +2,15 @@ import {Component, OnInit} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
+import {DiscountType} from "../../../../Enums/DiscountType";
+import {
+  LiteDistributorDiscountDto
+} from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
+import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
+import axios, {AxiosError} from "axios";
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
+import {api} from "../../../GlobalUsings";
+import {HttpTools} from "../../../../utils/HttpTools";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -12,17 +21,31 @@ export class EditOneDiscountComponent implements OnInit
 {
   otherDiscounts: IdNameDto[] = [];
 
-  discount: any = {};
+  // @ts-ignore
+  discount: LiteDistributorDiscountDto | LiteDerogationDto;
+  //@ts-ignore
+  initialDiscount: LiteDistributorDiscountDto | LiteDerogationDto;
+
+  initialAdditionalInformation: { manufacturers: IdNameDto[], distributors: IdNameDto[] }
+    = {manufacturers: [], distributors: []};
+
+  dummyStruct: { manufacturer: IdNameDto, distributor: IdNameDto } = {
+    manufacturer: {id: 0, name: ""},
+    distributor: {id: 0, name: ""},
+  }
+
+  additionalInformation = this.initialAdditionalInformation;
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService)
-  {}
+  {
+  }
 
   async ngOnInit(): Promise<void>
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [247];
+      routedData.selectedIds = [1, 2, 3];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -30,42 +53,46 @@ export class EditOneDiscountComponent implements OnInit
     // push at the beginning of the array
     if (!routedData.selectedIds.includes(routedData.selectedId))
       routedData.selectedIds.unshift(routedData.selectedId);
+
+    await this.fetchManufacturers(); // Do it first so the dummy struct is well initialized
+    await this.fetchDistributors(); // Do it first so the dummy struct is well initialized
+    this.fetchOtherDiscounts(routedData.selectedIds);
+    await this.fetchDiscount(routedData.selectedId);
   }
 
-  async goToDiscount(id: number)
+  get DiscountType(): typeof DiscountType
   {
-    /*const changes = this.detectChanges();
-    if (changes.count > 0)
-    {
-      const message = changes.count == 1
-        ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
-        : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
-
-      ConfirmationServiceTools.new(this.confirmationService, this, this.fetchProduct, message, id);
-    }
-    else*/
-    await this.fetchDiscount(id);
-  }
-
-  async goToFollowingToDiscount(step: number)
-  {
-    let index = this.otherDiscounts.findIndex(x => x.id == this.discount.id);
-    if (index == -1)
-    {
-      this.messageService.add({
-        severity: 'warn', summary: 'Oups une erreur est survenue',
-        detail: 'impossible de naviguer au prochain produit'
-      });
-      return;
-    }
-
-    index = Operation.modulo(index + step, this.otherDiscounts.length);
-    await this.goToDiscount(this.otherDiscounts[index].id);
+    return DiscountType;
   }
 
   async fetchDiscount(id: number)
   {
+    try
+    {
+      const getTypeResponse = await axios.get<DiscountType>(`${api}/discount/type/${id}`);
+      if (getTypeResponse.status !== 200)
+        MessageServiceTools.httpFail(this.messageService, getTypeResponse);
 
+      let endpoint: string = 'distributorDiscount';
+      if (getTypeResponse.data == DiscountType.Derogation)
+        endpoint = 'derogation';
+
+      const response = await axios.get<LiteDistributorDiscountDto | LiteDerogationDto>(`${api}/${endpoint}/${id}`);
+      if (response.status !== 200)
+        MessageServiceTools.httpFail(this.messageService, response);
+
+      this.initialDiscount = response.data;
+      this.initialDiscount.discountType = getTypeResponse.data; // we set the type because it is not send by the server
+      this.discount = Operation.deepCopy(this.initialDiscount);
+
+      this.initDummyStruct();
+      console.log(this.dummyStruct);
+      console.log(this.discount);
+      console.log(this.additionalInformation);
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.networkError(this.messageService, e.message);
+    }
   }
 
   reset()
@@ -74,4 +101,95 @@ export class EditOneDiscountComponent implements OnInit
   save()
   {}
 
+  get derogation(): LiteDerogationDto
+  {
+    return this.discount as LiteDerogationDto;
+  }
+
+  get distributorDiscount(): LiteDistributorDiscountDto
+  {
+    return this.discount as LiteDistributorDiscountDto;
+  }
+
+  async fetchOtherDiscounts(ids: number[])
+  {
+    // TODO: change to show the "Derogation|Distributor: Manufacturer|Distributor"
+    // this.otherDiscounts = selectedIds.map(id => ({id, name: id.toString()}));
+
+    try
+    {
+      const response = await axios.post<IdNameDto[]>(`${api}/discount/providers`, ids);
+      if (response.status !== 200)
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      // reorder otherProducts by as 'ids'
+      this.otherDiscounts = response.data;
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.networkError(this.messageService, e.message);
+    }
+  }
+
+  detectChanges(): { diffObj: any, count: number }
+  {
+    return {diffObj: {}, count: 0};
+  }
+
+  async fetchManufacturers()
+  {
+    try
+    {
+      // Get the products itself
+      const response = await axios.get(`${api}/Manufacturer/`);
+      if (!HttpTools.IsCode(response.status, 200))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.additionalInformation.manufacturers = response.data;
+      // deep copy this.additionalInformation.manufacturers
+      this.initialAdditionalInformation.manufacturers = [...response.data];
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+  async fetchDistributors()
+  {
+    try
+    {
+      // Get the products itself
+      const response = await axios.get(`${api}/Distributor/`);
+      if (!HttpTools.IsCode(response.status, 200))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.initialAdditionalInformation.manufacturers = response.data;
+      this.additionalInformation.distributors = Operation.deepCopy(response.data);
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+
+  private initDummyStruct()
+  {
+    if (this.discount.discountType == DiscountType.Derogation)
+    {
+      this.dummyStruct.manufacturer = this.additionalInformation.manufacturers
+        .find(x => x.id == this.derogation.manufacturerId)!;
+    }
+
+    if (this.discount.discountType == DiscountType.Distributor)
+    {
+      this.dummyStruct.distributor = this.additionalInformation.distributors
+        .find(x => x.id == this.distributorDiscount.distributorId)!;
+    }
+  }
+
+  completeMethod(event: any, fieldName: string)
+  {
+    // @ts-ignore
+    this.additionalInformation[fieldName] = this.initialAdditionalInformation[fieldName]
+      .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+  }
 }

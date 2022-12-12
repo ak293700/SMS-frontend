@@ -140,7 +140,7 @@
     </p-inputNumber>
 
     <label class="text">Actif</label>
-    <p-checkbox *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+    <p-checkbox *ngFor="let shopSpecific of product.shopSpecifics"
                 [binary]="true"
                 [(ngModel)]="shopSpecific.active">
     </p-checkbox>
