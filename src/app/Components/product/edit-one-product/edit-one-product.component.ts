@@ -100,6 +100,7 @@ export class EditOneProductComponent implements OnInit
 
   async fetchProduct(id: number)
   {
+    console.log("fetchProduct", id);
     try
     {
       // Get the products itself
@@ -218,7 +219,7 @@ export class EditOneProductComponent implements OnInit
   }
 
 
-  private _reset()
+  _reset()
   {
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
@@ -239,7 +240,7 @@ export class EditOneProductComponent implements OnInit
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    ConfirmationServiceTools.new(this.confirmationService, this, this._reset, message);
+    ConfirmationServiceTools.newComplexFunction(this.confirmationService, this._reset, message);
   }
 
   // This function does the actual work of saving the changes to the database
@@ -388,7 +389,10 @@ export class EditOneProductComponent implements OnInit
   // Smart fields
   get purchasePrice()
   {
-    return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
+    if (this.product.productType === ProductType.Simple)
+      return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
+    else
+      return this.bundle.purchasePrice;
   }
 
   set purchasePrice(value: number)
@@ -401,14 +405,17 @@ export class EditOneProductComponent implements OnInit
 
   getSalePriceIt(index: number): number
   {
+    const deee: number = this.product.productType === ProductType.Simple
+      ? this.simpleProduct.deee
+      : 0;
+
     return this.purchasePrice * (this.product.shopSpecifics[index].km)
-      * (1 - this.product.shopSpecifics[index].promotion);
+      * (1 - this.product.shopSpecifics[index].promotion)
+      + deee;
   }
 
   setSalePriceIt(index: number, value: number): void
   {
-    // this.product.shopSpecifics[index].km = value / this.purchasePrice;
-    // take the promotion into account
     this.product.shopSpecifics[index].km =
       value / (this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion));
   }
