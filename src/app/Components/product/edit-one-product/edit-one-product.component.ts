@@ -219,7 +219,7 @@ export class EditOneProductComponent implements OnInit
   }
 
 
-  _reset()
+  reset()
   {
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
@@ -227,7 +227,7 @@ export class EditOneProductComponent implements OnInit
     this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
   }
 
-  reset()
+  /*reset()
   {
     const changes = this.detectChanges();
     if (changes.count == 0)
@@ -241,7 +241,7 @@ export class EditOneProductComponent implements OnInit
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
     ConfirmationServiceTools.newComplexFunction(this.confirmationService, this._reset, message);
-  }
+  }*/
 
   // This function does the actual work of saving the changes to the database
   private async _save(changes: { diffObj: any, count: number })

@@ -28,7 +28,6 @@ export class EditOneBaseComponent
   async goToData(id: number)
   {
     const changes = this.parentComponent.detectChanges();
-    console.log(changes)
     if (changes.count > 0)
     {
       const message = changes.count == 1
@@ -37,11 +36,9 @@ export class EditOneBaseComponent
 
       // ConfirmationServiceTools.new(this.confirmationService, this, this.reset, message, id);
       ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any, id: number) => {
-          instance.reset();
-          instance.newSelectionEvent.emit(id);
-
-        }
-        , message, this, id);
+        instance.reset();
+        instance.newSelectionEvent.emit(id);
+      }, message, this, id);
     }
     else
       this.newSelectionEvent.emit(id);
@@ -65,8 +62,18 @@ export class EditOneBaseComponent
 
   reset()
   {
-    console.log('reset')
-    this.resetEvent.emit();
+    const changes = this.parentComponent.detectChanges();
+    if (changes.count == 0)
+      return this.resetEvent.emit();
+
+    const message = changes.count == 1
+      ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
+      : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
+
+    // ConfirmationServiceTools.new(this.confirmationService, this, this.reset, message, id);
+    ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any) => {
+      instance.resetEvent.emit()
+    }, message, this);
   }
 
   save()
