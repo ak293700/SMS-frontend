@@ -198,7 +198,6 @@ export class ProductFilterComponent implements OnInit
 
       this.products.filteredIds = response.data;
 
-
       await this.loadLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
     {
@@ -291,7 +290,9 @@ export class ProductFilterComponent implements OnInit
         if (firstShop !== undefined)
         {
           data = firstShop.salePriceIt;
-          tooltip = Shop.toString(firstShop.shop);
+          tooltip = shopSpecific
+            .map((ss) => `${Shop.toString(ss.shop)}: ${ss.salePriceIt.toFixed(2)}€`)
+            .join("\n");
         }
         break;
       case 'marginRate':
@@ -299,16 +300,20 @@ export class ProductFilterComponent implements OnInit
         {
           const salePriceEt: number = firstShop.salePriceIt / 1.2;
           data = (salePriceEt - product.purchasePrice) / salePriceEt;
+          tooltip = shopSpecific
+            .map((ss) =>
+            {
+              const marginRate: number = (ss.salePriceIt / 1.2 - product.purchasePrice) / salePriceEt;
+              return `${Shop.toString(ss.shop)}: ${(marginRate * 100).toFixed(2)}%`;
+            })
+            .join("\n");
         }
         break;
       case 'esDiff':
         const eps = shopSpecific[0];
         const es = shopSpecific[1];
         if (shopSpecific.length > 1) // there is a diff
-        {
           data = (eps.salePriceIt - es.salePriceIt) / es.salePriceIt;
-          tooltip = `Prix de vente ElecPlusSimple: ${es.salePriceIt}`;
-        }
         else
           data = undefined
         break;

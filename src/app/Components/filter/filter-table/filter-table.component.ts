@@ -13,10 +13,7 @@ export interface DataTableVector
 @Component({
   selector: 'app-filter-table',
   templateUrl: './filter-table.component.html',
-  styleUrls: [
-    './filter-table.component.css',
-    '../../../../styles/button.css'
-  ]
+  styleUrls: ['./filter-table.component.css', '../../../../styles/button.css']
 })
 export class FilterTableComponent implements OnInit, OnChanges
 {
@@ -66,7 +63,7 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   ngOnInit()
   {
-    this.initFields();
+    this.initFields(true);
   }
 
   ngOnChanges(changes: SimpleChanges): void
@@ -74,9 +71,11 @@ export class FilterTableComponent implements OnInit, OnChanges
     this.initFields();
   }
 
-  initFields()
+  initFields(firstChange: boolean = false)
   {
-    this._displayedHeader = this.datas.header;
+    if (firstChange)
+      this._displayedHeader = this.datas.header;
+
     this.totalRecords = this.datas.filteredIds.length;
 
     this.areAllSelected = false;

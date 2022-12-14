@@ -12,6 +12,7 @@ import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 
+// TODO: Continue this later
 @Component({
   selector: 'app-edit-one-discount',
   templateUrl: './edit-one-discount.component.html',
@@ -86,9 +87,6 @@ export class EditOneDiscountComponent implements OnInit
       this.discount = Operation.deepCopy(this.initialDiscount);
 
       this.initDummyStruct();
-      console.log(this.dummyStruct);
-      console.log(this.discount);
-      console.log(this.additionalInformation);
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);

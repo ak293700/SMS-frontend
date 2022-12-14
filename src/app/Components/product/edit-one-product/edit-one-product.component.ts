@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
 import axios, {AxiosResponse} from "axios";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
@@ -17,14 +17,20 @@ import {PatchBundleDto} from "../../../../Dtos/ProductDtos/BundleDto/PatchBundle
 import {PatchProductDto} from "../../../../Dtos/ProductDtos/PatchProductDto";
 import {PatchShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/PatchShopSpecificDto";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
+import {DiscountType} from "../../../../Enums/DiscountType";
+import {DialogService} from "primeng/dynamicdialog";
+import {DiscountFilterComponent} from "../../discount/discount-filter/discount-filter.component";
 
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
-  styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css']
+  styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css'],
+  providers: [DialogService]
 })
 export class EditOneProductComponent implements OnInit
 {
+  discountContextMenuItems: MenuItem[];
+
   otherProducts: IdNameDto[] = [];
 
   // @ts-ignore
@@ -33,21 +39,17 @@ export class EditOneProductComponent implements OnInit
   // @ts-ignore
   initialProduct: SimpleProductDto | BundleDto;
 
-  additionalInformation: {
-    manufacturers: IdNameDto[],
-    popularities: IdNameDto[],
-    availabilities: IdNameDto[]
-  } = {manufacturers: [], popularities: [], availabilities: []};
-
   initialAdditionalInformation: {
     manufacturers: IdNameDto[],
     popularities: IdNameDto[],
-    availabilities: IdNameDto[]
+    availabilities: IdNameDto[],
   } = {
     manufacturers: [],
     popularities: [],
-    availabilities: []
+    availabilities: [],
   };
+
+  additionalInformation = this.initialAdditionalInformation;
 
   // Use to ngModel some product fields
   dummyStruct: { manufacturer: IdNameDto, popularity: IdNameDto, availability: IdNameDto } = {
@@ -57,8 +59,22 @@ export class EditOneProductComponent implements OnInit
   }
 
   constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+              private confirmationService: ConfirmationService,
+              private dialogService: DialogService)
   {
+    this.discountContextMenuItems = [
+      {
+        label: 'Éditer',
+        icon: 'pi pi-pencil',
+        command: () => {
+          const ref = this.dialogService.open(DiscountFilterComponent, {
+            header: 'Remise',
+            width: '90%',
+          });
+        }
+      }
+    ];
+
     this.additionalInformation.popularities = ProductPopularity.toIdNameDto();
     this.additionalInformation.availabilities = Availability.toIdNameDto();
     this.initialAdditionalInformation = Operation.deepCopy(this.additionalInformation);
@@ -142,9 +158,14 @@ export class EditOneProductComponent implements OnInit
       .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
   }
 
-  get ProductType()
+  get ProductType(): typeof ProductType
   {
     return ProductType;
+  }
+
+  get DiscountType(): typeof DiscountType
+  {
+    return DiscountType;
   }
 
   Transform<T>(obj: any): T
@@ -355,4 +376,22 @@ export class EditOneProductComponent implements OnInit
     this.reformatProduct();
     return this._detectChanges(this.product, this.initialProduct, ['id']);
   }
+
+  discountValue(): number
+  {
+    if (this.product == null || this.simpleProduct.discount == null)
+      return 0;
+
+    return this.simpleProduct.discount.value;
+  }
+
+  /*get purchasePrice()
+  {
+    return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
+  }
+
+  set purchasePrice(value: number)
+  {
+
+  }*/
 }

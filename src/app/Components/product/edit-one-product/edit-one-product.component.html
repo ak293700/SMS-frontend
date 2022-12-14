@@ -1,3 +1,7 @@
+<p-dialog>
+  <span>Dialogue dynamique</span>
+
+</p-dialog>
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [parent]="this"
                    (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()">
@@ -45,6 +49,14 @@
                [placeholder]="initialProduct.imageLink"
                [(ngModel)]="product.imageLink" [pTooltip]="product.imageLink">
       </li>
+
+      <!-- <li class="field-item">
+         <label for="field-salePrice" class="text">Prix d'achat (HT)</label>
+         <p-inputNumber id="field-salePrice" mode="currency" currency="EUR"
+                        [placeholder]="purchasePrice.toString()"
+                        [(ngModel)]="purchasePrice" [readonly]="true">
+         </p-inputNumber>
+       </li>-->
     </ul>
   </div>
   <div *ngIf="product.productType === ProductType.Simple" id="common-field-simple-product">
@@ -66,6 +78,17 @@
         <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
                        [placeholder]="initialSimpleProduct.cataloguePrice.toString()"
                        [(ngModel)]="simpleProduct.cataloguePrice">
+        </p-inputNumber>
+      </li>
+      <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
+      <li #discount class="field-item">
+        <label for="field-discount" class="text">Remise</label>
+        <p-inputNumber id="field-discount" mode="decimal"
+                       [placeholder]="initialSimpleProduct.discount.value.toString()"
+                       [(ngModel)]="simpleProduct.discount.value"
+                       [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount.discountType)
+                        + '\n'
+                        + 'Prix net: ' + initialSimpleProduct.discount.isNetPrice">
         </p-inputNumber>
       </li>
       <li class="field-item">
@@ -101,7 +124,6 @@
     </ul>
   </div>
   <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
-
   </div>
 
   <div id="shop-specific-field"

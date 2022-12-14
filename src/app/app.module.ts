@@ -35,6 +35,7 @@ import {FilterTableComponent} from './Components/filter/filter-table/filter-tabl
 import {DiscountFilterComponent} from './Components/discount/discount-filter/discount-filter.component';
 import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/edit-one-discount.component';
 import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.component';
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.com
     AutoCompleteModule,
     ContextMenuModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    DialogModule
   ],
   providers: [
     {
