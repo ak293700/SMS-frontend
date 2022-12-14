@@ -19,23 +19,18 @@ export class FilterFieldsComponent
 
   async applyFilters()
   {
-    // if the filter is a date, we need to set the first and last second of the day
+    // reformat some filters
     this.filters.forEach((filter: any) =>
     {
+      // if the filter is a date, we need to set the first and last second of the day
       if (filter.type == 'date' && filter.value != null)
       {
-        /*filter.value.setHours(0, 0, 0, 0);
-        filter.value = filter.value.getTime();*/
-        console.log(filter.value);
         const range = filter.value;
         if (range[1] == null)
           range[1] = new Date(range[0]);
 
         range[0].setHours(0, 0, 0, 0);
         range[1].setHours(23, 59, 59, 999);
-
-        console.log(filter.value)
-
       }
     });
 
