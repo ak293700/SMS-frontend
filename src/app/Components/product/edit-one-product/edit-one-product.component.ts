@@ -401,11 +401,15 @@ export class EditOneProductComponent implements OnInit
 
   getSalePriceIt(index: number): number
   {
-    return this.purchasePrice * (1 + this.product.shopSpecifics[index].km);
+    return this.purchasePrice * (this.product.shopSpecifics[index].km)
+      * (1 - this.product.shopSpecifics[index].promotion);
   }
 
-  setSalePriceIt(index: number, value: any): void
+  setSalePriceIt(index: number, value: number): void
   {
-    this.product.shopSpecifics[index].km = value / this.purchasePrice - 1;
+    // this.product.shopSpecifics[index].km = value / this.purchasePrice;
+    // take the promotion into account
+    this.product.shopSpecifics[index].km =
+      value / (this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion));
   }
 }

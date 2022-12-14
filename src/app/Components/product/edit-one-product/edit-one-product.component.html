@@ -154,7 +154,7 @@
 
     <label class="text">Promotion</label>
     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-                   [useGrouping]="false" mode="decimal"
+                   [useGrouping]="false" mode="decimal" [step]="0.01"
                    [placeholder]="initialProduct.shopSpecifics[i].promotion.toString()"
                    [(ngModel)]="shopSpecific.promotion">
     </p-inputNumber>
