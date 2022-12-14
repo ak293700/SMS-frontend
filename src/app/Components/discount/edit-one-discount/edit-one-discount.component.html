@@ -1,7 +1,7 @@
 <app-edit-one-base *ngIf="discount !== undefined"
                    [otherDatas]="otherDiscounts" [data]="discount" [parent]="this"
                    (newSelection)="fetchDiscount($event)" (reset)="reset()" (save)="save()">
-  <h2 class="text" style="margin-bottom: 3rem">{{DiscountType.toString(discount.discountType)}}</h2>
+  <h2 class="text" style="margin-bottom: 3rem">{{ DiscountType.toString(discount.discountType) }}</h2>
 
   <div id="common-field">
     <ul class="field-container">
@@ -9,7 +9,7 @@
         <label for="field-productReference" class="text">Id</label>
         <input id="field-productReference" pInputText type="text"
                [placeholder]="initialDiscount.id"
-               [(ngModel)]="discount.id" readonly>
+               [(ngModel)]="discount.id" [disabled]="true">
       </li>
 
       <li class="field-item">
@@ -19,10 +19,9 @@
 
       <li class="field-item">
         <label class="text">Valeur</label>
-        <p-inputNumber [useGrouping]="false"
-                       [placeholder]="initialDiscount.value.toString()"
-                       [(ngModel)]="discount.value">
-        </p-inputNumber>
+        <input pInputText
+               [placeholder]="initialDiscount.value.toString()"
+               [(ngModel)]="discount.value"/>
       </li>
 
       <li class="field-item">
@@ -30,6 +29,14 @@
         <p-inputNumber [useGrouping]="false"
                        [placeholder]="initialDiscount.quantity?.toString() ?? 'Pas de quantité'"
                        [(ngModel)]="discount.quantity">
+        </p-inputNumber>
+      </li>
+
+      <li class="field-item">
+        <label class="text">Utilisé par</label>
+        <p-inputNumber [useGrouping]="false"
+                       [pTooltip]="discount.productsInUseReference.join(' ')"
+                       [(ngModel)]="discount.productsInUseReference.length" [disabled]="true">
         </p-inputNumber>
       </li>
 

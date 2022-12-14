@@ -7,4 +7,5 @@ export interface LiteDiscountDto
   value: number;
   isNetPrice: boolean;
   quantity?: number;
+  productsInUseReference: string[];
 }

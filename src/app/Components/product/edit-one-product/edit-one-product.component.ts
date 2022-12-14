@@ -21,6 +21,7 @@ import {DiscountType} from "../../../../Enums/DiscountType";
 import {DialogService} from "primeng/dynamicdialog";
 import {DiscountFilterComponent} from "../../discount/discount-filter/discount-filter.component";
 import {PricingTool} from "../../../../utils/PricingTool";
+import {CommonRequest} from "../../../../utils/CommonRequest";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -101,7 +102,6 @@ export class EditOneProductComponent implements OnInit
 
   async fetchProduct(id: number)
   {
-    console.log("fetchProduct", id);
     try
     {
       // Get the products itself
@@ -136,20 +136,10 @@ export class EditOneProductComponent implements OnInit
 
   async fetchManufacturers()
   {
-    try
-    {
-      // Get the products itself
-      const response = await axios.get(`${api}/Manufacturer/`);
-      if (!HttpTools.IsCode(response.status, 200))
-        return MessageServiceTools.httpFail(this.messageService, response);
+    const manufacturers: IdNameDto[] | void = await CommonRequest.fetchManufacturers(this.messageService);
 
-      this.additionalInformation.manufacturers = response.data;
-      // deep copy this.additionalInformation.manufacturers
-      this.initialAdditionalInformation.manufacturers = [...response.data];
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
+    this.additionalInformation.manufacturers = manufacturers;
+    this.initialAdditionalInformation.manufacturers = Operation.deepCopy(manufacturers);
   }
 
   // Look in additionalInformation
@@ -257,14 +247,14 @@ export class EditOneProductComponent implements OnInit
       if (Operation.countProperties(patchProduct) > 1)
       {
         const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
-        if (response.status !== 200)
+        if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
 
       for (const shopSpecificPatch of shopSpecificPatches)
       {
         const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
-        if (response.status !== 200)
+        if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
 
@@ -303,64 +293,10 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
   }
 
-  // keep is a list of properties that should not be compared
-  // should be keep in the diff
-  // shouldn't be counted in the diff
-  private _detectChanges(obj: any, initialObj: any, keep: string[]): { diffObj: any, count: number }
-  {
-    let count = 0;
-    let diffObj: any = {};
-
-    for (const key in obj)
-    {
-      if (keep.includes(key))
-      {
-        diffObj[key] = obj[key];
-        continue;
-      }
-
-      if (Operation.isPrimitive(obj[key]))
-      {
-        if (obj[key] !== initialObj[key])
-        {
-          diffObj[key] = obj[key];
-          count++;
-        }
-        continue;
-      }
-
-      if (Array.isArray(obj[key]))
-      {
-        diffObj[key] = [];
-        const initialCount = count;
-        for (let i = 0; i < obj[key].length; i++)
-        {
-          const changes = this._detectChanges(obj[key][i], initialObj[key][i], keep);
-          count += changes.count;
-          if (count > 0)
-            diffObj[key].push(changes.diffObj);
-        }
-        // We don't want to keep the array if there are no changes
-        if (initialCount === count)
-          delete diffObj[key];
-
-        continue
-      }
-
-      // Composed object
-      const changes = this._detectChanges(obj[key], initialObj[key], keep);
-      count += changes.count;
-      if (count > 0)
-        diffObj[key] = changes.diffObj;
-    }
-
-    return {diffObj: diffObj, count: count};
-  }
-
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatProduct();
-    return this._detectChanges(this.product, this.initialProduct, ['id']);
+    return Operation.detectChanges(this.product, this.initialProduct, ['id']);
   }
 
   discountValue(): number

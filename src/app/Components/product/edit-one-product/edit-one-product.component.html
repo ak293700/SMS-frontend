@@ -1,7 +1,8 @@
 <p-dialog>
+  <!--  Should be use to select a discount -->
   <span>Dialogue dynamique</span>
-
 </p-dialog>
+
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [parent]="this"
                    (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()">

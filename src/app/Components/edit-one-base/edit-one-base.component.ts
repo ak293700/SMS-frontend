@@ -23,7 +23,8 @@ export class EditOneBaseComponent
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService)
-  {}
+  {
+  }
 
   async goToData(id: number)
   {
@@ -70,7 +71,6 @@ export class EditOneBaseComponent
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    // ConfirmationServiceTools.new(this.confirmationService, this, this.reset, message, id);
     ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any) => {
       instance.resetEvent.emit()
     }, message, this);

@@ -36,5 +36,4 @@ export class FilterFieldsComponent
 
     this.applyFiltersEvent.emit();
   }
-
 }

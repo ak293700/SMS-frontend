@@ -7,12 +7,18 @@ import {
   LiteDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
 import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
+import {CommonRequest} from "../../../../utils/CommonRequest";
+import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
+import {
+  PatchDistributorDiscountDto
+} from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/PatchDistributorDiscountDto";
+import {PatchDiscountDto} from "../../../../Dtos/DiscountDtos/PatchDiscountDto";
+import {PatchDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/PatchDerogationDto";
 
-// TODO: Continue this later
 @Component({
   selector: 'app-edit-one-discount',
   templateUrl: './edit-one-discount.component.html',
@@ -57,7 +63,7 @@ export class EditOneDiscountComponent implements OnInit
 
     await this.fetchManufacturers(); // Do it first so the dummy struct is well initialized
     await this.fetchDistributors(); // Do it first so the dummy struct is well initialized
-    this.fetchOtherDiscounts(routedData.selectedIds);
+    await this.fetchOtherDiscounts(routedData.selectedIds);
     await this.fetchDiscount(routedData.selectedId);
   }
 
@@ -94,10 +100,59 @@ export class EditOneDiscountComponent implements OnInit
   }
 
   reset()
-  {}
+  {
+    this.discount = Operation.deepCopy(this.initialDiscount);
+    this.initDummyStruct();
+
+    this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
+  }
+
+  // This function does the actual work of saving the changes to the database
+  private async _save(changes: { diffObj: any, count: number })
+  {
+    let namespace: any = PatchDistributorDiscountDto;
+    let endpoint = 'distributorDiscount';
+    if (this.discount.discountType === DiscountType.Derogation)
+    {
+      namespace = PatchDerogationDto;
+      endpoint = 'derogation';
+    }
+
+    const patchProduct: PatchDiscountDto = namespace.build(changes.diffObj);
+
+    try
+    {
+      // Detect if patch is empty - more than 1 because of the id
+      if (Operation.countProperties(patchProduct) > 1)
+      {
+        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
+        if (!HttpTools.IsValid(response.status))
+          return MessageServiceTools.httpFail(this.messageService, response);
+      }
+
+      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+      await this.fetchDiscount(this.discount.id);
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
 
   save()
-  {}
+  {
+    const changes = this.detectChanges();
+    if (changes.count == 0)
+    {
+      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
+      return
+    }
+
+    ConfirmationServiceTools.new(this.confirmationService,
+      this,
+      this._save,
+      `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
+      changes);
+  }
 
   get derogation(): LiteDerogationDto
   {
@@ -120,6 +175,8 @@ export class EditOneDiscountComponent implements OnInit
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
+      response.data.forEach(d => d.name = `${d.name} (${d.id})`);
+
       // reorder otherProducts by as 'ids'
       this.otherDiscounts = response.data;
     } catch (e: any | AxiosError)
@@ -128,46 +185,40 @@ export class EditOneDiscountComponent implements OnInit
     }
   }
 
+  reformatDiscount()
+  {
+
+    if (this.discount.discountType == DiscountType.Derogation)
+    {
+      this.derogation.manufacturerId = this.dummyStruct.manufacturer.id;
+    }
+    else if (this.discount.discountType == DiscountType.Distributor)
+    {
+      this.distributorDiscount.distributorId = this.dummyStruct.distributor.id;
+    }
+  }
+
   detectChanges(): { diffObj: any, count: number }
   {
-    return {diffObj: {}, count: 0};
+    this.reformatDiscount();
+    return Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
   }
 
   async fetchManufacturers()
   {
-    try
-    {
-      // Get the products itself
-      const response = await axios.get(`${api}/Manufacturer/`);
-      if (!HttpTools.IsCode(response.status, 200))
-        return MessageServiceTools.httpFail(this.messageService, response);
+    const manufacturers: IdNameDto[] | void = await CommonRequest.fetchManufacturers(this.messageService);
 
-      this.additionalInformation.manufacturers = response.data;
-      // deep copy this.additionalInformation.manufacturers
-      this.initialAdditionalInformation.manufacturers = [...response.data];
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
+    this.additionalInformation.manufacturers = manufacturers;
+    this.initialAdditionalInformation.manufacturers = Operation.deepCopy(manufacturers);
   }
 
   async fetchDistributors()
   {
-    try
-    {
-      // Get the products itself
-      const response = await axios.get(`${api}/Distributor/`);
-      if (!HttpTools.IsCode(response.status, 200))
-        return MessageServiceTools.httpFail(this.messageService, response);
+    const distributors: IdNameDto[] | void = await CommonRequest.fetchDistributors(this.messageService);
 
-      this.initialAdditionalInformation.manufacturers = response.data;
-      this.additionalInformation.distributors = Operation.deepCopy(response.data);
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
+    this.additionalInformation.distributors = distributors;
+    this.initialAdditionalInformation.distributors = Operation.deepCopy(distributors);
   }
-
 
   private initDummyStruct()
   {

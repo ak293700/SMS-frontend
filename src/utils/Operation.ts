@@ -45,4 +45,60 @@ export class Operation
         return value;
     return undefined;
   }
+
+  // keep is a list of properties that should not be compared
+  // should be keep in the diff
+  // shouldn't be counted in the diff
+  static detectChanges(obj: any, initialObj: any, keep: string[]): { diffObj: any, count: number }
+  {
+    let count = 0;
+    let diffObj: any = {};
+
+    for (const key in obj)
+    {
+      if (keep.includes(key))
+      {
+        diffObj[key] = obj[key];
+        continue;
+      }
+
+      if (Operation.isPrimitive(obj[key]))
+      {
+        if (obj[key] !== initialObj[key])
+        {
+          diffObj[key] = obj[key];
+          count++;
+        }
+        continue;
+      }
+
+      if (Array.isArray(obj[key]))
+      {
+        diffObj[key] = [];
+        const initialCount = count;
+        for (let i = 0; i < obj[key].length; i++)
+        {
+          const changes = this.detectChanges(obj[key][i], initialObj[key][i], keep);
+          count += changes.count;
+          if (count > 0)
+            diffObj[key].push(changes.diffObj);
+        }
+        // We don't want to keep the array if there are no changes
+        if (initialCount === count)
+          delete diffObj[key];
+
+        continue
+      }
+
+      // Composed object
+      const changes = this.detectChanges(obj[key], initialObj[key], keep);
+      count += changes.count;
+      if (count > 0)
+        diffObj[key] = changes.diffObj;
+    }
+
+    return {diffObj: diffObj, count: count};
+  }
+
+
 }

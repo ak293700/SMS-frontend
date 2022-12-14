@@ -240,7 +240,7 @@ export class DiscountFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id}
+      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id.value}
     });
   }
 
