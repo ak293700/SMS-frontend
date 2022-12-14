@@ -20,6 +20,7 @@ import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceToo
 import {DiscountType} from "../../../../Enums/DiscountType";
 import {DialogService} from "primeng/dynamicdialog";
 import {DiscountFilterComponent} from "../../discount/discount-filter/discount-filter.component";
+import {PricingTool} from "../../../../utils/PricingTool";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -227,22 +228,6 @@ export class EditOneProductComponent implements OnInit
     this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
   }
 
-  /*reset()
-  {
-    const changes = this.detectChanges();
-    if (changes.count == 0)
-    {
-      this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Aucune modification'});
-      return
-    }
-
-    const message = changes.count == 1
-      ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
-      : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
-
-    ConfirmationServiceTools.newComplexFunction(this.confirmationService, this._reset, message);
-  }*/
-
   // This function does the actual work of saving the changes to the database
   private async _save(changes: { diffObj: any, count: number })
   {
@@ -409,14 +394,33 @@ export class EditOneProductComponent implements OnInit
       ? this.simpleProduct.deee
       : 0;
 
-    return this.purchasePrice * (this.product.shopSpecifics[index].km)
-      * (1 - this.product.shopSpecifics[index].promotion)
-      + deee;
+    return PricingTool
+      .calculateSalePriceIt(
+        this.purchasePrice,
+        this.product.shopSpecifics[index].km,
+        this.product.shopSpecifics[index].promotion,
+        deee);
   }
 
   setSalePriceIt(index: number, value: number): void
   {
     this.product.shopSpecifics[index].km =
-      value / (this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion));
+      value /
+      (this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion) * 1.2);
+  }
+
+  // return the margin rate in percent
+  getMarginRate(index: number)
+  {
+    const salePriceEt = this.getSalePriceIt(index) / 1.2;
+    return (PricingTool.calculateMarginRate(salePriceEt, this.purchasePrice) * 100).toFixed(2);
+  }
+
+  setMarginRate(index: number, value: number): void
+  {
+    const marginRate = value / 100;
+    const salePriceEt = this.purchasePrice / (1 - marginRate);
+
+    this.setSalePriceIt(index, salePriceEt * 1.2);
   }
 }

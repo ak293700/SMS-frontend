@@ -1,5 +1,15 @@
 export class HttpTools
 {
+  static IsValid(code: number): boolean
+  {
+    return this.IsCode(code, 200);
+  }
+
+  static IsError(code: number): boolean
+  {
+    return this.IsCode(code, 400);
+  }
+
   static IsCode(code: number, expectedCode: number): boolean
   {
     return this.getCode(code) == expectedCode;

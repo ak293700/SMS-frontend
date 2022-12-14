@@ -21,8 +21,12 @@
         <input [(ngModel)]="filter.value[1]" [disabled]="!filter.active" class="half-width"
                pInputText type="number"/>
       </div>
+
       <p-calendar *ngSwitchCase="'date'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-                  dateFormat="dd.mm.yy" id="filter-{{filter.label}}" selectionMode="range"></p-calendar>
+                  [showIcon]="true"
+                  dateFormat="dd/mm/yy" id="filter-{{filter.label}}" selectionMode="range">
+
+      </p-calendar>
 
       <p-autoComplete *ngSwitchCase="'dropdown'" [(ngModel)]="filter.value" [disabled]="!filter.active"
                       id="filter-{{filter.label}}" [suggestions]="filter.others"

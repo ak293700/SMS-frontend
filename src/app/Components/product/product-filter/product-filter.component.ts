@@ -14,6 +14,7 @@ import {ProductType} from "../../../../Enums/ProductType";
 import {ProductPopularity} from "../../../../Enums/ProductPopularity";
 import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
+import {HttpTools} from "../../../../utils/HttpTools";
 
 /*
   * This component is used to display the filter form.
@@ -190,18 +191,19 @@ export class ProductFilterComponent implements OnInit
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
+    console.log(filters);
     try
     {
       let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
-      if (response.status !== 200)
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.products.filteredIds = response.data;
 
       await this.loadLazy({first: 0, rows: this.rowsNumber});
-    } catch (e: any)
+    } catch (e: any | AxiosError)
     {
-      MessageServiceTools.networkError(this.messageService, e.message);
+      MessageServiceTools.axiosFail(this.messageService, e);
     }
   }
 
@@ -303,7 +305,8 @@ export class ProductFilterComponent implements OnInit
           tooltip = shopSpecific
             .map((ss) =>
             {
-              const marginRate: number = (ss.salePriceIt / 1.2 - product.purchasePrice) / salePriceEt;
+              const salePriceEt: number = ss.salePriceIt / 1.2;
+              const marginRate: number = (salePriceEt - product.purchasePrice) / salePriceEt;
               return `${Shop.toString(ss.shop)}: ${(marginRate * 100).toFixed(2)}%`;
             })
             .join("\n");

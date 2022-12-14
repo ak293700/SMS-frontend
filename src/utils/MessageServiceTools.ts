@@ -22,6 +22,9 @@ export class MessageServiceTools
     if (axiosError.response && HttpTools.IsCode(axiosError.response.status, 400)) // @ts-ignore
       MessageServiceTools.httpFail(messageService, axiosError.response);
     else
-      MessageServiceTools.networkError(messageService, axiosError.message);
+    {
+      // @ts-ignore
+      MessageServiceTools.networkError(messageService, axiosError?.response?.data.toString() ?? axiosError.message);
+    }
   }
 }
