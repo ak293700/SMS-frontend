@@ -4,7 +4,7 @@ import {LiteDiscountDto} from "../../DiscountDtos/LIteDiscountDto";
 
 export interface SimpleProductDto extends ProductDto
 {
-  discount: LiteDiscountDto;
+  discount?: LiteDiscountDto;
   supplierReference: string;
   pureReference: string;
   cataloguePrice: number;

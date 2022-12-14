@@ -385,13 +385,27 @@ export class EditOneProductComponent implements OnInit
     return this.simpleProduct.discount.value;
   }
 
-  /*get purchasePrice()
+  // Smart fields
+  get purchasePrice()
   {
     return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
   }
 
   set purchasePrice(value: number)
   {
+    if (this.simpleProduct.discount == null)
+      return;
 
-  }*/
+    this.simpleProduct.discount.value = 1 - value / this.simpleProduct.cataloguePrice;
+  }
+
+  getSalePriceIt(index: number): number
+  {
+    return this.purchasePrice * (1 + this.product.shopSpecifics[index].km);
+  }
+
+  setSalePriceIt(index: number, value: any): void
+  {
+    this.product.shopSpecifics[index].km = value / this.purchasePrice - 1;
+  }
 }
