@@ -61,6 +61,12 @@ export class DiscountFilterComponent implements OnInit
   {
     this.discounts.header = [
       {
+        label: 'Id',
+        field: 'id',
+        type: FieldType.Integer,
+        suffix: '',
+      },
+      {
         label: 'Type de remise',
         field: 'discountType',
         type: FieldType.None,
