@@ -65,19 +65,19 @@ export class CommonRequest
       endpoint = 'derogation';
     }
 
-    const patchProduct: PatchDiscountDto = namespace.build(diffObj);
+    const patchDiscount: PatchDiscountDto = namespace.build(diffObj);
 
     // remove distributorIds because it s done in a different way
-    const derogation = patchProduct as PatchDerogationDto;
+    const derogation = patchDiscount as PatchDerogationDto;
     const distributorIds = derogation.distributorIds;
     delete derogation.distributorIds;
 
     try
     {
       // Detect if patch is empty - more than 1 because of the id
-      if (Operation.countProperties(patchProduct) > 1)
+      if (Operation.countProperties(patchDiscount) > 1)
       {
-        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
+        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchDiscount);
         if (!HttpTools.IsValid(response.status))
         {
           MessageServiceTools.httpFail(messageService, response);

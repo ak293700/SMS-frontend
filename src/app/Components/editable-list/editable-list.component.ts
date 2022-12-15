@@ -45,7 +45,6 @@ export class EditableListComponent implements OnInit, OnChanges
   isDialogVisible: boolean = false;
 
   // @ts-ignore
-
   currentItem: ICompleteListItem;
   private uniqueId: number = 0;
 
@@ -157,6 +156,7 @@ export class EditableListComponent implements OnInit, OnChanges
   {
     const items = this._items.map((item: ICompleteListItem): IListItem =>
     {
+      console.log(item);
       const tmp: any = Operation.deepCopy(item);
       delete tmp.uniqueId;
       delete tmp.tooltip;

@@ -23,6 +23,7 @@ import {CommonRequest} from "../../../../utils/CommonRequest";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
+import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -160,7 +161,7 @@ export class EditOneProductComponent implements OnInit
         .map(item => ({
           id: item.productId,
           label: Operation.first(this.allProductReferences, p => p.id == item.productId).name,
-          quantity: item.quantity
+          additionalFields: {quantity: item.quantity}
         }));
     }
   }
@@ -280,6 +281,12 @@ export class EditOneProductComponent implements OnInit
         shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
     }
 
+    console.log(patchProduct);
+    const bundleItems: CreateBundleItemDto[] = changes.diffObj.items;
+    if (bundleItems !== undefined) // @ts-ignore
+      bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
+    console.log(bundleItems);
+
     try
     {
       // Detect if patch is empty - more than 1 because of the id
@@ -293,6 +300,13 @@ export class EditOneProductComponent implements OnInit
       for (const shopSpecificPatch of shopSpecificPatches)
       {
         const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
+        if (!HttpTools.IsValid(response.status))
+          return MessageServiceTools.httpFail(this.messageService, response);
+      }
+
+      if (this.product.productType === ProductType.Bundle && bundleItems !== undefined)
+      {
+        const response: AxiosResponse = await axios.post(`${api}/bundle/items/${patchProduct.id}`, bundleItems);
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
@@ -404,6 +418,15 @@ export class EditOneProductComponent implements OnInit
 
     if (this.product.productType == ProductType.Simple)
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
+    else if (this.product.productType == ProductType.Bundle)
+    {
+      this.bundle.items = this.dummyStruct.bundleItems
+        .map((item: IListItem) => {
+          console.log(item);
+
+          return {id: -1, productId: item.id, quantity: item.additionalFields.quantity}
+        }); // bundle items
+    }
   }
 
   detectChanges(): IChanges
@@ -472,7 +495,6 @@ export class EditOneProductComponent implements OnInit
 
     this.setSalePriceIt(index, salePriceEt * 1.2);
   }
-
 
   selectNewDiscount(selected: any)
   {
