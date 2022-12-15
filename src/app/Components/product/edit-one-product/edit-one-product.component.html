@@ -1,9 +1,11 @@
+<!--
 <p-dialog [(visible)]="discountOverlayVisible"
           [maximizable]="true"
           [style]="{'width':'100vw', 'height': '100vh'}"
           [draggable]="false" [modal]="true">
   <app-discount-filter (onSelectData)="selectNewDiscount($event)"></app-discount-filter>
 </p-dialog>
+-->
 
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [parent]="this"

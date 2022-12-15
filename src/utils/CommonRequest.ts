@@ -66,6 +66,12 @@ export class CommonRequest
     }
 
     const patchProduct: PatchDiscountDto = namespace.build(diffObj);
+
+    // remove distributorIds because it s done in a different way
+    const derogation = patchProduct as PatchDerogationDto;
+    const distributorIds = derogation.distributorIds;
+    delete derogation.distributorIds;
+
     try
     {
       // Detect if patch is empty - more than 1 because of the id
@@ -78,8 +84,18 @@ export class CommonRequest
           return false;
         }
       }
-      else
-        return false;
+
+      if (discountType === DiscountType.Derogation && distributorIds != undefined)
+      { // if the discount is a derogation and change the distributors linked to it, then we update them
+        const response: AxiosResponse = await axios.post(`${api}/derogation/distributors/${derogation.id}`,
+          distributorIds);
+
+        if (!HttpTools.IsValid(response.status))
+        {
+          MessageServiceTools.httpFail(messageService, response);
+          return false;
+        }
+      }
 
     } catch (e: any | AxiosError)
     {

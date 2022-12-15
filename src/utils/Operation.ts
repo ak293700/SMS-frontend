@@ -1,3 +1,5 @@
+import {IChanges} from "../Interfaces/IChanges";
+
 export class Operation
 {
   static deepCopy(x: any): any
@@ -59,62 +61,47 @@ export class Operation
   // keep is a list of properties that should not be compared
   // should be keep in the diff
   // shouldn't be counted in the diff
-  static detectChanges(obj: any, initialObj: any, keep: string[]): { diffObj: any, count: number }
+  static detectChanges(obj: any, initialObj: any, keep: string[] = []): IChanges
   {
-    let count = 0;
-    let diffObj: any = {};
 
     if (Operation.isPrimitive(obj))
     {
       if (obj !== initialObj)
-      {
-        diffObj = obj;
-        count++;
-      }
-      return {diffObj, count};
+        return {diffObj: obj, count: 1};
+
+      return {diffObj: undefined, count: 0};
     }
 
+
+    if (Array.isArray(obj)) // array are either equal or not
+    {
+      // Not the same length means the array has changed
+      if (obj.length !== initialObj.length)
+        return {diffObj: obj, count: 1};
+
+      // sort the arrays
+      let sortedObj = obj.sort();
+      let sortedInitialObj = initialObj.sort();
+
+      for (let i = 0; i < obj.length; i++)
+      {
+        const changes = this.detectChanges(sortedObj[i], sortedInitialObj[i], keep);
+        if (changes.count > 0)
+          return {diffObj: obj, count: 1};
+      }
+
+      return {diffObj: undefined, count: 0};
+    }
+
+    let count = 0;
+    let diffObj: any = {};
+    // if obj is an object
     for (const key in obj)
     {
       if (keep.includes(key))
       {
         diffObj[key] = obj[key];
         continue;
-      }
-
-      if (Array.isArray(obj[key]))
-      {
-        // Not the same length means the array has changed
-        if (obj[key].length !== initialObj[key].length)
-        {
-          diffObj[key] = obj[key];
-          count++;
-          continue;
-        }
-
-        // sort the arrays
-        let sortedObj = obj[key].sort();
-        let sortedInitialObj = initialObj[key].sort();
-
-        diffObj[key] = [];
-        const initialCount = count;
-
-        for (let i = 0; i < obj[key].length; i++)
-        {
-          const changes = this.detectChanges(sortedObj[i], sortedInitialObj[i], keep);
-          count += changes.count;
-          if (count > 0)
-            diffObj[key].push(changes.diffObj);
-        }
-        // We don't want to keep the array if there are no changes
-        if (initialCount === count)
-          delete diffObj[key];
-
-        // TODO: perhaps let the choice
-        if (count > initialCount)
-          count = initialCount + 1;
-
-        continue
       }
 
       // Composed object

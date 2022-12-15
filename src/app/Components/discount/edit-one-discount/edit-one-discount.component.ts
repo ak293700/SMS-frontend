@@ -62,6 +62,7 @@ export class EditOneDiscountComponent implements OnInit
     await this.fetchDistributors(); // Do it first so the dummy struct is well initialized
     await this.fetchOtherDiscounts(routedData.selectedIds);
     await this.fetchDiscount(routedData.selectedId);
+
   }
 
   get DiscountType(): typeof DiscountType
@@ -180,9 +181,9 @@ export class EditOneDiscountComponent implements OnInit
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatDiscount();
-    console.log((this.initialDiscount as LiteDerogationDto).distributorIds)
-    console.log(this.derogation.distributorIds)
-    return Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
+    const res = Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
+    console.log(res);
+    return res;
   }
 
   async fetchManufacturers()
