@@ -58,7 +58,7 @@
         <label for="field-distributors" class="text">Distributeurs autorisé</label>
         <app-editable-list id="field-distributors"
                            [suggestions]="additionalInformation.distributors"
-                           [items]="dummyStruct.distributors">
+                           [(items)]="dummyStruct.distributors">
         </app-editable-list>
       </li>
     </ul>
@@ -77,5 +77,4 @@
       </li>
     </ul>
   </div>
-  <!--<div *ngIf="discount.productType === ProductType.Bundle" id="common-field-bundle"></div>-->
 </app-edit-one-base>

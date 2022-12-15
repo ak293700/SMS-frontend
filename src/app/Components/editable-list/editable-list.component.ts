@@ -6,20 +6,17 @@ import {Operation} from "../../../utils/Operation";
 
 export interface IListItem extends IEnumerableByString
 {
-  uniqueId?: number;
   id: number;
   label: string; // label display on the item
   additionalFields?: any; // map of key=label, value=value
 }
 
-//
-// interface ICompleteListItem extends IListItem
-// {
-//   uniqueId?: number;
-//   id: number;
-//   label: string;
-//   additionalFields?: any; // map of key=label, value=value
-// }
+
+interface ICompleteListItem extends IListItem
+{
+  uniqueId: number;
+  tooltip: string;
+}
 
 
 @Component({
@@ -34,9 +31,10 @@ export class EditableListComponent implements OnInit, OnChanges
   selectorItem: IdNameDto = {id: 0, name: ''};
 
   @Input() items: IListItem[] = [];
-  @Output('items') itemsEvent: EventEmitter<IListItem[]> = new EventEmitter<IListItem[]>();
+  @Output() itemsChange: EventEmitter<IListItem[]> = new EventEmitter<IListItem[]>();
 
-  // private _items: ICompleteListItem[] = [];
+  // We use another object to store the items, because we need to add some properties to the items
+  _items: ICompleteListItem[] = [];
 
   @Input() additionalFields: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
@@ -48,7 +46,7 @@ export class EditableListComponent implements OnInit, OnChanges
 
   // @ts-ignore
 
-  currentItem: IListItem;
+  currentItem: ICompleteListItem;
   private uniqueId: number = 0;
 
   constructor()
@@ -63,9 +61,7 @@ export class EditableListComponent implements OnInit, OnChanges
 
     // if the additional fields are not initialized, we initialize them
 
-    console.log(this.items);
     this.initItem();
-
   }
 
   ngOnChanges(changes: SimpleChanges): void
@@ -76,16 +72,23 @@ export class EditableListComponent implements OnInit, OnChanges
   initItem()
   {
     this.uniqueId = 0;
-    this.items.forEach((item: IListItem) =>
+
+    // initialize _items from items
+    this._items = this.items.map((item: IListItem): ICompleteListItem =>
     {
-      item.uniqueId = this.uniqueId++;
-      if (item.additionalFields == null)
-        item.additionalFields = {};
+      const _item: ICompleteListItem = Operation.deepCopy(item);
+
+      _item.uniqueId = this.uniqueId++;
+      _item.tooltip = '';
+      if (_item.additionalFields == null)
+        _item.additionalFields = {};
       this.additionalFields.forEach((field: any) =>
       {
-        if (item.additionalFields[field.fieldName] == null)
-          item.additionalFields[field.fieldName] = field.default;
+        if (_item.additionalFields[field.fieldName] == null)
+          _item.additionalFields[field.fieldName] = field.default;
       });
+
+      return _item;
     });
   }
 
@@ -97,25 +100,25 @@ export class EditableListComponent implements OnInit, OnChanges
 
   onSelect(event: any)
   {
-    if (this.unique && this.items.find((item: IListItem) => item.id == event.id) != null)
+    if (this.unique && this._items.find((item: IListItem) => item.id == event.id) != null)
       return;
 
-    const newItem: IListItem = {id: event.id, label: event.name, uniqueId: this.uniqueId++};
+    const newItem: ICompleteListItem = {id: event.id, label: event.name, uniqueId: this.uniqueId++, tooltip: ''};
     if (this.additionalFields.length > 0)
     {
       newItem.additionalFields = {};
       this.additionalFields.forEach((field: any) => newItem.additionalFields[field.fieldName] = (field.default ?? null));
     }
 
-    this.items.push(newItem);
-
-    console.log(this.items);
+    this._items.push(newItem);
+    this.emitItemsChange();
   }
 
   deleteItem()
   {
-    const index = this.items.findIndex((item: IListItem) => item.uniqueId == this.currentItem.uniqueId);
-    this.items.splice(index, 1);
+    const index = this._items.findIndex((item: ICompleteListItem) => item.uniqueId == this.currentItem.uniqueId);
+    this._items.splice(index, 1);
+    this.emitItemsChange();
   }
 
   editItem()
@@ -138,10 +141,24 @@ export class EditableListComponent implements OnInit, OnChanges
     return tooltip;
   }
 
-  onContextMenu(event: any, item: IListItem)
+  onContextMenu(event: any, item: ICompleteListItem)
   {
     console.log('onContextMenu');
-    this.currentItem = Operation.first(this.items, (i: IListItem) => i.uniqueId == item.uniqueId);
+    this.currentItem = Operation.first(this._items, (i: ICompleteListItem) => i.uniqueId == item.uniqueId);
     console.log('this.currentItem', this.currentItem);
+  }
+
+  emitItemsChange()
+  {
+    const items = this._items.map((item: ICompleteListItem): IListItem =>
+    {
+      const tmp: any = Operation.deepCopy(item);
+      delete tmp.uniqueId;
+      delete tmp.tooltip;
+      return tmp as IListItem;
+    });
+
+    console.log('items', items);
+    this.itemsChange.emit(items);
   }
 }

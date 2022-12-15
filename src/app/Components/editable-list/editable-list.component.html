@@ -16,7 +16,7 @@
 
 <div class="editable-list-container">
   <ul class="item-container">
-    <li *ngFor="let item of items" [pTooltip]="getTooltip(item)" class="item-item"
+    <li *ngFor="let item of _items" [pTooltip]="getTooltip(item)" class="item-item"
         (contextmenu)="onContextMenu($event, item)">
       {{item.label}}
     </li>
