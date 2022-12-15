@@ -1,4 +1,4 @@
-<p-contextMenu #contextMenu [model]="menuItems" [global]="true"></p-contextMenu>
+<p-contextMenu [model]="menuItems" [global]="true"></p-contextMenu>
 
 <p-dialog *ngIf="currentItem !== undefined" [(visible)]="isDialogVisible" [modal]="true">
   <ul class="field-container">
@@ -14,7 +14,7 @@
   </ul>
 </p-dialog>
 
-<div id="container">
+<div class="editable-list-container">
   <ul class="item-container">
     <li *ngFor="let item of items" [pTooltip]="getTooltip(item)" class="item-item"
         (contextmenu)="onContextMenu($event, item)">
@@ -22,7 +22,7 @@
     </li>
   </ul>
 
-  <p-autoComplete id="selector" dataKey="id" [style.min-width.px]="250"
+  <p-autoComplete id="selector" dataKey="id"
                   field="name" [suggestions]="suggestions"
                   (completeMethod)="completeMethod($event)"
                   [(ngModel)]="selectorItem"

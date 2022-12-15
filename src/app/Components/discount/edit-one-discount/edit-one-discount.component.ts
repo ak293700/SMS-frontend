@@ -13,6 +13,7 @@ import {api} from "../../../GlobalUsings";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
+import {IListItem} from "../../editable-list/editable-list.component";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -31,9 +32,10 @@ export class EditOneDiscountComponent implements OnInit
   initialAdditionalInformation: { manufacturers: IdNameDto[], distributors: IdNameDto[] }
     = {manufacturers: [], distributors: []};
 
-  dummyStruct: { manufacturer: IdNameDto, distributor: IdNameDto } = {
+  dummyStruct: { manufacturer: IdNameDto, distributor: IdNameDto, distributors: IListItem[] } = {
     manufacturer: {id: 0, name: ""},
     distributor: {id: 0, name: ""},
+    distributors: [],
   }
 
   additionalInformation = this.initialAdditionalInformation;
@@ -47,7 +49,7 @@ export class EditOneDiscountComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [1, 2, 3];
+      routedData.selectedIds = [3890, 1, 2];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -87,6 +89,7 @@ export class EditOneDiscountComponent implements OnInit
       this.initialDiscount.discountType = getTypeResponse.data; // we set the type because it is not send by the server
       this.discount = Operation.deepCopy(this.initialDiscount);
 
+      console.log(this.discount);
       this.initDummyStruct();
     } catch (e: any | AxiosError)
     {
@@ -201,6 +204,10 @@ export class EditOneDiscountComponent implements OnInit
     {
       this.dummyStruct.manufacturer = this.additionalInformation.manufacturers
         .find(x => x.id == this.derogation.manufacturerId)!;
+
+      this.dummyStruct.distributors = this.additionalInformation.distributors
+        .filter(x => this.derogation.distributorIds.includes(x.id))
+        .map(d => {return {id: d.id, label: d.name}});
     }
 
     if (this.discount.discountType == DiscountType.Distributor)

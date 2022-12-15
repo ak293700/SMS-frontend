@@ -1,4 +1,9 @@
-#container {
+:host {
+  width: inherit;
+}
+
+
+.editable-list-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,9 +11,9 @@
 
   position: relative;
 
-  background-color: var(--main-color);
+  background-color: transparent;
   height: 100%;
-  width: 100%;
+  width: inherit;
 }
 
 .item-container {
@@ -30,4 +35,6 @@
   padding: 12px;
   border-radius: 6px;
   cursor: pointer;
+
+  font-family: var(--default-font-family);
 }
