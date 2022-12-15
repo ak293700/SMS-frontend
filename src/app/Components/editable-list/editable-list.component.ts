@@ -78,8 +78,6 @@ export class EditableListComponent implements OnInit, OnChanges
     {
       const _item: ICompleteListItem = Operation.deepCopy(item);
 
-      _item.uniqueId = this.uniqueId++;
-      _item.tooltip = '';
       if (_item.additionalFields == null)
         _item.additionalFields = {};
       this.additionalFields.forEach((field: any) =>
@@ -88,6 +86,8 @@ export class EditableListComponent implements OnInit, OnChanges
           _item.additionalFields[field.fieldName] = field.default;
       });
 
+      _item.uniqueId = this.uniqueId++;
+      _item.tooltip = this.getTooltip(_item);
       return _item;
     });
   }
@@ -110,6 +110,7 @@ export class EditableListComponent implements OnInit, OnChanges
       this.additionalFields.forEach((field: any) => newItem.additionalFields[field.fieldName] = (field.default ?? null));
     }
 
+    newItem.tooltip = this.getTooltip(newItem);
     this._items.push(newItem);
     this.emitItemsChange();
   }
@@ -125,6 +126,12 @@ export class EditableListComponent implements OnInit, OnChanges
   {
     this.isDialogVisible = true;
   }
+
+  onCloseEditDialog()
+  {
+    this.emitItemsChange();
+  }
+
 
   getTooltip(item: IListItem)
   {
@@ -143,9 +150,7 @@ export class EditableListComponent implements OnInit, OnChanges
 
   onContextMenu(event: any, item: ICompleteListItem)
   {
-    console.log('onContextMenu');
     this.currentItem = Operation.first(this._items, (i: ICompleteListItem) => i.uniqueId == item.uniqueId);
-    console.log('this.currentItem', this.currentItem);
   }
 
   emitItemsChange()
@@ -158,7 +163,6 @@ export class EditableListComponent implements OnInit, OnChanges
       return tmp as IListItem;
     });
 
-    console.log('items', items);
     this.itemsChange.emit(items);
   }
 }

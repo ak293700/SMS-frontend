@@ -1,22 +1,22 @@
 <p-contextMenu [model]="menuItems" [global]="true"></p-contextMenu>
 
-<p-dialog *ngIf="currentItem !== undefined" [(visible)]="isDialogVisible" [modal]="true">
+<p-dialog *ngIf="currentItem !== undefined" [(visible)]="isDialogVisible" [modal]="true" (onHide)="onCloseEditDialog()">
   <ul class="field-container">
     <li *ngFor="let additionalField of additionalFields" [ngSwitch]="additionalField.type" class="field-item">
       <label for="field-{{additionalField.label}}" class="text">{{additionalField.label}}</label>
       <p-inputNumber *ngSwitchCase="'number'" id="field-{{additionalField.label}}"
                      [useGrouping]="false"
-                     [(ngModel)]="currentItem.additionalFields[additionalField.label]">
+                     [(ngModel)]="currentItem.additionalFields[additionalField.fieldName]">
       </p-inputNumber>
       <input pInputText *ngSwitchCase="'text'" id="field-{{additionalField.label}}"
-             [(ngModel)]="currentItem.additionalFields[additionalField.label]"
+             [(ngModel)]="currentItem.additionalFields[additionalField.fieldName]"
              type="text"/>
   </ul>
 </p-dialog>
 
 <div class="editable-list-container">
   <ul class="item-container">
-    <li *ngFor="let item of _items" [pTooltip]="getTooltip(item)" class="item-item"
+    <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item"
         (contextmenu)="onContextMenu($event, item)">
       {{item.label}}
     </li>
