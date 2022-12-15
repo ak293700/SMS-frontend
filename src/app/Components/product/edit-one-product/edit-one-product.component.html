@@ -124,8 +124,6 @@
                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
         </p-autoComplete>
       </li>
-
-
     </ul>
   </div>
   <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
@@ -134,7 +132,7 @@
         <label for="field-bundle-items" class="text">Composant</label>
         <app-editable-list id="field-bundle-items" [suggestions]="allProductReferences"
                            [items]="dummyStruct.bundleItems"
-        >
+                           [additionalFields]="bundleItemAdditionalField">
         </app-editable-list>
       </li>
     </ul>
@@ -197,4 +195,7 @@
   </div>
 </app-edit-one-base>
 
-<div *ngIf="product === undefined">Chargement ...</div>
+<i *ngIf="product == undefined"
+   class="pi pi-spin pi-spinner"
+   style="font-size: 2rem; position: absolute; left: 50%; top: 50%; translate: -50% -50%">
+</i>

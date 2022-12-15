@@ -8,9 +8,18 @@ export interface IListItem extends IEnumerableByString
 {
   uniqueId?: number;
   id: number;
-  label: string;
+  label: string; // label display on the item
   additionalFields?: any; // map of key=label, value=value
 }
+
+//
+// interface ICompleteListItem extends IListItem
+// {
+//   uniqueId?: number;
+//   id: number;
+//   label: string;
+//   additionalFields?: any; // map of key=label, value=value
+// }
 
 
 @Component({
@@ -25,9 +34,11 @@ export class EditableListComponent implements OnInit, OnChanges
   selectorItem: IdNameDto = {id: 0, name: ''};
 
   @Input() items: IListItem[] = [];
-  @Output('items') itemsEvent = new EventEmitter<IListItem[]>();
+  @Output('items') itemsEvent: EventEmitter<IListItem[]> = new EventEmitter<IListItem[]>();
 
-  @Input() additionalFields: { label: string, type: string, default?: any }[] = [];
+  // private _items: ICompleteListItem[] = [];
+
+  @Input() additionalFields: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
   @Input() unique: boolean = true;
 
@@ -41,17 +52,20 @@ export class EditableListComponent implements OnInit, OnChanges
   private uniqueId: number = 0;
 
   constructor()
-  {}
+  {
+  }
 
   ngOnInit(): void
   {
     if (this.additionalFields.length > 0)
-      this.menuItems.push({label: 'Éditer', icon: 'pi pi-pencil', command: (event) => this.editItem(event)});
-    this.menuItems.push({label: 'Supprimer', icon: 'pi pi-trash', command: (event) => this.deleteItem(event)});
+      this.menuItems.push({label: 'Éditer', icon: 'pi pi-pencil', command: () => this.editItem()});
+    this.menuItems.push({label: 'Supprimer', icon: 'pi pi-trash', command: () => this.deleteItem()});
 
     // if the additional fields are not initialized, we initialize them
 
+    console.log(this.items);
     this.initItem();
+
   }
 
   ngOnChanges(changes: SimpleChanges): void
@@ -69,12 +83,11 @@ export class EditableListComponent implements OnInit, OnChanges
         item.additionalFields = {};
       this.additionalFields.forEach((field: any) =>
       {
-        if (item.additionalFields[field.label] == null)
-          item.additionalFields[field.label] = field.default;
+        if (item.additionalFields[field.fieldName] == null)
+          item.additionalFields[field.fieldName] = field.default;
       });
     });
   }
-
 
   completeMethod(event: any)
   {
@@ -87,33 +100,26 @@ export class EditableListComponent implements OnInit, OnChanges
     if (this.unique && this.items.find((item: IListItem) => item.id == event.id) != null)
       return;
 
-    const newItem: IListItem = {id: event.id, label: event.name};
+    const newItem: IListItem = {id: event.id, label: event.name, uniqueId: this.uniqueId++};
     if (this.additionalFields.length > 0)
     {
       newItem.additionalFields = {};
-      this.additionalFields.forEach((field: any) => newItem.additionalFields[field.label] = (field.default ?? null));
+      this.additionalFields.forEach((field: any) => newItem.additionalFields[field.fieldName] = (field.default ?? null));
     }
 
-    this.items.push({uniqueId: this.uniqueId++, id: event.id, label: event.name});
+    this.items.push(newItem);
+
+    console.log(this.items);
   }
 
-  deleteItem(event: any)
+  deleteItem()
   {
     const index = this.items.findIndex((item: IListItem) => item.uniqueId == this.currentItem.uniqueId);
     this.items.splice(index, 1);
   }
 
-  editItem(event: any)
+  editItem()
   {
-    console.log('event', event);
-    const eventItem = event.item;
-    console.log('eventItem', eventItem);
-
-    // this.currentItem =
-    //   Operation.first(this.items, (item: IListItem) => item.uniqueId == eventItem.uniqueId);
-
-    console.log()
-
     this.isDialogVisible = true;
   }
 
@@ -126,7 +132,7 @@ export class EditableListComponent implements OnInit, OnChanges
     for (let field of this.additionalFields)
     {
 
-      tooltip += field.label + ': ' + item.additionalFields[field.label];
+      tooltip += field.label + ': ' + item.additionalFields[field.fieldName];
     }
 
     return tooltip;

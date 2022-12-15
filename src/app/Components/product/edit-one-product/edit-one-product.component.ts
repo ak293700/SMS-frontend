@@ -69,7 +69,7 @@ export class EditOneProductComponent implements OnInit
     bundleItems: [],
   }
 
-  bundleItemAdditionalField: { label: string, type: string, default?: any }[] = [];
+  bundleItemAdditionalField: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
@@ -91,6 +91,7 @@ export class EditOneProductComponent implements OnInit
 
     this.bundleItemAdditionalField = [
       {
+        fieldName: "quantity",
         label: "Quantité",
         type: "number",
         default: 1

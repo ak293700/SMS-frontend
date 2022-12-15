@@ -16,19 +16,35 @@ export class ProductReferencesService
 
   private _productReferences: IdNameDto[] | undefined = undefined;
 
-  async fetch(): Promise<boolean>
+  // if set to true it means that the product references are being loaded
+  private _isLoaded: boolean = true;
+
+  reload(): void
   {
-    const response = await axios.get(`${api}/product/references`);
+    this._isLoaded = true;
+    // const response =;
+    axios.get(`${api}/product/references`)
+      .then(response => {
+        if (!HttpTools.IsValid(response.status))
+          MessageServiceTools.httpFail(this.messageService, response.data);
+        else
+          this._productReferences = response.data;
 
-    if (!HttpTools.IsValid(response.status))
-    {
-      MessageServiceTools.httpFail(this.messageService, response.data);
-      return false;
-    }
+        this._isLoaded = false;
+      })
+      .catch(error => {
+        MessageServiceTools.axiosFail(this.messageService, error);
+      });
+  }
 
-    this._productReferences = response.data;
+  // the async of reload
+  private async fetch()
+  {
+    this.reload();
 
-    return true;
+    // wait for this._isLoaded to be false
+    while (this._isLoaded)
+      await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   async getProductReferences(): Promise<IdNameDto[]>
