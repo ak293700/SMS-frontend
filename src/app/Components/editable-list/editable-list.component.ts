@@ -25,8 +25,8 @@ export class EditableListComponent implements OnInit, OnChanges
   selectorItem: IdNameDto = {id: 0, name: ''};
 
   @Input() items: IListItem[] = [];
-
   @Output('items') itemsEvent = new EventEmitter<IListItem[]>();
+
   @Input() additionalFields: { label: string, type: string, default?: any }[] = [];
 
   @Input() unique: boolean = true;

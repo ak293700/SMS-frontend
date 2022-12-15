@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -16,7 +16,7 @@ import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITable
 })
 export class DiscountFilterComponent implements OnInit
 {
-  @Output('onSelectData') selectDataEvent: EventEmitter<any> = new EventEmitter<any>();
+  // @Output('onSelectData') selectDataEvent: EventEmitter<any> = new EventEmitter<any>();
 
   filters: any[] = [];
 
@@ -244,13 +244,12 @@ export class DiscountFilterComponent implements OnInit
     const selectedDiscountId = discount.id.value
     const selected = {selectedIds: selectedIds, selectedId: selectedDiscountId};
 
-    if (this.selectDataEvent.observed)
+    /*    if (this.selectDataEvent.observed)
     {
       console.log("selectDataEvent is observed");
       this.selectDataEvent.emit(selected);
       return
-    }
-
+    }*/
 
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,

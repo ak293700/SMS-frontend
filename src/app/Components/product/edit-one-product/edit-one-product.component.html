@@ -1,11 +1,9 @@
-<!--
-<p-dialog [(visible)]="discountOverlayVisible"
-          [maximizable]="true"
-          [style]="{'width':'100vw', 'height': '100vh'}"
-          [draggable]="false" [modal]="true">
-  <app-discount-filter (onSelectData)="selectNewDiscount($event)"></app-discount-filter>
-</p-dialog>
--->
+<!--<p-dialog [(visible)]="discountOverlayVisible"-->
+<!--          [maximizable]="true"-->
+<!--          [style]="{'width':'100vw', 'height': '100vh'}"-->
+<!--          [draggable]="false" [modal]="true">-->
+<!--  <app-discount-filter (onSelectData)="selectNewDiscount($event)"></app-discount-filter>-->
+<!--</p-dialog>-->
 
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [parent]="this"
@@ -131,6 +129,15 @@
     </ul>
   </div>
   <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
+    <ul class="field-container">
+      <li class="field-item">
+        <label for="field-bundle-items" class="text">Composant</label>
+        <app-editable-list id="field-bundle-items" [suggestions]="allProductReferences"
+                           [items]="dummyStruct.bundleItems"
+        >
+        </app-editable-list>
+      </li>
+    </ul>
   </div>
 
   <div id="shop-specific-field"
@@ -189,3 +196,5 @@
            (ngModelChange)="setMarginRate(i, $event)"/>
   </div>
 </app-edit-one-base>
+
+<div *ngIf="product === undefined">Chargement ...</div>

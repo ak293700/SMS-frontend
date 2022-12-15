@@ -21,12 +21,14 @@ import {DiscountType} from "../../../../Enums/DiscountType";
 import {PricingTool} from "../../../../utils/PricingTool";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {IChanges} from "../../../../Interfaces/IChanges";
+import {IListItem} from "../../editable-list/editable-list.component";
+import {ProductReferencesService} from "../../../Services/product-references.service";
 
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
   styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css'],
-  // providers: [DialogService]
+  providers: [ProductReferencesService]
 })
 export class EditOneProductComponent implements OnInit
 {
@@ -35,6 +37,8 @@ export class EditOneProductComponent implements OnInit
   discountOverlayVisible: boolean = false;
 
   otherProducts: IdNameDto[] = [];
+
+  allProductReferences: IdNameDto[] = [];
 
   // @ts-ignore
   product: SimpleProductDto | BundleDto;
@@ -55,14 +59,21 @@ export class EditOneProductComponent implements OnInit
   additionalInformation = this.initialAdditionalInformation;
 
   // Use to ngModel some product fields
-  dummyStruct: { manufacturer: IdNameDto, popularity: IdNameDto, availability: IdNameDto } = {
+  dummyStruct: {
+    manufacturer: IdNameDto, popularity: IdNameDto,
+    availability: IdNameDto, bundleItems: IListItem[]
+  } = {
     manufacturer: {id: 0, name: ""},
     popularity: {id: 0, name: ""},
-    availability: {id: 0, name: ""}
+    availability: {id: 0, name: ""},
+    bundleItems: [],
   }
 
+  bundleItemAdditionalField: { label: string, type: string, default?: any }[] = [];
+
   constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+              private confirmationService: ConfirmationService,
+              private productReferencesService: ProductReferencesService)
   {
     this.discountContextMenuItems = [
       {
@@ -77,6 +88,14 @@ export class EditOneProductComponent implements OnInit
     this.initialAdditionalInformation = Operation.deepCopy(this.additionalInformation);
 
     this.discountOverlayVisible = true;
+
+    this.bundleItemAdditionalField = [
+      {
+        label: "Quantité",
+        type: "number",
+        default: 1
+      }
+    ];
   }
 
   showDiscountOverlay()
@@ -88,7 +107,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -108,7 +127,7 @@ export class EditOneProductComponent implements OnInit
     {
       // Get the products itself
       const response = await axios.get(`${api}/product/${id}`);
-      if (!HttpTools.IsCode(response.status, 200))
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.initialProduct = response.data;
@@ -133,6 +152,15 @@ export class EditOneProductComponent implements OnInit
     {
       this.dummyStruct.availability = this.additionalInformation.availabilities
         .find(x => x.id == this.simpleProduct.availability)!;
+    }
+    else if (this.product.productType == ProductType.Bundle)
+    {
+      this.dummyStruct.bundleItems = this.bundle.items
+        .map(item => ({
+          id: item.productId,
+          label: Operation.first(this.allProductReferences, p => p.id == item.productId).name,
+          quantity: item.quantity
+        }));
     }
   }
 
@@ -189,20 +217,26 @@ export class EditOneProductComponent implements OnInit
 
   async fetchReferences(ids: number[])
   {
-    try
-    {
-      const response = await axios.post(`${api}/product/references`, ids);
-      if (response.status !== 200)
-        return MessageServiceTools.httpFail(this.messageService, response);
+    this.allProductReferences = await this.productReferencesService.getProductReferences();
 
-      // reorder otherProducts by as 'ids'
-      this.otherProducts = response.data;
-      // .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
+    this.otherProducts = this.allProductReferences
+      .filter((e: IdNameDto) => ids.includes(e.id))
+      .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
 
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
+    // try
+    // {
+    //   const response = await axios.post(`${api}/product/references`, ids);
+    //   if (response.status !== 200)
+    //     return MessageServiceTools.httpFail(this.messageService, response);
+    //
+    //   // reorder otherProducts by as 'ids'
+    //   this.otherProducts = response.data;
+    //   // .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
+    //
+    // } catch (e: any)
+    // {
+    //   MessageServiceTools.axiosFail(this.messageService, e);
+    // }
   }
 
   // createGrid
@@ -371,7 +405,7 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
   }
 
-  detectChanges(): { diffObj: any, count: number }
+  detectChanges(): IChanges
   {
     this.reformatProduct();
     return Operation.detectChanges(this.product, this.initialProduct, ['id']);
