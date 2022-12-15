@@ -1,1 +1,24 @@
-<p>editable-list works!</p>
+<p-contextMenu [model]="menuItems" [global]="true"></p-contextMenu>
+
+<p-dialog [(visible)]="isDialogVisible">
+  <ng-template>
+    <p>Dialog Content</p>
+  </ng-template>
+</p-dialog>
+
+<div id="container">
+  <p-autoComplete id="selector" dataKey="id"
+                  field="name" [suggestions]="suggestions"
+                  (completeMethod)="completeMethod($event)"
+                  [(ngModel)]="selectorItem"
+                  (onSelect)="onSelect($event)"
+                  [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+  </p-autoComplete>
+
+  <ul>
+    <li *ngFor="let item of items" [pTooltip]="getTooltip(item)">
+      {{item.label}}
+
+    </li>
+  </ul>
+</div>

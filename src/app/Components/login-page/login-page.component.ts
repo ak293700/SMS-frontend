@@ -1,6 +1,8 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
+import {IdNameDto} from "../../../Dtos/IdNameDto";
+import {IListItem} from "../editable-list/editable-list.component";
 
 @Component({
   selector: 'app-login-page',
@@ -11,6 +13,22 @@ export class LoginPageComponent
 {
   loginForm: FormGroup;
   public showPassword: boolean = false;
+
+  suggestions: IdNameDto[] = [
+    {id: 1, name: 'test1'},
+    {id: 2, name: 'test2'},
+    {id: 3, name: 'test3'}
+  ];
+
+  items: IListItem[] = [
+    {id: 1, label: 'test1'},
+    {id: 2, label: 'test2'},
+  ]
+
+  additionalFields: { label: string, type: string, default?: any }[] = [
+    {label: 'test', type: 'text', default: 'default'}
+  ];
+
 
   constructor(private formBuilder: FormBuilder,
               private router: Router)
