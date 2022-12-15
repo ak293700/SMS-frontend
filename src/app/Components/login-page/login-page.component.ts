@@ -22,7 +22,7 @@ export class LoginPageComponent
 
   items: IListItem[] = [
     {id: 1, label: 'test1'},
-    {id: 2, label: 'test2'},
+    {id: 2, label: 'test2', additionalFields: {test: 'voici un test'}},
   ]
 
   additionalFields: { label: string, type: string, default?: any }[] = [

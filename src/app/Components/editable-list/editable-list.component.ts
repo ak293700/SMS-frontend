@@ -1,9 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {MenuItem} from "primeng/api";
+import {IEnumerableByString} from "../../../Interfaces/IEnumerableByString";
+import {Operation} from "../../../utils/Operation";
 
-export interface IListItem
+export interface IListItem extends IEnumerableByString
 {
+  uniqueId?: number;
   id: number;
   label: string;
   additionalFields?: any; // map of key=label, value=value
@@ -33,6 +36,11 @@ export class EditableListComponent implements OnInit
 
   isDialogVisible: boolean = false;
 
+  // @ts-ignore
+  currentItem: IListItem;
+
+  private uniqueId: number = 0;
+
   constructor()
   {}
 
@@ -42,8 +50,18 @@ export class EditableListComponent implements OnInit
       this.menuItems.push({label: 'Edit', icon: 'pi pi-pencil', command: (event) => this.editItem(event)});
     this.menuItems.push({label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteItem(event)});
 
+    // if the additional fields are not initialized, we initialize them
+
+    this.initItem();
+    console.log(this.items);
+  }
+
+  initItem()
+  {
+    this.uniqueId = 0;
     this.items.forEach((item: IListItem) =>
     {
+      item.uniqueId = this.uniqueId++;
       if (item.additionalFields == null)
         item.additionalFields = {};
       this.additionalFields.forEach((field: any) =>
@@ -53,6 +71,7 @@ export class EditableListComponent implements OnInit
       });
     });
   }
+
 
   completeMethod(event: any)
   {
@@ -72,19 +91,27 @@ export class EditableListComponent implements OnInit
       this.additionalFields.forEach((field: any) => newItem.additionalFields[field.label] = (field.default ?? null));
     }
 
-    this.items.push({id: event.id, label: event.name});
+    this.items.push({uniqueId: this.uniqueId++, id: event.id, label: event.name});
   }
-
 
   deleteItem(event: any)
   {
-    const index = this.items.findIndex((item: IListItem) => item.id == event.id);
+    const index = this.items.findIndex((item: IListItem) => item.uniqueId == event.uniqueId);
     this.items.splice(index, 1);
   }
 
   editItem(event: any)
   {
-    console.log('editItem', event);
+    console.log('event', event);
+    const eventItem = event.item;
+    console.log('eventItem', eventItem);
+
+    // this.currentItem =
+    //   Operation.first(this.items, (item: IListItem) => item.uniqueId == eventItem.uniqueId);
+
+    console.log()
+
+    this.isDialogVisible = true;
   }
 
   getTooltip(item: IListItem)
@@ -100,5 +127,12 @@ export class EditableListComponent implements OnInit
     }
 
     return tooltip;
+  }
+
+  onContextMenu(event: any, item: IListItem)
+  {
+    console.log('onContextMenu');
+    this.currentItem = Operation.first(this.items, (i: IListItem) => i.uniqueId == item.uniqueId);
+    console.log('this.currentItem', this.currentItem);
   }
 }

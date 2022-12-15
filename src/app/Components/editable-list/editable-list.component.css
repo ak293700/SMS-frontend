@@ -16,7 +16,7 @@
   width: 100%;
 }
 
-ul {
+.item-container {
   list-style: none;
   padding: 0;
   margin: 20px;
@@ -27,7 +27,7 @@ ul {
   gap: 10px;
 }
 
-li {
+.item-item {
   background-color: var(--secondary-color);
   padding: 12px;
   border-radius: 6px;

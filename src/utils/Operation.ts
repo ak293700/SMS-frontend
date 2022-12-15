@@ -46,6 +46,16 @@ export class Operation
     return undefined;
   }
 
+  static first<T>(array: T[], predicate: (value: T) => boolean = () => true)
+    : T
+  {
+    for (const value of array)
+      if (predicate(value))
+        return value;
+    // @ts-ignore
+    return undefined;
+  }
+
   // keep is a list of properties that should not be compared
   // should be keep in the diff
   // shouldn't be counted in the diff
@@ -99,6 +109,4 @@ export class Operation
 
     return {diffObj: diffObj, count: count};
   }
-
-
 }
