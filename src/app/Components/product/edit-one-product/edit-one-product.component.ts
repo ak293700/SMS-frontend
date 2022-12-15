@@ -18,20 +18,21 @@ import {PatchProductDto} from "../../../../Dtos/ProductDtos/PatchProductDto";
 import {PatchShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/PatchShopSpecificDto";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {DiscountType} from "../../../../Enums/DiscountType";
-import {DialogService} from "primeng/dynamicdialog";
-import {DiscountFilterComponent} from "../../discount/discount-filter/discount-filter.component";
 import {PricingTool} from "../../../../utils/PricingTool";
 import {CommonRequest} from "../../../../utils/CommonRequest";
+import {IChanges} from "../../../../Interfaces/IChanges";
 
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
   styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css'],
-  providers: [DialogService]
+  // providers: [DialogService]
 })
 export class EditOneProductComponent implements OnInit
 {
   discountContextMenuItems: MenuItem[];
+
+  discountOverlayVisible: boolean = false;
 
   otherProducts: IdNameDto[] = [];
 
@@ -61,25 +62,26 @@ export class EditOneProductComponent implements OnInit
   }
 
   constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService,
-              private dialogService: DialogService)
+              private confirmationService: ConfirmationService)
   {
     this.discountContextMenuItems = [
       {
         label: 'Éditer',
         icon: 'pi pi-pencil',
-        command: () => {
-          const ref = this.dialogService.open(DiscountFilterComponent, {
-            header: 'Remise',
-            width: '90%',
-          });
-        }
+        command: this.showDiscountOverlay.bind(this)
       }
     ];
 
     this.additionalInformation.popularities = ProductPopularity.toIdNameDto();
     this.additionalInformation.availabilities = Availability.toIdNameDto();
     this.initialAdditionalInformation = Operation.deepCopy(this.additionalInformation);
+
+    this.discountOverlayVisible = true;
+  }
+
+  showDiscountOverlay()
+  {
+    this.discountOverlayVisible = true;
   }
 
   async ngOnInit()
@@ -219,8 +221,10 @@ export class EditOneProductComponent implements OnInit
   }
 
   // This function does the actual work of saving the changes to the database
-  private async _save(changes: { diffObj: any, count: number })
+  private async _save(changes: IChanges)
   {
+    await this.saveDiscount(changes.diffObj.discount);
+
     let namespace: any = PatchSimpleProductDto;
     let endpoint = 'simpleproduct';
     if (this.product.productType === ProductType.Bundle)
@@ -280,6 +284,80 @@ export class EditOneProductComponent implements OnInit
       this._save,
       `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
       changes);
+  }
+
+  private async _saveDiscount(discount: any)
+  {
+
+  }
+
+  // return can continue or not
+  async saveDiscount(discount: any): Promise<boolean>
+  {
+    if (discount == undefined)
+      return true;
+
+    console.log(discount);
+
+    // A derogation cannot be modified in the product section
+    if (this.simpleProduct.discount?.discountType == discount.Derogation)
+    {
+      this.messageService.add({
+        severity: 'warn', summary: 'Dérogation',
+        detail: "Impossible de modifier la valeur d'une dérogation"
+      });
+      return false;
+    }
+
+    const id = discount.id;
+    let numberOfProductInUse;
+    try
+    {
+      // Get the number of product that use this discount
+      const response: AxiosResponse = await axios.get(`${api}/discount/productsInUse/number/${id}`, discount);
+      if (!HttpTools.IsValid(response.status))
+      {
+        MessageServiceTools.httpFail(this.messageService, response);
+        return false;
+      }
+
+      numberOfProductInUse = response.data;
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+      return false
+    }
+
+    // Set to false because if only use by one product, it will not be split
+    let split: boolean = false;
+
+    // If the discount is used by more than one product, ask for confirmation
+    if (numberOfProductInUse > 1)
+    {
+      if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+        `${numberOfProductInUse} produits utilisent cette remise. Voulez-vous continuer ?`))
+      {
+        this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Enregistrement annulée'});
+        return false;
+      }
+
+      split = await ConfirmationServiceTools.newBlocking(this.confirmationService,
+        `Voulez-vous appliquer la modification à tous les produits ? (Sinon créer une nouvelle pour celui-ci)`);
+    }
+
+    if (split)
+    {
+      // Split the discount
+    }
+    else // Save the discount
+    {
+      if (!await CommonRequest.patchDiscount(discount,
+        this.simpleProduct.discount?.discountType!,
+        this.messageService))
+        return false;
+    }
+
+    return true;
   }
 
   // Some product fields are not directly model
@@ -358,5 +436,11 @@ export class EditOneProductComponent implements OnInit
     const salePriceEt = this.purchasePrice / (1 - marginRate);
 
     this.setSalePriceIt(index, salePriceEt * 1.2);
+  }
+
+
+  selectNewDiscount(selected: any)
+  {
+    console.log(selected);
   }
 }

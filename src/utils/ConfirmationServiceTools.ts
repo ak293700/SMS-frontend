@@ -32,4 +32,20 @@ export class ConfirmationServiceTools
     });
 
   }
+
+  // Blocking confirmation popup
+  static newBlocking(confirmationService: ConfirmationService, message: string): Promise<boolean>
+  {
+    return new Promise<boolean>(resolve => {
+      confirmationService.confirm({
+        message: message, accept: () =>
+        {
+          resolve(true);
+        }, reject: () =>
+        {
+          resolve(false);
+        }
+      });
+    });
+  }
 }

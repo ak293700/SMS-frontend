@@ -4,7 +4,7 @@
 
 <app-filter-fields [filters]="filters" (applyFilters)="applyFilters()"></app-filter-fields>
 
-<app-filter-table (onEditData)="editProduct($event)" (onLazyLoad)="loadLazy($event)"
+<app-filter-table (onSelectData)="editProduct($event)" (onLazyLoad)="loadLazy($event)"
                   [loading]="loading" [datas]="products" [selectedDatas]="selectedProducts"
                   [isPhoto]="true">
 </app-filter-table>

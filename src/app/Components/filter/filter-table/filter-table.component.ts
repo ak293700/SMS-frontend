@@ -21,7 +21,7 @@ export class FilterTableComponent implements OnInit, OnChanges
   @Input() contextMenuItems: MenuItem[] = [];
   @Output('onLazyLoad') lazyLoadEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output('onEditData') editDataEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output('onSelectData') selectDataEvent: EventEmitter<any> = new EventEmitter<any>();
 
   contextMenuSelectedProduct: any;
 
@@ -170,6 +170,6 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   editProduct(product: any)
   {
-    this.editDataEvent.emit(product);
+    this.selectDataEvent.emit(product);
   }
 }

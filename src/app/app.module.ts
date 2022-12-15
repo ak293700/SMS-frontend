@@ -36,6 +36,7 @@ import {DiscountFilterComponent} from './Components/discount/discount-filter/dis
 import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/edit-one-discount.component';
 import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.component';
 import {DialogModule} from "primeng/dialog";
+import {EditableListComponent} from './Components/editable-list/editable-list.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {DialogModule} from "primeng/dialog";
     FilterTableComponent,
     DiscountFilterComponent,
     EditOneDiscountComponent,
-    EditOneBaseComponent
+    EditOneBaseComponent,
+    EditableListComponent
   ],
   imports: [
     BrowserModule,

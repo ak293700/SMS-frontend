@@ -7,17 +7,12 @@ import {
   LiteDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
 import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
-import axios, {AxiosError, AxiosResponse} from "axios";
+import axios, {AxiosError} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
-import {HttpTools} from "../../../../utils/HttpTools";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
-import {
-  PatchDistributorDiscountDto
-} from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/PatchDistributorDiscountDto";
-import {PatchDiscountDto} from "../../../../Dtos/DiscountDtos/PatchDiscountDto";
-import {PatchDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/PatchDerogationDto";
+import {IChanges} from "../../../../Interfaces/IChanges";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -108,33 +103,13 @@ export class EditOneDiscountComponent implements OnInit
   }
 
   // This function does the actual work of saving the changes to the database
-  private async _save(changes: { diffObj: any, count: number })
+  private async _save(changes: IChanges)
   {
-    let namespace: any = PatchDistributorDiscountDto;
-    let endpoint = 'distributorDiscount';
-    if (this.discount.discountType === DiscountType.Derogation)
+    // If everything works
+    if (await CommonRequest.patchDiscount(changes.diffObj, this.discount.discountType, this.messageService))
     {
-      namespace = PatchDerogationDto;
-      endpoint = 'derogation';
-    }
-
-    const patchProduct: PatchDiscountDto = namespace.build(changes.diffObj);
-
-    try
-    {
-      // Detect if patch is empty - more than 1 because of the id
-      if (Operation.countProperties(patchProduct) > 1)
-      {
-        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
-        if (!HttpTools.IsValid(response.status))
-          return MessageServiceTools.httpFail(this.messageService, response);
-      }
-
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
       await this.fetchDiscount(this.discount.id);
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
     }
   }
 

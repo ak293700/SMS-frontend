@@ -27,10 +27,7 @@ import {HttpTools} from "../../../../utils/HttpTools";
 @Component({
   selector: 'app-product-filter',
   templateUrl: './product-filter.component.html',
-  styleUrls: [
-    './product-filter.component.css',
-    '../../../../styles/button.css'
-  ],
+  styleUrls: ['./product-filter.component.css', '../../../../styles/button.css'],
 })
 export class ProductFilterComponent implements OnInit
 {
@@ -191,7 +188,6 @@ export class ProductFilterComponent implements OnInit
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-    console.log(filters);
     try
     {
       let response = await axios.post(`${api}/SelectProduct/filter/execute`, filters, {responseType: 'json'});
