@@ -17,12 +17,21 @@ export class LoginPageComponent
   suggestions: IdNameDto[] = [
     {id: 1, name: 'test1'},
     {id: 2, name: 'test2'},
-    {id: 3, name: 'test3'}
+    {id: 3, name: 'test3'},
+    {id: 4, name: 'test4'},
+    {id: 5, name: 'test5'},
+    {id: 6, name: 'test6'},
+    {id: 7, name: 'test7'},
   ];
 
   items: IListItem[] = [
     {id: 1, label: 'test1'},
     {id: 2, label: 'test2', additionalFields: {test: 'voici un test'}},
+    {id: 3, label: 'test3'},
+    {id: 4, label: 'test4'},
+    {id: 5, label: 'test5'},
+    {id: 6, label: 'test6'},
+    {id: 7, label: 'test7'},
   ]
 
   additionalFields: { label: string, type: string, default?: any }[] = [

@@ -15,18 +15,18 @@
 </p-dialog>
 
 <div id="container">
-  <p-autoComplete id="selector" dataKey="id"
-                  field="name" [suggestions]="suggestions"
-                  (completeMethod)="completeMethod($event)"
-                  [(ngModel)]="selectorItem"
-                  (onSelect)="onSelect($event)"
-                  [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
-  </p-autoComplete>
-
   <ul class="item-container">
     <li *ngFor="let item of items" [pTooltip]="getTooltip(item)" class="item-item"
         (contextmenu)="onContextMenu($event, item)">
       {{item.label}}
     </li>
   </ul>
+
+  <p-autoComplete id="selector" dataKey="id" [style.min-width.px]="250"
+                  field="name" [suggestions]="suggestions"
+                  (completeMethod)="completeMethod($event)"
+                  [(ngModel)]="selectorItem"
+                  (onSelect)="onSelect($event)"
+                  [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+  </p-autoComplete>
 </div>

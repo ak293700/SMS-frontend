@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {MenuItem} from "primeng/api";
 import {IEnumerableByString} from "../../../Interfaces/IEnumerableByString";
@@ -18,16 +18,15 @@ export interface IListItem extends IEnumerableByString
   templateUrl: './editable-list.component.html',
   styleUrls: ['./editable-list.component.css', '../../../styles/button.css']
 })
-export class EditableListComponent implements OnInit
+export class EditableListComponent implements OnInit, OnChanges
 {
   @Input('suggestions') initialSuggestions: IdNameDto[] = [];
   suggestions: IdNameDto[] = this.initialSuggestions;
-
   selectorItem: IdNameDto = {id: 0, name: ''};
 
   @Input() items: IListItem[] = [];
-  @Output('items') itemsEvent = new EventEmitter<IListItem[]>();
 
+  @Output('items') itemsEvent = new EventEmitter<IListItem[]>();
   @Input() additionalFields: { label: string, type: string, default?: any }[] = [];
 
   @Input() unique: boolean = true;
@@ -37,8 +36,8 @@ export class EditableListComponent implements OnInit
   isDialogVisible: boolean = false;
 
   // @ts-ignore
-  currentItem: IListItem;
 
+  currentItem: IListItem;
   private uniqueId: number = 0;
 
   constructor()
@@ -47,13 +46,17 @@ export class EditableListComponent implements OnInit
   ngOnInit(): void
   {
     if (this.additionalFields.length > 0)
-      this.menuItems.push({label: 'Edit', icon: 'pi pi-pencil', command: (event) => this.editItem(event)});
-    this.menuItems.push({label: 'Delete', icon: 'pi pi-trash', command: (event) => this.deleteItem(event)});
+      this.menuItems.push({label: 'Éditer', icon: 'pi pi-pencil', command: (event) => this.editItem(event)});
+    this.menuItems.push({label: 'Supprimer', icon: 'pi pi-trash', command: (event) => this.deleteItem(event)});
 
     // if the additional fields are not initialized, we initialize them
 
     this.initItem();
-    console.log(this.items);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void
+  {
+    this.initItem();
   }
 
   initItem()
@@ -96,7 +99,7 @@ export class EditableListComponent implements OnInit
 
   deleteItem(event: any)
   {
-    const index = this.items.findIndex((item: IListItem) => item.uniqueId == event.uniqueId);
+    const index = this.items.findIndex((item: IListItem) => item.uniqueId == this.currentItem.uniqueId);
     this.items.splice(index, 1);
   }
 

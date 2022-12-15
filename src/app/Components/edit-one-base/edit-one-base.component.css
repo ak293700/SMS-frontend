@@ -26,7 +26,6 @@ main {
 aside {
   border-left: 2px solid black;
   background-color: var(--third-color);
-
 }
 
 .other-data-container {
