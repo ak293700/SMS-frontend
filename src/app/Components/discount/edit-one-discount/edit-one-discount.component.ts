@@ -169,6 +169,7 @@ export class EditOneDiscountComponent implements OnInit
     if (this.discount.discountType == DiscountType.Derogation)
     {
       this.derogation.manufacturerId = this.dummyStruct.manufacturer.id;
+      this.derogation.distributorIds = this.dummyStruct.distributors.map(d => d.id);
     }
     else if (this.discount.discountType == DiscountType.Distributor)
     {
@@ -179,6 +180,8 @@ export class EditOneDiscountComponent implements OnInit
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatDiscount();
+    console.log((this.initialDiscount as LiteDerogationDto).distributorIds)
+    console.log(this.derogation.distributorIds)
     return Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
   }
 

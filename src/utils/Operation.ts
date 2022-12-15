@@ -64,6 +64,16 @@ export class Operation
     let count = 0;
     let diffObj: any = {};
 
+    if (Operation.isPrimitive(obj))
+    {
+      if (obj !== initialObj)
+      {
+        diffObj = obj;
+        count++;
+      }
+      return {diffObj, count};
+    }
+
     for (const key in obj)
     {
       if (keep.includes(key))
@@ -72,23 +82,26 @@ export class Operation
         continue;
       }
 
-      if (Operation.isPrimitive(obj[key]))
+      if (Array.isArray(obj[key]))
       {
-        if (obj[key] !== initialObj[key])
+        // Not the same length means the array has changed
+        if (obj[key].length !== initialObj[key].length)
         {
           diffObj[key] = obj[key];
           count++;
+          continue;
         }
-        continue;
-      }
 
-      if (Array.isArray(obj[key]))
-      {
+        // sort the arrays
+        let sortedObj = obj[key].sort();
+        let sortedInitialObj = initialObj[key].sort();
+
         diffObj[key] = [];
         const initialCount = count;
+
         for (let i = 0; i < obj[key].length; i++)
         {
-          const changes = this.detectChanges(obj[key][i], initialObj[key][i], keep);
+          const changes = this.detectChanges(sortedObj[i], sortedInitialObj[i], keep);
           count += changes.count;
           if (count > 0)
             diffObj[key].push(changes.diffObj);
@@ -96,6 +109,10 @@ export class Operation
         // We don't want to keep the array if there are no changes
         if (initialCount === count)
           delete diffObj[key];
+
+        // TODO: perhaps let the choice
+        if (count > initialCount)
+          count = initialCount + 1;
 
         continue
       }
