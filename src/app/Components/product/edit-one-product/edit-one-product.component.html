@@ -54,6 +54,15 @@
       </li>
 
       <li class="field-item">
+        <label for="field-cataloguePrice" class="text">Prix tarif</label>
+        <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
+                       [placeholder]="product.cataloguePrice.toString()"
+                       [(ngModel)]="product.cataloguePrice"
+                       [disabled]="product.productType === ProductType.Bundle">
+        </p-inputNumber>
+      </li>
+
+      <li class="field-item">
         <label for="field-salePrice" class="text">Prix d'achat (HT)</label>
         <p-inputNumber id="field-salePrice" mode="currency" currency="EUR"
                        [placeholder]="purchasePrice.toString()" [step]="0.01"
@@ -76,13 +85,6 @@
         <input id="field-pureReference" pInputText type="text"
                [placeholder]="initialSimpleProduct.pureReference"
                [(ngModel)]="simpleProduct.pureReference">
-      </li>
-      <li class="field-item">
-        <label for="field-cataloguePrice" class="text">Prix tarif</label>
-        <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
-                       [placeholder]="initialSimpleProduct.cataloguePrice.toString()"
-                       [(ngModel)]="simpleProduct.cataloguePrice">
-        </p-inputNumber>
       </li>
       <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
       <li #discount class="field-item">

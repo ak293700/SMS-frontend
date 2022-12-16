@@ -6,6 +6,7 @@ export interface ProductDto
 {
   id: number;
   productType: ProductType;
+  cataloguePrice: number;
   productReference: string;
   ean13: string;
   manufacturerId: number;
