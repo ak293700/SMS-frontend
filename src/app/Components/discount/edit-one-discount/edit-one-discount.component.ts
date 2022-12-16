@@ -18,7 +18,8 @@ import {IListItem} from "../../editable-list/editable-list.component";
 @Component({
   selector: 'app-edit-one-discount',
   templateUrl: './edit-one-discount.component.html',
-  styleUrls: ['./edit-one-discount.component.css', '../../../../styles/button.css']
+  styleUrls: ['./edit-one-discount.component.css', '../../../../styles/button.css',
+    '../../../../styles/main-color-background.css']
 })
 export class EditOneDiscountComponent implements OnInit
 {

@@ -28,7 +28,8 @@ import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/Bundle
 @Component({
   selector: 'app-edit-one-product',
   templateUrl: './edit-one-product.component.html',
-  styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css'],
+  styleUrls: ['./edit-one-product.component.css', '../../../../styles/button.css',
+    '../../../../styles/main-color-background.css'],
   providers: [ProductReferencesService]
 })
 export class EditOneProductComponent implements OnInit
