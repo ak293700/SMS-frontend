@@ -140,7 +140,7 @@
       <li class="field-item">
         <label for="field-bundle-items" class="text">Composant</label>
         <app-editable-list id="field-bundle-items" [suggestions]="allProductReferences"
-                           [(items)]="dummyStruct.bundleItems"
+                           [(items)]="dummyStruct.bundleItems" padProperty="quantity"
                            [additionalFields]="bundleItemAdditionalField">
         </app-editable-list>
       </li>

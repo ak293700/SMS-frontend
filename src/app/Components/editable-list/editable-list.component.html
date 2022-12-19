@@ -20,6 +20,7 @@
         (contextmenu)="onContextMenu($event, item)" [ngClass]="{'selected': item.id === _selectedItem?.id,
         'selectable': selectable && item.id !== _selectedItem?.id}">
       {{item.label}}
+      <span *ngIf="padProperty != undefined" class="pad">{{item.additionalFields[padProperty]}}</span>
     </li>
   </ul>
 

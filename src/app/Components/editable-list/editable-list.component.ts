@@ -46,6 +46,9 @@ export class EditableListComponent implements OnInit, OnChanges
   @Output() selectedItemChange: EventEmitter<IListItem> = new EventEmitter<IListItem>();
   _selectedItem: ICompleteListItem | undefined = undefined;
 
+  // the property to right in the right corner of the item
+  @Input() padProperty: string | undefined = undefined;
+
   menuItems: MenuItem[] = [];
 
   isDialogVisible: boolean = false;
@@ -74,7 +77,7 @@ export class EditableListComponent implements OnInit, OnChanges
     this.initItem();
   }
 
-  initItem(changes: SimpleChanges | undefined = undefined)
+  initItem()
   {
     this.uniqueId = 0;
     this._items = this.items.map((item: IListItem): ICompleteListItem =>
@@ -100,6 +103,12 @@ export class EditableListComponent implements OnInit, OnChanges
     {
       this._selectedItem = Operation.firstOrDefault(this._items, item => item.id === this.selectedItem?.id);
     }
+  }
+
+  initPadProperty()
+  {
+    if (this.padProperty == undefined)
+      return;
   }
 
   completeMethod(event: any)

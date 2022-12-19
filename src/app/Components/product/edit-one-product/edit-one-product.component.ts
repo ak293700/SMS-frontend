@@ -96,8 +96,6 @@ export class EditOneProductComponent implements OnInit
     this.additionalInformation.availabilities = Availability.toIdNameDto();
     this.initialAdditionalInformation = Operation.deepCopy(this.additionalInformation);
 
-    this.discountOverlayVisible = true;
-
     this.bundleItemAdditionalField = [
       {
         fieldName: "quantity",
@@ -117,7 +115,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [6190, 7911, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -476,8 +474,6 @@ export class EditOneProductComponent implements OnInit
 
   async saveDiscountCanUse(availableDiscounts: IListItem[]): Promise<boolean>
   {
-    console.log(availableDiscounts);
-
     if (availableDiscounts == undefined)
       return true;
 
