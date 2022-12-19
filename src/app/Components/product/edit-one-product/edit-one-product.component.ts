@@ -49,17 +49,16 @@ export class EditOneProductComponent implements OnInit
   // @ts-ignore
   initialProduct: SimpleProductDto | BundleDto;
 
-  initialAvailableDiscounts: IListItem[] = [];
-  availableDiscounts: IListItem[] = [];
-
   initialAdditionalInformation: {
     manufacturers: IdNameDto[],
     popularities: IdNameDto[],
     availabilities: IdNameDto[],
+    availableDiscounts: IListItem[],
   } = {
     manufacturers: [],
     popularities: [],
     availabilities: [],
+    availableDiscounts: []
   };
 
   additionalInformation = this.initialAdditionalInformation;
@@ -158,20 +157,20 @@ export class EditOneProductComponent implements OnInit
   {
     if (this.product.productType !== ProductType.Simple)
     {
-      this.availableDiscounts = [];
+      this.additionalInformation.availableDiscounts = [];
       return;
     }
 
     try
     {
-      // fetch
+      // fetch the discount available for the producst
       const response = await axios.get<IdNameDto[]>(`${api}/discount/available/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.initialAvailableDiscounts = response.data
+      this.initialAdditionalInformation.availableDiscounts = response.data
         .map((d: IdNameDto) => ({id: d.id, label: d.name}));
-      this.availableDiscounts = Operation.deepCopy(this.initialAvailableDiscounts);
+      this.additionalInformation.availableDiscounts = Operation.deepCopy(this.initialAdditionalInformation.availableDiscounts);
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -210,7 +209,7 @@ export class EditOneProductComponent implements OnInit
 
       if (this.simpleProduct.discount != null)
       {
-        this.dummyStruct.selectedDiscount = this.availableDiscounts
+        this.dummyStruct.selectedDiscount = this.additionalInformation.availableDiscounts
           .find(x => x.id == this.simpleProduct.discount!.id)!;
       }
       else
@@ -398,18 +397,11 @@ export class EditOneProductComponent implements OnInit
       changes);
   }
 
-  private async _saveDiscount(discount: any)
-  {
-
-  }
-
   // return can continue or not
   async saveDiscount(discount: any): Promise<boolean>
   {
     if (discount == undefined)
       return true;
-
-    console.log(discount);
 
     // A derogation cannot be modified in the product section
     if (this.simpleProduct.discount?.discountType == discount.Derogation)
@@ -495,7 +487,19 @@ export class EditOneProductComponent implements OnInit
   detectChanges(): IChanges
   {
     this.reformatProduct();
-    return Operation.detectChanges(this.product, this.initialProduct, ['id']);
+
+    // push every change into the changes array
+    const changes = [Operation.detectChanges(this.product, this.initialProduct, ['id'])];
+
+    if (this.product.productType == ProductType.Simple)
+    {
+      changes.push(Operation.detectChanges(this.additionalInformation.availableDiscounts,
+        this.initialAdditionalInformation.availableDiscounts, ['id']));
+    }
+
+    // merge all changes into one
+    return changes.reduce((acc, val) =>
+    { return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}});
   }
 
   discountValue(): number
@@ -559,19 +563,20 @@ export class EditOneProductComponent implements OnInit
     this.setSalePriceIt(index, salePriceEt * 1.2);
   }
 
-  selectNewDiscount(selected: IListItem)
-  {
-
-    console.log(selected);
-  }
 
   // when the select discount dialog closed it is called
   async onSelectDiscountClose()
   {
-    if (this.dummyStruct.selectedDiscount == undefined
-      || this.product.productType != ProductType.Simple
-      || this.dummyStruct.selectedDiscount.id == this.simpleProduct.discount!.id)
+    if (this.product.productType != ProductType.Simple)
       return;
+
+    // discount were or has been set to null
+    if (this.dummyStruct.selectedDiscount == undefined)
+    {
+      this.simpleProduct.discount = undefined;
+      return
+    }
+
 
     try
     {

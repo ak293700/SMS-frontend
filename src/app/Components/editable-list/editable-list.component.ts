@@ -44,6 +44,7 @@ export class EditableListComponent implements OnInit, OnChanges
 
   @Input() selectedItem: IListItem | undefined = undefined;
   @Output() selectedItemChange: EventEmitter<IListItem> = new EventEmitter<IListItem>();
+  _selectedItem: ICompleteListItem | undefined = undefined;
 
   menuItems: MenuItem[] = [];
 
@@ -70,19 +71,16 @@ export class EditableListComponent implements OnInit, OnChanges
 
   ngOnChanges(changes: SimpleChanges): void
   {
+    console.log(changes)
     this.initItem();
   }
 
-  initItem()
+  initItem(changes: SimpleChanges | undefined = undefined)
   {
     this.uniqueId = 0;
-    if (!this.selectable)
-      this.selectedItem = undefined;
-
-    // initialize _items from items
     this._items = this.items.map((item: IListItem): ICompleteListItem =>
     {
-      const _item: ICompleteListItem = Operation.deepCopy(item);
+      const _item: ICompleteListItem = Operation.deepCopy<any>(item);
 
       if (_item.additionalFields == null)
         _item.additionalFields = {};
@@ -96,6 +94,13 @@ export class EditableListComponent implements OnInit, OnChanges
       _item.tooltip = this.getTooltip(_item);
       return _item;
     });
+
+    if (!this.selectable)
+      this._selectedItem = undefined;
+    else
+    {
+      this._selectedItem = Operation.firstOrDefault(this._items, item => item.id === this.selectedItem?.id);
+    }
   }
 
   completeMethod(event: any)
@@ -126,6 +131,13 @@ export class EditableListComponent implements OnInit, OnChanges
   {
     const index = this._items.findIndex((item: ICompleteListItem) => item.uniqueId == this.currentItem.uniqueId);
     this._items.splice(index, 1);
+
+    if (this._selectedItem != undefined && this._selectedItem.uniqueId == this.currentItem.uniqueId)
+    {
+      this._selectedItem = undefined;
+      this.emitSelectedItemsChange();
+    }
+
     this.emitItemsChange();
   }
 
@@ -164,7 +176,6 @@ export class EditableListComponent implements OnInit, OnChanges
   {
     const items = this._items.map((item: ICompleteListItem): IListItem =>
     {
-      console.log(item);
       const tmp: any = Operation.deepCopy(item);
       delete tmp.uniqueId;
       delete tmp.tooltip;
@@ -181,12 +192,19 @@ export class EditableListComponent implements OnInit, OnChanges
     if (!this.selectable)
       return;
 
-    this.selectedItem = item;
+    this._selectedItem = item;
     this.emitSelectedItemsChange();
   }
 
   emitSelectedItemsChange()
   {
-    this.selectedItemChange.emit(this.selectedItem);
+    const tmp: any = Operation.deepCopy(this._selectedItem);
+    if (tmp != undefined)
+    {
+      delete tmp.uniqueId;
+      delete tmp.tooltip;
+    }
+    console.log('tmp', tmp);
+    this.selectedItemChange.emit(tmp);
   }
 }

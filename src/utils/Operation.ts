@@ -2,7 +2,7 @@ import {IChanges} from "../Interfaces/IChanges";
 
 export class Operation
 {
-  static deepCopy(x: any): any
+  static deepCopy<T>(x: T): T
   {
     if (Operation.isPrimitive(x))
       return x;
@@ -13,6 +13,7 @@ export class Operation
       for (const value of x)
         res.push(Operation.deepCopy(value));
 
+      // @ts-ignore
       return res;
     }
 

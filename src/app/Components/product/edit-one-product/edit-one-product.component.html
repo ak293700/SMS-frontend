@@ -3,7 +3,8 @@
           [style]="{'width':'50vw', 'height': '80vh'}"
           [draggable]="false" [modal]="true"
           (onHide)="onSelectDiscountClose()">
-  <app-editable-list [(items)]="availableDiscounts" [suggestions]="allDiscounts" [selectable]="true"
+  <app-editable-list [(items)]="additionalInformation.availableDiscounts"
+                     [suggestions]="allDiscounts" [selectable]="true"
                      [(selectedItem)]="dummyStruct.selectedDiscount">
   </app-editable-list>
 </p-dialog>
