@@ -14,6 +14,9 @@ import {CreateBundleComponent} from "./Components/product/create-product/create-
 import {
   ChooseBundleComposantComponent
 } from "./Components/product/create-product/create-bundle/choose-bundle-composant/choose-bundle-composant.component";
+import {
+  CreateBundleOtherFieldsComponent
+} from "./Components/product/create-product/create-bundle/create-bundle-other-fields/create-bundle-other-fields.component";
 
 const routes: Routes = [
   {path: 'login', component: LoginPageComponent},
@@ -42,6 +45,7 @@ const routes: Routes = [
         path: 'bundle', component: CreateBundleComponent, children: [
           {path: '', redirectTo: 'composant', pathMatch: "full"},
           {path: 'composant', component: ChooseBundleComposantComponent},
+          {path: 'other-fields', component: CreateBundleOtherFieldsComponent},
         ]
       },
       {path: 'filter', component: ProductFilterComponent},

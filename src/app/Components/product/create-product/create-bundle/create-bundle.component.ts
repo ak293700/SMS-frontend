@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MenuItem} from "primeng/api";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-bundle',
@@ -17,17 +17,17 @@ export class CreateBundleComponent
   steps: MenuItem[];
   pageIndex: number = 0;
 
-  constructor(private route: Router)
+  constructor(private router: Router, private activatedRoute: ActivatedRoute)
   {
     this.steps = [
-      {label: 'Composant', routerLink: './composant'},
-      {label: 'Autre attribut', routerLink: '/product/filter'},
+      {label: 'Composant', routerLink: 'composant'},
+      {label: 'Autre attribut', routerLink: 'other-fields'}
     ];
   }
 
   async previousPage()
   {
-    await this.goToPage(this.pageIndex + 1);
+    await this.goToPage(this.pageIndex - 1);
   }
 
   async nextPage()
@@ -37,7 +37,27 @@ export class CreateBundleComponent
 
   async goToPage(pageIndex: number)
   {
-    this.pageIndex = pageIndex;
-    await this.route.navigate([this.steps[pageIndex]]);
+
+    if (pageIndex < 0)
+    {
+      await this.router.navigate(['..'], {relativeTo: this.activatedRoute});
+    }
+    else if (pageIndex >= this.steps.length)
+    {
+      await this.create();
+    }
+    else
+    {
+      this.pageIndex = pageIndex;
+
+      const route = `${this.steps[pageIndex].routerLink}`;
+      await this.router.navigate([route], {relativeTo: this.activatedRoute});
+    }
+
+  }
+
+  create()
+  {
+    console.log("Create");
   }
 }

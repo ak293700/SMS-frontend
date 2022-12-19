@@ -5,6 +5,12 @@
   <router-outlet></router-outlet>
 </main>
 <footer>
-  <p-button label="Précédent" (click)="previousPage()"></p-button>
-  <p-button label="Suivant" (click)="nextPage()"></p-button>
+  <button pButton [label]="pageIndex == 0 ? 'Annuler' : 'Précédent'" (click)="previousPage()"
+          [ngClass]="{'p-button-danger': pageIndex == 0}">
+
+  </button>
+  <button pButton [label]="pageIndex == steps.length - 1 ? 'Valider' : 'Suivant'" (click)="nextPage()"
+          [ngClass]="{'p-button-success': pageIndex == steps.length - 1}">
+
+  </button>
 </footer>
