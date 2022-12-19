@@ -24,6 +24,7 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
+import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -564,8 +565,25 @@ export class EditOneProductComponent implements OnInit
     console.log(selected);
   }
 
-  onSelectDiscountClose()
+  // when the select discount dialog closed it is called
+  async onSelectDiscountClose()
   {
+    if (this.dummyStruct.selectedDiscount == undefined
+      || this.product.productType != ProductType.Simple
+      || this.dummyStruct.selectedDiscount.id == this.simpleProduct.discount!.id)
+      return;
 
+    try
+    {
+      const response: AxiosResponse = await axios
+        .get<LiteDiscountDto>(`${api}/discount/${this.dummyStruct.selectedDiscount.id}`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.simpleProduct.discount = response.data;
+    } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
   }
 }
