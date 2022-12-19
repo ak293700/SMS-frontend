@@ -16,8 +16,9 @@
 
 <div class="editable-list-container">
   <ul class="item-container">
-    <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item"
-        (contextmenu)="onContextMenu($event, item)">
+    <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item" (click)="onSelect(item)"
+        (contextmenu)="onContextMenu($event, item)" [ngClass]="{'selected': item.id === selectedItem?.id,
+        'selectable': selectable && item.id !== selectedItem?.id}">
       {{item.label}}
     </li>
   </ul>
@@ -26,7 +27,7 @@
                   field="name" [suggestions]="suggestions"
                   (completeMethod)="completeMethod($event)"
                   [(ngModel)]="selectorItem"
-                  (onSelect)="onSelect($event)"
+                  (onSelect)="onAdd($event)"
                   [dropdown]="true" [forceSelection]="true"
                   [autoHighlight]="true">
   </p-autoComplete>

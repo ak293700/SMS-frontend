@@ -40,6 +40,11 @@ export class EditableListComponent implements OnInit, OnChanges
 
   @Input() unique: boolean = true;
 
+  @Input() selectable: boolean = false;
+
+  @Input() selectedItem: IListItem | undefined = undefined;
+  @Output() selectedItemChange: EventEmitter<IListItem> = new EventEmitter<IListItem>();
+
   menuItems: MenuItem[] = [];
 
   isDialogVisible: boolean = false;
@@ -71,6 +76,8 @@ export class EditableListComponent implements OnInit, OnChanges
   initItem()
   {
     this.uniqueId = 0;
+    if (!this.selectable)
+      this.selectedItem = undefined;
 
     // initialize _items from items
     this._items = this.items.map((item: IListItem): ICompleteListItem =>
@@ -97,9 +104,10 @@ export class EditableListComponent implements OnInit, OnChanges
       .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
   }
 
-  onSelect(event: any)
+  // call when adding a new item to the list
+  onAdd(event: any)
   {
-    if (this.unique && this._items.find((item: IListItem) => item.id == event.id) != null)
+    if (this.unique && this._items.find((item: ICompleteListItem) => item.id == event.id) != null)
       return;
 
     const newItem: ICompleteListItem = {id: event.id, label: event.name, uniqueId: this.uniqueId++, tooltip: ''};
@@ -164,5 +172,20 @@ export class EditableListComponent implements OnInit, OnChanges
     });
 
     this.itemsChange.emit(items);
+  }
+
+
+  // call when selecting an item from the list
+  onSelect(item: ICompleteListItem)
+  {
+    if (!this.selectable)
+      return;
+
+    this.selectedItem = item;
+  }
+
+  emitSelectedItemsChange()
+  {
+    this.selectedItemChange.emit(this.selectedItem);
   }
 }

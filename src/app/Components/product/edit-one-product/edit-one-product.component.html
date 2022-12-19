@@ -1,9 +1,11 @@
-<!--<p-dialog [(visible)]="discountOverlayVisible"-->
-<!--          [maximizable]="true"-->
-<!--          [style]="{'width':'100vw', 'height': '100vh'}"-->
-<!--          [draggable]="false" [modal]="true">-->
-<!--  <app-discount-filter (onSelectData)="selectNewDiscount($event)"></app-discount-filter>-->
-<!--</p-dialog>-->
+<p-dialog [(visible)]="discountOverlayVisible"
+          [maximizable]="true"
+          [style]="{'width':'50vw', 'height': '80vh'}"
+          [draggable]="false" [modal]="true">
+  <app-editable-list [(items)]="availableDiscounts" [suggestions]="allDiscounts" [selectable]="true">
+
+  </app-editable-list>
+</p-dialog>
 
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [parent]="this"
@@ -90,6 +92,7 @@
       <li #discount class="field-item">
         <label *ngIf="simpleProduct.discount !== undefined" for="field-discount" class="text">Remise</label>
         <input pInputText id="field-discount" type="number" [step]="0.01"
+               [disabled]="simpleProduct.discount!.isNetPrice"
                [placeholder]="initialSimpleProduct.discount!.value.toString()"
                [(ngModel)]="simpleProduct.discount!.value"
                [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
@@ -98,7 +101,7 @@
       </li>
       <li class="field-item">
         <label for="field-deee" class="text">Deee</label>
-        <p-inputNumber id="field-deee" mode="currency" currency="EUR"
+        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"
                        [placeholder]="initialSimpleProduct.deee.toString()"
                        [(ngModel)]="simpleProduct.deee">
         </p-inputNumber>

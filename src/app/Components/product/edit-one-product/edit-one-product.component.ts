@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -48,6 +48,9 @@ export class EditOneProductComponent implements OnInit
   // @ts-ignore
   initialProduct: SimpleProductDto | BundleDto;
 
+  initialAvailableDiscounts: IListItem[] = [];
+  availableDiscounts: IListItem[] = [];
+
   initialAdditionalInformation: {
     manufacturers: IdNameDto[],
     popularities: IdNameDto[],
@@ -59,6 +62,8 @@ export class EditOneProductComponent implements OnInit
   };
 
   additionalInformation = this.initialAdditionalInformation;
+
+  allDiscounts: IdNameDto[] = [];
 
   // Use to ngModel some product fields
   dummyStruct: {
@@ -110,7 +115,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [6190, 7911, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -121,6 +126,7 @@ export class EditOneProductComponent implements OnInit
 
     await this.fetchManufacturers(); // Do it first so the dummy struct is well initialized
     await this.fetchReferences(routedData.selectedIds);
+    await this.fetchAllDiscounts();
     await this.fetchProduct(routedData.selectedId);
   }
 
@@ -135,8 +141,53 @@ export class EditOneProductComponent implements OnInit
 
       this.initialProduct = response.data;
       this.product = Operation.deepCopy(this.initialProduct);
+
+      await this.fetchAvailableDiscounts();
       this.initDummyStruct();
     } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+  // fetch the discount available for the product
+  async fetchAvailableDiscounts()
+  {
+    if (this.product.productType !== ProductType.Simple)
+    {
+      this.availableDiscounts = [];
+      return;
+    }
+
+    try
+    {
+      // fetch
+      const response = await axios.get<IdNameDto[]>(`${api}/discount/available/${this.product.id}`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.initialAvailableDiscounts = response.data
+        .map((d: IdNameDto) => ({id: d.id, label: d.name}));
+      this.availableDiscounts = Operation.deepCopy(this.initialAvailableDiscounts);
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+
+    console.log(this.availableDiscounts);
+  }
+
+  // fetch all the discounts
+  async fetchAllDiscounts()
+  {
+    try
+    {
+      const response = await axios.get<IdNameDto[]>(`${api}/discount`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.allDiscounts = response.data;
+    } catch (e: any | AxiosError)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }

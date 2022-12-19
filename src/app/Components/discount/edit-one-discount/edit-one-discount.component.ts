@@ -146,19 +146,16 @@ export class EditOneDiscountComponent implements OnInit
 
   async fetchOtherDiscounts(ids: number[])
   {
-    // TODO: change to show the "Derogation|Distributor: Manufacturer|Distributor"
-    // this.otherDiscounts = selectedIds.map(id => ({id, name: id.toString()}));
-
     try
     {
       const response = await axios.post<IdNameDto[]>(`${api}/discount/providers`, ids);
       if (response.status !== 200)
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      response.data.forEach(d => d.name = `${d.name} (${d.id})`);
+      this.otherDiscounts = response.data;
+      this.otherDiscounts.forEach(d => d.name = `${d.name} (${d.id})`);
 
       // reorder otherProducts by as 'ids'
-      this.otherDiscounts = response.data;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);

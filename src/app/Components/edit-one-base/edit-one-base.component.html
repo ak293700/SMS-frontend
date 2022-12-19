@@ -19,9 +19,10 @@
   </main>
   <aside>
     <ul class="other-data-container">
-      <li *ngFor="let otherProduct of otherDatas" class="other-data-item">
-        <button (click)="goToData(otherProduct.id)" [disabled]="otherProduct.id === data.id">
-          {{otherProduct.name}}</button>
+      <li *ngFor="let otherData of otherDatas" class="other-data-item">
+        <button (click)="goToData(otherData.id)" [disabled]="otherData.id === data.id">
+          {{otherData.name}}
+        </button>
       </li>
     </ul>
   </aside>
