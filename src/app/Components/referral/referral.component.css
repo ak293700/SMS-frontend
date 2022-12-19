@@ -5,11 +5,11 @@
   align-items: center;
   justify-content: center;
 
-  min-height: 100vh;
-  width: 100%;
-  background-color: var(--main-color);
-
   padding: 50px;
+}
+
+div {
+  height: 100%;
 }
 
 .page-link-container {
@@ -60,4 +60,11 @@
   top: 50%;
   left: 50%;
   translate: -50% -50%;
+}
+
+#back-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 30px;
 }

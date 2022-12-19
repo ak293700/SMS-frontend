@@ -7,7 +7,6 @@ import {RoutingAppComponent} from './Components/routing-app/routing-app.componen
 import {LoginPageComponent} from './Components/login-page/login-page.component';
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {HomeComponent} from './Components/home/home.component';
 import {ProductFilterComponent} from './Components/product/product-filter/product-filter.component';
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
@@ -37,12 +36,17 @@ import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/
 import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.component';
 import {DialogModule} from "primeng/dialog";
 import {EditableListComponent} from './Components/editable-list/editable-list.component';
+import {ReferralComponent} from './Components/referral/referral.component';
+import {CreateBundleComponent} from './Components/product/create-product/create-bundle/create-bundle.component';
+import {StepsModule} from "primeng/steps";
+import {
+  ChooseBundleComposantComponent
+} from './Components/product/create-product/create-bundle/choose-bundle-composant/choose-bundle-composant.component';
 
 @NgModule({
   declarations: [
     RoutingAppComponent,
     LoginPageComponent,
-    HomeComponent,
     ProductFilterComponent,
     PrettierPipe,
     EditMultipleProductsComponent,
@@ -52,7 +56,10 @@ import {EditableListComponent} from './Components/editable-list/editable-list.co
     DiscountFilterComponent,
     EditOneDiscountComponent,
     EditOneBaseComponent,
-    EditableListComponent
+    EditableListComponent,
+    ReferralComponent,
+    CreateBundleComponent,
+    ChooseBundleComposantComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +82,8 @@ import {EditableListComponent} from './Components/editable-list/editable-list.co
     ContextMenuModule,
     ToastModule,
     ConfirmDialogModule,
-    DialogModule
+    DialogModule,
+    StepsModule
   ],
   providers: [
     {

@@ -1,0 +1,10 @@
+<header>
+  <p-steps [model]="steps" [readonly]="true"></p-steps>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<footer>
+  <p-button label="Précédent" (click)="previousPage()"></p-button>
+  <p-button label="Suivant" (click)="nextPage()"></p-button>
+</footer>
