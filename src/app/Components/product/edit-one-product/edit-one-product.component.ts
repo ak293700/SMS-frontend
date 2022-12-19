@@ -321,8 +321,18 @@ export class EditOneProductComponent implements OnInit
   // This function does the actual work of saving the changes to the database
   private async _save(changes: IChanges)
   {
-    await this.saveDiscount(changes.diffObj.discount);
-    // await this.saveDiscount(changes.diffObj.discount);
+    console.log(changes);
+    if (!await this.saveDiscount(changes.diffObj.discount))
+      return this.messageService.add({
+        severity: 'error', summary: 'Erreur',
+        detail: 'Erreur lors de la de la sauvegarde de la remise'
+      });
+
+    if (!await this.saveDiscountCanUse(changes.diffObj.availableDiscounts))
+      return this.messageService.add({
+        severity: 'error', summary: 'Erreur',
+        detail: 'Erreur lors de la de la sauvegarde des remises disponible'
+      });
 
     let namespace: any = PatchSimpleProductDto;
     let endpoint = 'simpleproduct';
@@ -384,7 +394,6 @@ export class EditOneProductComponent implements OnInit
   {
     const changes = this.detectChanges();
 
-    return;
     if (changes.count == 0)
     {
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
@@ -398,7 +407,7 @@ export class EditOneProductComponent implements OnInit
       changes);
   }
 
-  // return can continue or not
+  // return can everything went well
   async saveDiscount(discount: any): Promise<boolean>
   {
     if (discount == undefined)
@@ -465,9 +474,28 @@ export class EditOneProductComponent implements OnInit
     return true;
   }
 
-  async saveDiscountCanUse(): Promise<boolean>
+  async saveDiscountCanUse(availableDiscounts: IListItem[]): Promise<boolean>
   {
-    // const changes =
+    console.log(availableDiscounts);
+
+    if (availableDiscounts == undefined)
+      return true;
+
+    try
+    {
+      const ids = availableDiscounts.map(d => d.id);
+      const response: AxiosResponse = await axios.post(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
+      if (!HttpTools.IsValid(response.status))
+      {
+        MessageServiceTools.httpFail(this.messageService, response);
+        return false;
+      }
+
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+      return false;
+    }
 
     return true;
   }
@@ -504,7 +532,7 @@ export class EditOneProductComponent implements OnInit
       const tmp = Operation.detectChanges(this.additionalInformation.availableDiscounts,
         this.initialAdditionalInformation.availableDiscounts, ['id']);
 
-      tmp.diffObj = {availableDiscount: tmp.diffObj};
+      tmp.diffObj = {availableDiscounts: tmp.diffObj};
       changes.push(tmp);
     }
 
