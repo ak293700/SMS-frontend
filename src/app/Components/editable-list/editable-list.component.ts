@@ -71,7 +71,6 @@ export class EditableListComponent implements OnInit, OnChanges
 
   ngOnChanges(changes: SimpleChanges): void
   {
-    console.log(changes)
     this.initItem();
   }
 

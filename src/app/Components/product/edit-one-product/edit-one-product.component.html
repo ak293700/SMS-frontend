@@ -60,7 +60,7 @@
       <li class="field-item">
         <label for="field-cataloguePrice" class="text">Prix tarif</label>
         <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
-                       [placeholder]="product.cataloguePrice.toString()"
+                       [placeholder]="product.cataloguePrice.toString()" [step]="0.01"
                        [(ngModel)]="product.cataloguePrice"
                        [disabled]="product.productType === ProductType.Bundle">
         </p-inputNumber>
@@ -71,7 +71,7 @@
         <p-inputNumber id="field-salePrice" mode="currency" currency="EUR"
                        [placeholder]="purchasePrice.toString()" [step]="0.01"
                        [(ngModel)]="purchasePrice"
-                       [disabled]="product.productType === ProductType.Bundle">
+                       [disabled]="product.productType === ProductType.Bundle || simpleProduct.discount == null">
         </p-inputNumber>
       </li>
     </ul>
@@ -90,16 +90,18 @@
                [placeholder]="initialSimpleProduct.pureReference"
                [(ngModel)]="simpleProduct.pureReference">
       </li>
+      <!--*ngIf="simpleProduct.discount !== undefined"-->
       <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
       <li #discount class="field-item">
-        <label *ngIf="simpleProduct.discount !== undefined" for="field-discount" class="text">Remise</label>
-        <input pInputText id="field-discount" type="number" [step]="0.01"
+        <label for="field-discount" class="text">Remise</label>
+        <input *ngIf="simpleProduct.discount != undefined" pInputText id="field-discount" type="number" [step]="0.01"
                [disabled]="simpleProduct.discount!.isNetPrice"
                [placeholder]="initialSimpleProduct.discount!.value.toString()"
                [(ngModel)]="simpleProduct.discount!.value"
                [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
                         + '\n'
                         + 'Prix net: ' + initialSimpleProduct.discount!.isNetPrice">
+        <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
       </li>
       <li class="field-item">
         <label for="field-deee" class="text">Deee</label>

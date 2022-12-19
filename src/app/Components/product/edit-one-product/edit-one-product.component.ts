@@ -322,6 +322,7 @@ export class EditOneProductComponent implements OnInit
   private async _save(changes: IChanges)
   {
     await this.saveDiscount(changes.diffObj.discount);
+    // await this.saveDiscount(changes.diffObj.discount);
 
     let namespace: any = PatchSimpleProductDto;
     let endpoint = 'simpleproduct';
@@ -343,11 +344,9 @@ export class EditOneProductComponent implements OnInit
         shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
     }
 
-    console.log(patchProduct);
     const bundleItems: CreateBundleItemDto[] = changes.diffObj.items;
     if (bundleItems !== undefined) // @ts-ignore
       bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
-    console.log(bundleItems);
 
     try
     {
@@ -384,6 +383,8 @@ export class EditOneProductComponent implements OnInit
   save()
   {
     const changes = this.detectChanges();
+
+    return;
     if (changes.count == 0)
     {
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
@@ -464,6 +465,13 @@ export class EditOneProductComponent implements OnInit
     return true;
   }
 
+  async saveDiscountCanUse(): Promise<boolean>
+  {
+    // const changes =
+
+    return true;
+  }
+
   // Some product fields are not directly model
   // This function does the bridge between the model and the product
   reformatProduct()
@@ -493,13 +501,16 @@ export class EditOneProductComponent implements OnInit
 
     if (this.product.productType == ProductType.Simple)
     {
-      changes.push(Operation.detectChanges(this.additionalInformation.availableDiscounts,
-        this.initialAdditionalInformation.availableDiscounts, ['id']));
+      const tmp = Operation.detectChanges(this.additionalInformation.availableDiscounts,
+        this.initialAdditionalInformation.availableDiscounts, ['id']);
+
+      tmp.diffObj = {availableDiscount: tmp.diffObj};
+      changes.push(tmp);
     }
 
     // merge all changes into one
     return changes.reduce((acc, val) =>
-    { return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}});
+    { return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}}, {diffObj: {}, count: 0});
   }
 
   discountValue(): number
