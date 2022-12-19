@@ -182,6 +182,7 @@ export class EditableListComponent implements OnInit, OnChanges
       return;
 
     this.selectedItem = item;
+    this.emitSelectedItemsChange();
   }
 
   emitSelectedItemsChange()

@@ -1,9 +1,10 @@
 <p-dialog [(visible)]="discountOverlayVisible"
           [maximizable]="true"
           [style]="{'width':'50vw', 'height': '80vh'}"
-          [draggable]="false" [modal]="true">
-  <app-editable-list [(items)]="availableDiscounts" [suggestions]="allDiscounts" [selectable]="true">
-
+          [draggable]="false" [modal]="true"
+          (onHide)="onSelectDiscountClose()">
+  <app-editable-list [(items)]="availableDiscounts" [suggestions]="allDiscounts" [selectable]="true"
+                     [(selectedItem)]="dummyStruct.selectedDiscount">
   </app-editable-list>
 </p-dialog>
 

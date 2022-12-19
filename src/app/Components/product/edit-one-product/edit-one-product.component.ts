@@ -69,11 +69,13 @@ export class EditOneProductComponent implements OnInit
   dummyStruct: {
     manufacturer: IdNameDto, popularity: IdNameDto,
     availability: IdNameDto, bundleItems: IListItem[]
+    selectedDiscount: IListItem | undefined
   } = {
     manufacturer: {id: 0, name: ""},
     popularity: {id: 0, name: ""},
     availability: {id: 0, name: ""},
     bundleItems: [],
+    selectedDiscount: undefined
   }
 
   bundleItemAdditionalField: { fieldName: string, label: string, type: string, default?: any }[] = [];
@@ -173,8 +175,6 @@ export class EditOneProductComponent implements OnInit
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
-
-    console.log(this.availableDiscounts);
   }
 
   // fetch all the discounts
@@ -206,6 +206,16 @@ export class EditOneProductComponent implements OnInit
     {
       this.dummyStruct.availability = this.additionalInformation.availabilities
         .find(x => x.id == this.simpleProduct.availability)!;
+
+      if (this.simpleProduct.discount != null)
+      {
+        this.dummyStruct.selectedDiscount = this.availableDiscounts
+          .find(x => x.id == this.simpleProduct.discount!.id)!;
+      }
+      else
+      {
+        this.dummyStruct.selectedDiscount = undefined;
+      }
     }
     else if (this.product.productType == ProductType.Bundle)
     {
@@ -548,8 +558,14 @@ export class EditOneProductComponent implements OnInit
     this.setSalePriceIt(index, salePriceEt * 1.2);
   }
 
-  selectNewDiscount(selected: any)
+  selectNewDiscount(selected: IListItem)
   {
+
     console.log(selected);
+  }
+
+  onSelectDiscountClose()
+  {
+
   }
 }
