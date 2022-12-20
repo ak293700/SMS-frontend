@@ -31,6 +31,7 @@
   container: size;
 }
 
+
 .item-item {
   position: relative;
   background-color: var(--secondary-color);
@@ -41,7 +42,15 @@
   font-family: var(--default-font-family);
   transition: all .2s ease-in-out;
 
-  margin: 10px;
+  margin-top: 10px;
+}
+
+.item-item:first-child {
+  margin-left: auto;
+}
+
+.item-item:last-child {
+  margin-right: auto;
 }
 
 .selected {

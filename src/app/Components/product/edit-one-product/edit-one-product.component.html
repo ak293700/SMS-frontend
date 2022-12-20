@@ -137,7 +137,7 @@
   </div>
   <div *ngIf="product.productType === ProductType.Bundle" id="common-field-bundle">
     <ul class="field-container">
-      <li class="field-item">
+      <li class="field-item" [style.width.px]="430">
         <label for="field-bundle-items" class="text">Composant</label>
         <app-editable-list id="field-bundle-items" [suggestions]="allProductReferences"
                            [(items)]="dummyStruct.bundleItems" padProperty="quantity"
