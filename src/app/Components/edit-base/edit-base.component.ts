@@ -1,4 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {IdNameDto} from "../../../Dtos/IdNameDto";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {Operation} from "../../../utils/Operation";
+import {IChanges} from "../../../Interfaces/IChanges";
+import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
 
 @Component({
   selector: 'app-edit-base',
@@ -7,10 +12,10 @@ import {Component} from '@angular/core';
 })
 export class EditBaseComponent
 {
-  /*@Input() otherDatas: IdNameDto[] = [];
+  @Input() otherDatas: IdNameDto[] = [];
   @Input() data: { id: number } = {id: 0};
 
-  @Input('parent') parentComponent: any = undefined;
+  @Input() detectChanges: () => IChanges = () => {return {count: 0, diffObj: []};};
 
   @Output('newSelection') newSelectionEvent = new EventEmitter<number>();
 
@@ -24,18 +29,18 @@ export class EditBaseComponent
 
   async goToData(id: number)
   {
-    const changes = this.parentComponent.detectChanges();
+    const changes = this.detectChanges();
     if (changes.count > 0)
     {
       const message = changes.count == 1
         ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
         : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-      // ConfirmationServiceTools.new(this.confirmationService, this, this.reset, message, id);
-      ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any, id: number) => {
-        instance.reset();
-        instance.newSelectionEvent.emit(id);
-      }, message, this, id);
+      const f = (id: number) => {
+        this.reset();
+        this.newSelectionEvent.emit(id);
+      };
+      ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this), id);
     }
     else
       this.newSelectionEvent.emit(id);
@@ -59,7 +64,7 @@ export class EditBaseComponent
 
   reset()
   {
-    const changes = this.parentComponent.detectChanges();
+    const changes = this.detectChanges();
     if (changes.count == 0)
       return this.resetEvent.emit();
 
@@ -67,15 +72,12 @@ export class EditBaseComponent
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any) => {
-      instance.resetEvent.emit()
-    }, message, this);
+    const f = () => this.resetEvent.emit();
+    ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this));
   }
 
   save()
   {
     this.saveEvent.emit();
   }
-
-*/
 }

@@ -1,18 +1,21 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {IdNameDto} from "../../../Dtos/IdNameDto";
-import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
-import {Operation} from "../../../utils/Operation";
+import {Component} from '@angular/core';
 import {ConfirmationService, MessageService} from "primeng/api";
-import {IChanges} from "../../../Interfaces/IChanges";
+import {EditBaseComponent} from "../edit-base/edit-base.component";
 
-@Component({
+/*@Component({
   selector: 'app-edit-one-base',
   templateUrl: './edit-one-base.component.html',
   styleUrls: ['./edit-one-base.component.css']
+})*/
+
+@Component({
+  selector: 'app-edit-one-base',
+  templateUrl: '../edit-base/edit-base.component.html',
+  styleUrls: ['../edit-base/edit-base.component.css']
 })
-export class EditOneBaseComponent
+export class EditOneBaseComponent extends EditBaseComponent
 {
-  @Input() otherDatas: IdNameDto[] = [];
+  /*@Input() otherDatas: IdNameDto[] = [];
   @Input() data: { id: number } = {id: 0};
 
   @Input() detectChanges: () => IChanges = () => {return {count: 0, diffObj: []};};
@@ -80,5 +83,11 @@ export class EditOneBaseComponent
   save()
   {
     this.saveEvent.emit();
+  }*/
+
+  constructor(messageService: MessageService,
+              confirmationService: ConfirmationService)
+  {
+    super(messageService, confirmationService);
   }
 }

@@ -20,7 +20,7 @@ export class ConfirmationServiceTools
   // f: the function to execute when success
   // message: the message to display
   // params: the parameters to pass to f
-  static newComplexFunction(confirmationService: ConfirmationService, f: (...params: any[]) => any, message: string, ...params: any[])
+  static newComplexFunction(confirmationService: ConfirmationService, message: string, f: (...params: any[]) => any, ...params: any[])
   {
     confirmationService.confirm({
       message: message, accept: async () =>
@@ -30,7 +30,6 @@ export class ConfirmationServiceTools
         await f(...params);
       }
     });
-
   }
 
   // Blocking confirmation popup
