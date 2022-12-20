@@ -39,6 +39,7 @@ import {EditableListComponent} from './Components/editable-list/editable-list.co
 import {ReferralComponent} from './Components/referral/referral.component';
 import {CreateBundleComponent} from './Components/product/create-product/create-bundle/create-bundle.component';
 import {StepsModule} from "primeng/steps";
+import {BackButtonComponent} from './Components/back-button/back-button.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import {StepsModule} from "primeng/steps";
     EditableListComponent,
     ReferralComponent,
     CreateBundleComponent,
+    BackButtonComponent,
   ],
   imports: [
     BrowserModule,

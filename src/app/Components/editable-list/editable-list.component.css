@@ -45,10 +45,12 @@
   margin-top: 10px;
 }
 
+/* To have the item centered */
 .item-item:first-child {
   margin-left: auto;
 }
 
+/* To have the item centered */
 .item-item:last-child {
   margin-right: auto;
 }
