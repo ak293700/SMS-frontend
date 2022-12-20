@@ -1,18 +1,4 @@
-<nav>
-  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
-</nav>
+<app-edit-multiple [otherDatas]="otherProducts">
 
-<!--
-<div class="grid-container">
-  <main style="background: red">main
-  </main>
-  <aside style="background: black">
-    <ul class="other-product-container">
-      <li *ngFor="let otherProduct of otherProducts" [ngSwitch]="filter.type" class="item">
-        <p-button styleClass="btn-hover-main">{{otherProduct.productReference}}</p-button>
-      </li>
-    </ul>
 
-  </aside>
-</div>
--->
+</app-edit-multiple>

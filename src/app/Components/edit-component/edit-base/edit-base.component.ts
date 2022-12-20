@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {IdNameDto} from "../../../Dtos/IdNameDto";
+import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {Operation} from "../../../utils/Operation";
+import {Operation} from "../../../../utils/Operation";
 
 /*@Component({
   selector: 'app-edit-base',

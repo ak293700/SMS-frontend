@@ -545,23 +545,19 @@ export class EditOneProductComponent implements OnInit
 
   getSalePriceIt(index: number): number
   {
-    const deee: number = this.product.productType === ProductType.Simple
-      ? this.simpleProduct.deee
-      : 0;
-
     return PricingTool
       .calculateSalePriceIt(
         this.purchasePrice,
         this.product.shopSpecifics[index].km,
         this.product.shopSpecifics[index].promotion,
-        deee);
+        this.product.deee);
   }
 
   setSalePriceIt(index: number, value: number): void
   {
-    this.product.shopSpecifics[index].km =
-      value /
-      (this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion) * 1.2);
+    const nominator = value - this.product.deee;
+    const denominator = this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion) * 1.2;
+    this.product.shopSpecifics[index].km = nominator / denominator;
   }
 
   // return the margin rate in percent

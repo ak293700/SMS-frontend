@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {ConfirmationService, MessageService} from "primeng/api";
 import {EditBaseComponent} from "../edit-base/edit-base.component";
-import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
-import {IChanges} from "../../../Interfaces/IChanges";
+import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
+import {IChanges} from "../../../../Interfaces/IChanges";
 
 /*@Component({
   selector: 'app-edit-one-base',
@@ -17,7 +17,7 @@ import {IChanges} from "../../../Interfaces/IChanges";
 })
 export class EditOneBaseComponent extends EditBaseComponent
 {
-  @Input() detectChanges: () => IChanges = () => {return {count: 0, diffObj: []};};
+  @Input() detectChanges: () => IChanges = () => { return {diffObj: [], count: 0}; };
 
   constructor(messageService: MessageService,
               confirmationService: ConfirmationService)

@@ -33,7 +33,7 @@ import {FilterFieldsComponent} from './Components/filter/filter-fields/filter-fi
 import {FilterTableComponent} from './Components/filter/filter-table/filter-table.component';
 import {DiscountFilterComponent} from './Components/discount/discount-filter/discount-filter.component';
 import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/edit-one-discount.component';
-import {EditOneBaseComponent} from './Components/edit-one-base/edit-one-base.component';
+import {EditOneBaseComponent} from './Components/edit-component/edit-one-base/edit-one-base.component';
 import {DialogModule} from "primeng/dialog";
 import {EditableListComponent} from './Components/editable-list/editable-list.component';
 import {ReferralComponent} from './Components/referral/referral.component';
@@ -41,6 +41,7 @@ import {CreateBundleComponent} from './Components/product/create-product/create-
 import {StepsModule} from "primeng/steps";
 import {BackButtonComponent} from './Components/back-button/back-button.component';
 import {CreateDiscountComponent} from './Components/discount/create-discount/create-discount.component';
+import {EditMultipleComponent} from './Components/edit-component/edit-multiple/edit-multiple.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import {CreateDiscountComponent} from './Components/discount/create-discount/cre
     CreateBundleComponent,
     BackButtonComponent,
     CreateDiscountComponent,
+    EditMultipleComponent,
   ],
   imports: [
     BrowserModule,
