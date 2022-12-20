@@ -11,6 +11,7 @@ import {DiscountFilterComponent} from "./Components/discount/discount-filter/dis
 import {EditOneDiscountComponent} from "./Components/discount/edit-one-discount/edit-one-discount.component";
 import {ReferralComponent} from "./Components/referral/referral.component";
 import {CreateBundleComponent} from "./Components/product/create-product/create-bundle/create-bundle.component";
+import {CreateDiscountComponent} from "./Components/discount/create-discount/create-discount.component";
 
 
 const routes: Routes = [
@@ -51,7 +52,16 @@ const routes: Routes = [
   },
   {
     path: 'discount', children: [
-      {path: '', redirectTo: '/home', pathMatch: 'full'},
+      {
+        path: '', component: ReferralComponent, data: {
+          rails: [
+            {label: 'Création', link: 'create'},
+            {label: 'Modification', link: 'filter'}
+          ],
+          backButton: {link: '/home'}
+        }
+      },
+      {path: 'create', component: CreateDiscountComponent},
       {path: 'filter', component: DiscountFilterComponent},
       {
         path: 'edit', children: [

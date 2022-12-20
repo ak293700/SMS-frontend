@@ -13,8 +13,10 @@ export class ReferralComponent implements OnDestroy
 {
 
   rails: { label: string, link: string }[] = [];
-  backButtonLink: string = '..';
+  // backButtonLink: string = '..';
   showBackButton: boolean = true;
+
+  backButtonLink: string | undefined = undefined;
 
   subscription: any[] = [];
 
@@ -27,7 +29,7 @@ export class ReferralComponent implements OnDestroy
         if (data.backButton.link !== undefined)
           this.backButtonLink = data.backButton.link;
         if (data.backButton.show !== undefined)
-          this.showBackButton = data.backButton.show ?? true;
+          this.showBackButton = data.backButton.show;
       }
     }));
   }

@@ -1,9 +1,6 @@
 <div class="flex-center">
-  <p-button *ngIf="showBackButton" id="back-button"
-            [routerLink]="backButtonLink"
-            styleClass="btn-hover-main" label="Retour">
-    <i class="pi pi-arrow-left" style="margin-right: .7rem"></i>
-  </p-button>
+  <app-back-button *ngIf="showBackButton" [routerLink]="backButtonLink">
+  </app-back-button>
 
   <ul class="page-link-container">
     <li *ngFor="let rail of rails" class="page-link-item">

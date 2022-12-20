@@ -24,8 +24,8 @@
                [(ngModel)]="discount.value"/>
       </li>
 
-      <li class="field-item">
-        <label class="text" pTooltip="Quantité sur laquelle la remise est disponible">Quantité</label>
+      <li class="field-item" pTooltip="Quantité sur laquelle la remise est disponible">
+        <label class="text">Quantité</label>
         <p-inputNumber [useGrouping]="false"
                        [placeholder]="initialDiscount.quantity?.toString() ?? 'Pas de quantité'"
                        [(ngModel)]="discount.quantity">

@@ -1,0 +1,73 @@
+<app-back-button></app-back-button>
+
+<div id="common-field">
+  <ul class="field-container">
+    <li class="field-item">
+      <label class="text">Prix net</label>
+      <p-checkbox [binary]="true" [(ngModel)]="discount.isNetPrice"></p-checkbox>
+    </li>
+
+    <li class="field-item">
+      <label class="text">Valeur</label>
+      <input pInputText
+             [(ngModel)]="discount.value"/>
+    </li>
+
+    <li class="field-item" pTooltip="Quantité sur laquelle la remise est disponible">
+      <label class="text">Quantité</label>
+      <p-inputNumber [useGrouping]="false"
+                     [(ngModel)]="discount.quantity">
+      </p-inputNumber>
+    </li>
+
+    <li class="field-item">
+      <label for="field-discount-type" class="text">Distributeur</label>
+      <p-autoComplete id="field-discount-type" dataKey="id"
+                      field="name" [suggestions]="additionalInformation.discountTypes"
+                      (completeMethod)="completeMethod($event, 'popularities')"
+                      [(ngModel)]="discount.discountType"
+                      [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+      </p-autoComplete>
+    </li>
+  </ul>
+</div>
+
+<!--<div *ngIf="discount.discountType === DiscountType.Derogation" id="common-field-derogation">
+  <ul class="field-container">
+    <li class="field-item">
+      <label for="field-manufacturer" class="text">Fabricant</label>
+      <p-autoComplete id="field-manufacturer" dataKey="id"
+                      field="name" [suggestions]="additionalInformation.manufacturers"
+                      (completeMethod)="completeMethod($event, 'manufacturers')"
+                      [(ngModel)]="dummyStruct.manufacturer"
+                      [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+      </p-autoComplete>
+    </li>
+
+    <li class="field-item">
+      <label for="field-distributors" class="text">Distributeurs autorisés</label>
+      <app-editable-list id="field-distributors"
+                         [suggestions]="additionalInformation.distributors"
+                         [(items)]="dummyStruct.distributors">
+      </app-editable-list>
+    </li>
+  </ul>
+</div>-->
+
+<div *ngIf="discount.discountType === DiscountType.Distributor" id="common-field-distributor">
+  <ul class="field-container">
+    <!--<li class="field-item">
+      <label for="field-distributor" class="text">Distributeur</label>
+      <p-autoComplete id="field-distributor" dataKey="id"
+                      field="name" [suggestions]="additionalInformation.distributors"
+                      (completeMethod)="completeMethod($event, 'distributors')"
+                      [(ngModel)]="dummyStruct.distributor"
+                      [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+      </p-autoComplete>
+    </li>-->
+  </ul>
+</div>
+
+
+<p-button (click)="create()" label="Créer" styleClass="btn-hover-main"
+          [style.margin.px]="40"></p-button>

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ActivatedRoute, Router, UrlTree} from "@angular/router";
+import {Router, UrlTree} from "@angular/router";
 
 @Component({
   selector: 'app-back-button',
@@ -15,15 +15,13 @@ export class BackButtonComponent
 
   _routerLink: string;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute)
+  constructor(private router: Router)
   {
-
     if (this.routerLink !== undefined)
     {
       this._routerLink = this.routerLink;
       return;
     }
-
 
     // get the last route
     const tmp: UrlTree | undefined = this.router.getCurrentNavigation()?.previousNavigation?.finalUrl;

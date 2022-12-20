@@ -1,4 +1,5 @@
 import {IChanges} from "../Interfaces/IChanges";
+import {IdNameDto} from "../Dtos/IdNameDto";
 
 export class Operation
 {
@@ -113,5 +114,21 @@ export class Operation
     }
 
     return {diffObj: diffObj, count: count};
+  }
+
+  static toIdNameDto(e: any): IdNameDto[]
+  {
+    const res: IdNameDto[] = [];
+    const values = Object.values(e);
+    for (let i = 0; i < values.length; i++)
+    {
+      const value = values[i];
+      if (typeof value !== 'string')
+        break
+
+      res.push({id: i, name: value});
+    }
+
+    return res;
   }
 }

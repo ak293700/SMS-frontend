@@ -40,6 +40,7 @@ import {ReferralComponent} from './Components/referral/referral.component';
 import {CreateBundleComponent} from './Components/product/create-product/create-bundle/create-bundle.component';
 import {StepsModule} from "primeng/steps";
 import {BackButtonComponent} from './Components/back-button/back-button.component';
+import {CreateDiscountComponent} from './Components/discount/create-discount/create-discount.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import {BackButtonComponent} from './Components/back-button/back-button.componen
     ReferralComponent,
     CreateBundleComponent,
     BackButtonComponent,
+    CreateDiscountComponent,
   ],
   imports: [
     BrowserModule,
