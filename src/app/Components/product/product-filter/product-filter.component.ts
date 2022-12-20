@@ -331,7 +331,9 @@ export class ProductFilterComponent implements OnInit
 
   async editSelection()
   {
-    // go to child route 'edit/multiple'
-    await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
+    await this.router.navigate(['../edit/multiple'], {
+      relativeTo: this.route,
+      state: {selectedIds: this.selectedProducts.ids}
+    });
   }
 }

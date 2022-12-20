@@ -74,6 +74,15 @@
                        [disabled]="product.productType === ProductType.Bundle || simpleProduct.discount == null">
         </p-inputNumber>
       </li>
+
+      <li class="field-item">
+        <label for="field-deee" class="text">Deee</label>
+        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"
+                       [placeholder]="initialProduct.deee.toString()"
+                       [(ngModel)]="product.deee"
+                       [disabled]="product.productType === ProductType.Bundle">
+        </p-inputNumber>
+      </li>
     </ul>
   </div>
   <div *ngIf="product.productType === ProductType.Simple" id="common-field-simple-product">
@@ -104,11 +113,11 @@
         <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
       </li>
       <li class="field-item">
-        <label for="field-deee" class="text">Deee</label>
-        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"
-                       [placeholder]="initialSimpleProduct.deee.toString()"
-                       [(ngModel)]="simpleProduct.deee">
-        </p-inputNumber>
+        <!--        <label for="field-deee" class="text">Deee</label>-->
+        <!--        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"-->
+        <!--                       [placeholder]="initialSimpleProduct.deee.toString()"-->
+        <!--                       [(ngModel)]="simpleProduct.deee">-->
+        <!--        </p-inputNumber>-->
       </li>
       <li class="field-item">
         <label for="field-stock" class="text">Stock</label>

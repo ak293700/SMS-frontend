@@ -10,6 +10,7 @@ export interface ProductDto
   productReference: string;
   ean13: string;
   manufacturerId: number;
+  deee: number;
   popularity: ProductPopularity;
   imageLink: string;
   shopSpecifics: ShopSpecificDto[];
