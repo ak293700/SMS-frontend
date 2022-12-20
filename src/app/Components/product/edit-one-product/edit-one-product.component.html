@@ -10,7 +10,7 @@
 </p-dialog>
 
 <app-edit-one-base *ngIf="product !== undefined"
-                   [otherDatas]="otherProducts" [data]="product" [parent]="this"
+                   [otherDatas]="otherProducts" [data]="product" [detectChanges]="detectChanges.bind(this)"
                    (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()">
   <h2 class="text" style="margin-bottom: 3rem">{{ProductType.toString(product.productType)}}</h2>
 

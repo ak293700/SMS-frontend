@@ -3,6 +3,7 @@ import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
 import {Operation} from "../../../utils/Operation";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {IChanges} from "../../../Interfaces/IChanges";
 
 @Component({
   selector: 'app-edit-one-base',
@@ -14,7 +15,7 @@ export class EditOneBaseComponent
   @Input() otherDatas: IdNameDto[] = [];
   @Input() data: { id: number } = {id: 0};
 
-  @Input('parent') parentComponent: any = undefined;
+  @Input() detectChanges: () => IChanges = () => {return {count: 0, diffObj: []};};
 
   @Output('newSelection') newSelectionEvent = new EventEmitter<number>();
 
@@ -28,7 +29,7 @@ export class EditOneBaseComponent
 
   async goToData(id: number)
   {
-    const changes = this.parentComponent.detectChanges();
+    const changes = this.detectChanges();
     if (changes.count > 0)
     {
       const message = changes.count == 1
@@ -63,7 +64,7 @@ export class EditOneBaseComponent
 
   reset()
   {
-    const changes = this.parentComponent.detectChanges();
+    const changes = this.detectChanges();
     if (changes.count == 0)
       return this.resetEvent.emit();
 
@@ -80,5 +81,4 @@ export class EditOneBaseComponent
   {
     this.saveEvent.emit();
   }
-
 }

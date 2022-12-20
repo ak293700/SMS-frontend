@@ -1,5 +1,5 @@
 <app-edit-one-base *ngIf="discount !== undefined"
-                   [otherDatas]="otherDiscounts" [data]="discount" [parent]="this"
+                   [otherDatas]="otherDiscounts" [data]="discount" [detectChanges]="detectChanges.bind(this)"
                    (newSelection)="fetchDiscount($event)" (reset)="reset()" (save)="save()">
   <h2 class="text" style="margin-bottom: 3rem">{{ DiscountType.toString(discount.discountType) }}</h2>
 
