@@ -41,7 +41,6 @@ import {CreateBundleComponent} from './Components/product/create-product/create-
 import {StepsModule} from "primeng/steps";
 import {BackButtonComponent} from './Components/back-button/back-button.component';
 import {CreateDiscountComponent} from './Components/discount/create-discount/create-discount.component';
-import {EditBaseComponent} from './Components/edit-base/edit-base.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +60,6 @@ import {EditBaseComponent} from './Components/edit-base/edit-base.component';
     CreateBundleComponent,
     BackButtonComponent,
     CreateDiscountComponent,
-    EditBaseComponent,
   ],
   imports: [
     BrowserModule,

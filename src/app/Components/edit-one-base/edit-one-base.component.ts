@@ -1,6 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {ConfirmationService, MessageService} from "primeng/api";
 import {EditBaseComponent} from "../edit-base/edit-base.component";
+import {ConfirmationServiceTools} from "../../../utils/ConfirmationServiceTools";
+import {IChanges} from "../../../Interfaces/IChanges";
 
 /*@Component({
   selector: 'app-edit-one-base',
@@ -15,22 +17,15 @@ import {EditBaseComponent} from "../edit-base/edit-base.component";
 })
 export class EditOneBaseComponent extends EditBaseComponent
 {
-  /*@Input() otherDatas: IdNameDto[] = [];
-  @Input() data: { id: number } = {id: 0};
-
   @Input() detectChanges: () => IChanges = () => {return {count: 0, diffObj: []};};
 
-  @Output('newSelection') newSelectionEvent = new EventEmitter<number>();
-
-  @Output('reset') resetEvent = new EventEmitter();
-  @Output('save') saveEvent = new EventEmitter();
-
-  constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+  constructor(messageService: MessageService,
+              confirmationService: ConfirmationService)
   {
+    super(messageService, confirmationService);
   }
 
-  async goToData(id: number)
+  override async goToData(id: number)
   {
     const changes = this.detectChanges();
     if (changes.count > 0)
@@ -39,30 +34,14 @@ export class EditOneBaseComponent extends EditBaseComponent
         ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
         : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-      // ConfirmationServiceTools.new(this.confirmationService, this, this.reset, message, id);
-      ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any, id: number) => {
-        instance.reset();
-        instance.newSelectionEvent.emit(id);
-      }, message, this, id);
+      const f = (id: number) => {
+        this.reset();
+        this.newSelectionEvent.emit(id);
+      };
+      ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this), id);
     }
     else
       this.newSelectionEvent.emit(id);
-  }
-
-  async goToFollowingData(step: number)
-  {
-    let index = this.otherDatas.findIndex(x => x.id == this.data.id);
-    if (index == -1)
-    {
-      this.messageService.add({
-        severity: 'warn', summary: 'Oups une erreur est survenue',
-        detail: 'impossible de naviguer au prochain produit'
-      });
-      return;
-    }
-
-    index = Operation.modulo(index + step, this.otherDatas.length);
-    await this.goToData(this.otherDatas[index].id);
   }
 
   reset()
@@ -75,19 +54,7 @@ export class EditOneBaseComponent extends EditBaseComponent
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
       : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
 
-    ConfirmationServiceTools.newComplexFunction(this.confirmationService, (instance: any) => {
-      instance.resetEvent.emit()
-    }, message, this);
-  }
-
-  save()
-  {
-    this.saveEvent.emit();
-  }*/
-
-  constructor(messageService: MessageService,
-              confirmationService: ConfirmationService)
-  {
-    super(messageService, confirmationService);
+    const f = () => this.resetEvent.emit();
+    ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this));
   }
 }

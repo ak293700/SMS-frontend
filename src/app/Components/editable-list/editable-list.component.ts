@@ -212,7 +212,6 @@ export class EditableListComponent implements OnInit, OnChanges
       delete tmp.uniqueId;
       delete tmp.tooltip;
     }
-    console.log('tmp', tmp);
     this.selectedItemChange.emit(tmp);
   }
 }

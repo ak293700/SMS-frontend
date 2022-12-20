@@ -32,6 +32,5 @@ export class BackButtonComponent
     }
 
     this._routerLink = tmp.toString();
-    console.log(this._routerLink);
   }
 }

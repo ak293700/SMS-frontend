@@ -303,7 +303,6 @@ export class EditOneProductComponent implements OnInit
   // This function does the actual work of saving the changes to the database
   private async _save(changes: IChanges)
   {
-    console.log(changes);
     if (!await this.saveDiscount(changes.diffObj.discount))
       return this.messageService.add({
         severity: 'error', summary: 'Erreur',
@@ -493,8 +492,6 @@ export class EditOneProductComponent implements OnInit
     {
       this.bundle.items = this.dummyStruct.bundleItems
         .map((item: IListItem) => {
-          console.log(item);
-
           return {id: -1, productId: item.id, quantity: item.additionalFields.quantity}
         }); // bundle items
     }

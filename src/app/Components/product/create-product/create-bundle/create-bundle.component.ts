@@ -96,7 +96,6 @@ export class CreateBundleComponent implements OnInit
   checkValidity(): boolean
   {
     const fields = [this.product.productReference, this.product.manufacturer, this.product.popularity, this.product.items];
-    console.log('fields', fields);
 
     return fields.every(field => field !== undefined && field !== null && field !== '');
   }

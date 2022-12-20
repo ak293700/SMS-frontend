@@ -89,8 +89,6 @@ export class CreateDiscountComponent implements OnInit
 
   private async _create(discount: CreateDerogationDto | CreateDistributorDiscountDto): Promise<void>
   {
-    console.log(discount);
-
     let endpoint = "distributorDiscount";
     if (this.discountType === DiscountType.Derogation)
       endpoint = "derogation";

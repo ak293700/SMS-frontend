@@ -91,7 +91,6 @@ export class EditOneDiscountComponent implements OnInit
       this.initialDiscount.discountType = getTypeResponse.data; // we set the type because it is not send by the server
       this.discount = Operation.deepCopy(this.initialDiscount);
 
-      console.log(this.discount);
       this.initDummyStruct();
     } catch (e: any | AxiosError)
     {
@@ -179,9 +178,7 @@ export class EditOneDiscountComponent implements OnInit
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatDiscount();
-    const res = Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
-    console.log(res);
-    return res;
+    return Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
   }
 
   async fetchManufacturers()

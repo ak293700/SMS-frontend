@@ -244,13 +244,6 @@ export class DiscountFilterComponent implements OnInit
     const selectedDiscountId = discount.id.value
     const selected = {selectedIds: selectedIds, selectedId: selectedDiscountId};
 
-    /*    if (this.selectDataEvent.observed)
-    {
-      console.log("selectDataEvent is observed");
-      this.selectDataEvent.emit(selected);
-      return
-    }*/
-
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
       state: selected
