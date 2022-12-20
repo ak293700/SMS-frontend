@@ -9,7 +9,6 @@ export interface SimpleProductDto extends ProductDto
   pureReference: string;
   selectedDiscountId: number;
   manufacturerCategoryId: number;
-  deee: number;
   stock: number;
   averageStockPrice: number;
   availability: Availability;

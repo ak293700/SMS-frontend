@@ -106,11 +106,6 @@ export class EditOneProductComponent implements OnInit
     ];
   }
 
-  showDiscountOverlay()
-  {
-    this.discountOverlayVisible = true;
-  }
-
   async ngOnInit()
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
@@ -128,6 +123,11 @@ export class EditOneProductComponent implements OnInit
     await this.fetchReferences(routedData.selectedIds);
     await this.fetchAllDiscounts();
     await this.fetchProduct(routedData.selectedId);
+  }
+
+  showDiscountOverlay()
+  {
+    this.discountOverlayVisible = true;
   }
 
   async fetchProduct(id: number)
@@ -284,21 +284,6 @@ export class EditOneProductComponent implements OnInit
     this.otherProducts = this.allProductReferences
       .filter((e: IdNameDto) => ids.includes(e.id))
       .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
-
-    // try
-    // {
-    //   const response = await axios.post(`${api}/product/references`, ids);
-    //   if (response.status !== 200)
-    //     return MessageServiceTools.httpFail(this.messageService, response);
-    //
-    //   // reorder otherProducts by as 'ids'
-    //   this.otherProducts = response.data;
-    //   // .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
-    //
-    // } catch (e: any)
-    // {
-    //   MessageServiceTools.axiosFail(this.messageService, e);
-    // }
   }
 
   // createGrid
@@ -306,7 +291,6 @@ export class EditOneProductComponent implements OnInit
   {
     return Shop;
   }
-
 
   reset()
   {
