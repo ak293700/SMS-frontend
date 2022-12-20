@@ -1,9 +1,19 @@
+:host {
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
 header {
   height: 20vh;
+  margin-bottom: 5vh;
+  box-sizing: border-box;
 }
 
 main {
-  height: 70vh;
+  height: 65vh;
   width: 100%;
 
   display: flex;

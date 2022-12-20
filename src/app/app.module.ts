@@ -39,12 +39,6 @@ import {EditableListComponent} from './Components/editable-list/editable-list.co
 import {ReferralComponent} from './Components/referral/referral.component';
 import {CreateBundleComponent} from './Components/product/create-product/create-bundle/create-bundle.component';
 import {StepsModule} from "primeng/steps";
-import {
-  ChooseBundleComposantComponent
-} from './Components/product/create-product/create-bundle/choose-bundle-composant/choose-bundle-composant.component';
-import {
-  CreateBundleOtherFieldsComponent
-} from './Components/product/create-product/create-bundle/create-bundle-other-fields/create-bundle-other-fields.component';
 
 @NgModule({
   declarations: [
@@ -62,8 +56,6 @@ import {
     EditableListComponent,
     ReferralComponent,
     CreateBundleComponent,
-    ChooseBundleComposantComponent,
-    CreateBundleOtherFieldsComponent
   ],
   imports: [
     BrowserModule,

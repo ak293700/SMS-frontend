@@ -11,14 +11,10 @@ import {DiscountFilterComponent} from "./Components/discount/discount-filter/dis
 import {EditOneDiscountComponent} from "./Components/discount/edit-one-discount/edit-one-discount.component";
 import {ReferralComponent} from "./Components/referral/referral.component";
 import {CreateBundleComponent} from "./Components/product/create-product/create-bundle/create-bundle.component";
-import {
-  ChooseBundleComposantComponent
-} from "./Components/product/create-product/create-bundle/choose-bundle-composant/choose-bundle-composant.component";
-import {
-  CreateBundleOtherFieldsComponent
-} from "./Components/product/create-product/create-bundle/create-bundle-other-fields/create-bundle-other-fields.component";
+
 
 const routes: Routes = [
+  {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', component: LoginPageComponent},
   {
     path: 'home', component: ReferralComponent, data: {
@@ -39,15 +35,10 @@ const routes: Routes = [
             {label: 'Création', link: 'bundle'},
             {label: 'Modification', link: 'filter'}
           ],
+          backButton: {link: '/home'}
         }
       },
-      {
-        path: 'bundle', component: CreateBundleComponent, children: [
-          {path: '', redirectTo: 'composant', pathMatch: "full"},
-          {path: 'composant', component: ChooseBundleComposantComponent},
-          {path: 'other-fields', component: CreateBundleOtherFieldsComponent},
-        ]
-      },
+      {path: 'bundle', component: CreateBundleComponent},
       {path: 'filter', component: ProductFilterComponent},
       {
         path: 'edit', children: [
