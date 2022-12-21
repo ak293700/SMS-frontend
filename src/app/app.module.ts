@@ -44,6 +44,7 @@ import {CreateDiscountComponent} from './Components/discount/create-discount/cre
 import {EditMultipleComponent} from './Components/edit-component/edit-multiple/edit-multiple.component';
 import {RippleModule} from "primeng/ripple";
 import {SelectorBtnComponent} from './Components/selectors/selector-btn/selector-btn.component';
+import {SettingsComponent} from './Components/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import {SelectorBtnComponent} from './Components/selectors/selector-btn/selector
     CreateDiscountComponent,
     EditMultipleComponent,
     SelectorBtnComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

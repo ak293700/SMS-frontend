@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Router, UrlTree} from "@angular/router";
 
 @Component({
@@ -9,13 +9,16 @@ import {Router, UrlTree} from "@angular/router";
     './back-button.component.css'
   ]
 })
-export class BackButtonComponent
+export class BackButtonComponent implements OnInit
 {
   @Input() routerLink: string | undefined = undefined;
 
-  _routerLink: string;
+  _routerLink: string = '..';
 
   constructor(private router: Router)
+  {}
+
+  ngOnInit(): void
   {
     if (this.routerLink !== undefined)
     {

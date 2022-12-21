@@ -12,6 +12,7 @@ import {EditOneDiscountComponent} from "./Components/discount/edit-one-discount/
 import {ReferralComponent} from "./Components/referral/referral.component";
 import {CreateBundleComponent} from "./Components/product/create-product/create-bundle/create-bundle.component";
 import {CreateDiscountComponent} from "./Components/discount/create-discount/create-discount.component";
+import {SettingsComponent} from "./Components/settings/settings.component";
 
 
 const routes: Routes = [
@@ -72,7 +73,7 @@ const routes: Routes = [
       },
     ]
   },
-  {path: 'setting', component: LoginPageComponent},
+  {path: 'settings', component: SettingsComponent},
   {path: 'filter', component: FilterFieldsComponent},
   // {path: '**', redirectTo: 'login'}
 ];
