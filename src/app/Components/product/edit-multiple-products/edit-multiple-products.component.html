@@ -1,4 +1,40 @@
 <app-edit-multiple [otherDatas]="otherProducts">
 
+  <div id="common-field">
+    <ul class="field-container">
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-popularity" class="text">Popularité</label>
+          <p-checkbox [(ngModel)]="dS.popularity.active" [binary]="true"></p-checkbox>
+        </div>
+        <p-autoComplete id="field-popularity" dataKey="id"
+                        field="name" [disabled]="!dS.popularity.active"
+                        [suggestions]="additionalInformation.popularities"
+                        (completeMethod)="completeMethod($event, 'popularities')"
+                        [(ngModel)]="dS.popularity.value"
+                        [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+        </p-autoComplete>
+      </li>
 
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-popularity" class="text">Fabricant</label>
+          <p-checkbox [(ngModel)]="dS.manufacturer.active" [binary]="true"></p-checkbox>
+        </div>
+        <p-autoComplete id="field-manufacturer" dataKey="id"
+                        field="name" [disabled]="!dS.manufacturer.active"
+                        [suggestions]="additionalInformation.manufacturers"
+                        (completeMethod)="completeMethod($event, 'manufacturers')"
+                        [(ngModel)]="dS.manufacturer.value"
+                        [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+        </p-autoComplete>
+        <app-selector-btn [states]="['+', '-']" [state]="'+'">
+
+        </app-selector-btn>
+
+      </li>
+    </ul>
+
+
+  </div>
 </app-edit-multiple>

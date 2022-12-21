@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {IdNameDto} from "../../../Dtos/IdNameDto";
+import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {MenuItem} from "primeng/api";
-import {IEnumerableByString} from "../../../Interfaces/IEnumerableByString";
-import {Operation} from "../../../utils/Operation";
+import {IEnumerableByString} from "../../../../Interfaces/IEnumerableByString";
+import {Operation} from "../../../../utils/Operation";
 
 export interface IListItem extends IEnumerableByString
 {
@@ -22,7 +22,7 @@ interface ICompleteListItem extends IListItem
 @Component({
   selector: 'app-editable-list',
   templateUrl: './editable-list.component.html',
-  styleUrls: ['./editable-list.component.css', '../../../styles/button.css']
+  styleUrls: ['./editable-list.component.css', '../../../../styles/button.css']
 })
 export class EditableListComponent implements OnInit, OnChanges
 {
@@ -200,7 +200,12 @@ export class EditableListComponent implements OnInit, OnChanges
     if (!this.selectable)
       return;
 
-    this._selectedItem = item;
+    // If the item is already selected, we unselect it
+    if (this._selectedItem == item)
+      this._selectedItem = undefined;
+    else
+      this._selectedItem = item;
+
     this.emitSelectedItemsChange();
   }
 

@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {IdNameDto} from "../../../Dtos/IdNameDto";
-import {IListItem} from "../editable-list/editable-list.component";
+import {IListItem} from "../selectors/editable-list/editable-list.component";
 
 @Component({
   selector: 'app-login-page',

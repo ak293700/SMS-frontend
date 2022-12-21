@@ -18,7 +18,7 @@
   <ul class="item-container">
     <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item" (click)="onSelect(item)"
         (contextmenu)="onContextMenu($event, item)" [ngClass]="{'selected': item.id === _selectedItem?.id,
-        'selectable': selectable && item.id !== _selectedItem?.id}">
+        'selectable': selectable}">
       {{item.label}}
       <span *ngIf="padProperty != undefined" class="pad">{{item.additionalFields[padProperty]}}</span>
     </li>

@@ -19,7 +19,7 @@ export class ProductReferencesService
   // if set to true it means that the product references are being loaded
   private _isLoaded: boolean = true;
 
-  reload(): void
+  refresh(): void
   {
     this._isLoaded = true;
     // const response =;
@@ -40,7 +40,7 @@ export class ProductReferencesService
   // the async of reload
   private async fetch()
   {
-    this.reload();
+    this.refresh();
 
     // wait for this._isLoaded to be false
     while (this._isLoaded)
@@ -54,5 +54,13 @@ export class ProductReferencesService
 
     // @ts-ignore
     return this._productReferences;
+  }
+
+  push(id: number, name: string): void
+  {
+    if (this._productReferences === undefined)
+      return;
+
+    this._productReferences.push({id, name});
   }
 }

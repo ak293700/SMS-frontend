@@ -35,13 +35,15 @@ import {DiscountFilterComponent} from './Components/discount/discount-filter/dis
 import {EditOneDiscountComponent} from './Components/discount/edit-one-discount/edit-one-discount.component';
 import {EditOneBaseComponent} from './Components/edit-component/edit-one-base/edit-one-base.component';
 import {DialogModule} from "primeng/dialog";
-import {EditableListComponent} from './Components/editable-list/editable-list.component';
+import {EditableListComponent} from './Components/selectors/editable-list/editable-list.component';
 import {ReferralComponent} from './Components/referral/referral.component';
 import {CreateBundleComponent} from './Components/product/create-product/create-bundle/create-bundle.component';
 import {StepsModule} from "primeng/steps";
 import {BackButtonComponent} from './Components/back-button/back-button.component';
 import {CreateDiscountComponent} from './Components/discount/create-discount/create-discount.component';
 import {EditMultipleComponent} from './Components/edit-component/edit-multiple/edit-multiple.component';
+import {RippleModule} from "primeng/ripple";
+import {SelectorBtnComponent} from './Components/selectors/selector-btn/selector-btn.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import {EditMultipleComponent} from './Components/edit-component/edit-multiple/e
     BackButtonComponent,
     CreateDiscountComponent,
     EditMultipleComponent,
+    SelectorBtnComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +88,8 @@ import {EditMultipleComponent} from './Components/edit-component/edit-multiple/e
     ToastModule,
     ConfirmDialogModule,
     DialogModule,
-    StepsModule
+    StepsModule,
+    RippleModule
   ],
   providers: [
     {

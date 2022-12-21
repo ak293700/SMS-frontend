@@ -8,6 +8,8 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 export class FilterFieldsComponent
 {
   @Input() filters: any[] = [];
+
+
   @Output('applyFilters') applyFiltersEvent = new EventEmitter();
 
   dropDownFilter(event: any, filter: any)

@@ -21,7 +21,7 @@ import {DiscountType} from "../../../../Enums/DiscountType";
 import {PricingTool} from "../../../../utils/PricingTool";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {IChanges} from "../../../../Interfaces/IChanges";
-import {IListItem} from "../../editable-list/editable-list.component";
+import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
@@ -555,8 +555,8 @@ export class EditOneProductComponent implements OnInit
 
   setSalePriceIt(index: number, value: number): void
   {
-    const nominator = value - this.product.deee;
-    const denominator = this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion) * 1.2;
+    const nominator = value / 1.2 - this.product.deee;
+    const denominator = this.purchasePrice * (1 - this.product.shopSpecifics[index].promotion);
     this.product.shopSpecifics[index].km = nominator / denominator;
   }
 

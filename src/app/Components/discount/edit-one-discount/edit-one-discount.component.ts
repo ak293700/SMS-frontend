@@ -13,7 +13,7 @@ import {api} from "../../../GlobalUsings";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
-import {IListItem} from "../../editable-list/editable-list.component";
+import {IListItem} from "../../selectors/editable-list/editable-list.component";
 
 @Component({
   selector: 'app-edit-one-discount',

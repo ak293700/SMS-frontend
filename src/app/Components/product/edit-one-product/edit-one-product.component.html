@@ -99,7 +99,6 @@
                [placeholder]="initialSimpleProduct.pureReference"
                [(ngModel)]="simpleProduct.pureReference">
       </li>
-      <!--*ngIf="simpleProduct.discount !== undefined"-->
       <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
       <li #discount class="field-item">
         <label for="field-discount" class="text">Remise</label>
@@ -111,13 +110,6 @@
                         + '\n'
                         + 'Prix net: ' + initialSimpleProduct.discount!.isNetPrice">
         <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
-      </li>
-      <li class="field-item">
-        <!--        <label for="field-deee" class="text">Deee</label>-->
-        <!--        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"-->
-        <!--                       [placeholder]="initialSimpleProduct.deee.toString()"-->
-        <!--                       [(ngModel)]="simpleProduct.deee">-->
-        <!--        </p-inputNumber>-->
       </li>
       <li class="field-item">
         <label for="field-stock" class="text">Stock</label>
@@ -206,7 +198,7 @@
 
     <label class="text">Taux de marge (%)</label>
     <input pInputText *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-           type="number" [step]="0.1"
+           type="number" [step]="0.01"
            [placeholder]="getMarginRate(i).toString()"
            [ngModel]="getMarginRate(i)"
            (ngModelChange)="setMarginRate(i, $event)"/>

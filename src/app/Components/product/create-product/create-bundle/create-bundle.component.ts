@@ -3,7 +3,7 @@ import {MessageService} from "primeng/api";
 import {IdNameDto} from "../../../../../Dtos/IdNameDto";
 import {ProductPopularity} from "../../../../../Enums/ProductPopularity";
 import {CommonRequest} from "../../../../../utils/CommonRequest";
-import {IListItem} from "../../../editable-list/editable-list.component";
+import {IListItem} from "../../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {CreateBundleDto} from "../../../../../Dtos/ProductDtos/BundleDto/CreateBundleDto";
@@ -71,9 +71,6 @@ export class CreateBundleComponent implements OnInit
         detail: 'Veuillez remplir tous les champs'
       });
 
-    console.log("Create");
-    this.messageService.add({severity: 'success', summary: 'Succès', detail: 'Produit créé'});
-
     await this._create(this.buildRequest());
   }
 
@@ -87,6 +84,8 @@ export class CreateBundleComponent implements OnInit
 
       this.messageService.add({severity: 'success', summary: 'Succès', detail: 'Produit créé'});
       this.product = {items: []};
+
+      this.productReferencesService.push(response.data.id, response.data.name);
     } catch (e: any | AxiosError)
     {
       return MessageServiceTools.axiosFail(this.messageService, e);

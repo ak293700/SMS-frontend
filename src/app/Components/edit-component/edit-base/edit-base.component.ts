@@ -21,8 +21,7 @@ export abstract class EditBaseComponent
 
   protected constructor(protected messageService: MessageService,
                         protected confirmationService: ConfirmationService)
-  {
-  }
+  {}
 
   abstract goToData(id: number): void;
 

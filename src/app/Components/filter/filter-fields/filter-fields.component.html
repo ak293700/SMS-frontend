@@ -1,7 +1,7 @@
 <div class="filter-container">
   <ul class="field-container">
     <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="field-item">
-      <div class="filter-label-container">
+      <div class="field-label-container">
         <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
         <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>
       </div>
@@ -30,7 +30,7 @@
 
       <p-autoComplete *ngSwitchCase="'dropdown'" [(ngModel)]="filter.value" [disabled]="!filter.active"
                       id="filter-{{filter.label}}" [suggestions]="filter.others"
-                      (completeMethod)="dropDownFilter($event, filter)"
+                      (completeMethod)="dropDownFilter($event, filter.label)"
                       [dropdown]="true">
         <ng-template let-suggestion pTemplate="item">
           <div class="ui-helper-clearfix">
