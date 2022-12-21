@@ -24,5 +24,4 @@ export class EditMultipleComponent extends EditBaseComponent
   {
     this.resetEvent.emit();
   }
-
 }

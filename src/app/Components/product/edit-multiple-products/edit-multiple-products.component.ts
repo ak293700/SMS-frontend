@@ -63,12 +63,15 @@ export class EditMultipleProductsComponent implements OnInit
   discountContextMenuItems: MenuItem[] = [];
   discountOverlayVisible: boolean = false;
 
+  loading: boolean = false;
+
   constructor(private productReferencesService: ProductReferencesService,
               private getDiscountsService: GetDiscountsService,
               private commonRequest: CommonRequestService,
               private messageService: MessageService,
               private myConfirmationService: MyConfirmationService)
   {
+    this.loading = true;
     // do it here only not to have the error
     this.reset();
 
@@ -94,6 +97,7 @@ export class EditMultipleProductsComponent implements OnInit
     this.initialAdditionalInformation.discounts = await this.getDiscountsService.getDiscounts();
 
     this.reset();
+    this.loading = false;
   }
 
   get OperationEnum(): typeof OperationEnum
@@ -177,8 +181,17 @@ export class EditMultipleProductsComponent implements OnInit
     return hasError ? undefined : fields;
   }
 
+  private async computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
+  {
+    this.loading = true;
+    const response = await this._computeChangesNumber(fields);
+    this.loading = false;
+    return response;
+  }
+
+
   // find the number of product that will be affected
-  async computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
+  private async _computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
   {
     const productWithoutPropagationFields: string[] = ['manufacturer', 'popularity', 'availability',
       'availableDiscounts', 'discount'];

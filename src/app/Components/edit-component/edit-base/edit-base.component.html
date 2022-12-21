@@ -6,7 +6,7 @@
     <i class="pi pi-arrow-right"></i></button>
 </nav>
 
-<div class="grid-container">
+<div class="grid-container" *ngIf="!loading">
   <main>
     <ng-content></ng-content>
 
@@ -27,3 +27,9 @@
     </ul>
   </aside>
 </div>
+
+
+<i *ngIf="loading"
+   class="pi pi-spin pi-spinner"
+   style="font-size: 2rem; position: absolute; left: 50%; top: 50%; translate: -50% -50%">
+</i>

@@ -2,7 +2,7 @@
 
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [detectChanges]="detectChanges.bind(this)"
-                   (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()">
+                   (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()" [loading]="loading">
   <h2 class="text" style="margin-bottom: 3rem">{{ProductType.toString(product.productType)}}</h2>
 
   <div id="common-field">
@@ -205,8 +205,3 @@
            (ngModelChange)="setMarginRate(i, $event)"/>
   </div>
 </app-edit-one-base>
-
-<i *ngIf="product == undefined"
-   class="pi pi-spin pi-spinner"
-   style="font-size: 2rem; position: absolute; left: 50%; top: 50%; translate: -50% -50%">
-</i>

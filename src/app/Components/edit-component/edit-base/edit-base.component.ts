@@ -14,6 +14,10 @@ export abstract class EditBaseComponent
   @Input() otherDatas: IdNameDto[] = [];
   @Input() data: { id: number } = {id: 0};
 
+  // set to true at the very beginning of the constructor
+  // do not forget to set it to false at the end of ngOnInit
+  @Input() loading: boolean = false;
+
   @Output('newSelection') newSelectionEvent = new EventEmitter<number>();
 
   @Output('reset') resetEvent = new EventEmitter();
@@ -21,7 +25,8 @@ export abstract class EditBaseComponent
 
   protected constructor(protected messageService: MessageService,
                         protected confirmationService: ConfirmationService)
-  {}
+  {
+  }
 
   abstract goToData(id: number): void;
 

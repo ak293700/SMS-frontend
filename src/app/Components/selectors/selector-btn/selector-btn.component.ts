@@ -31,7 +31,6 @@ export class SelectorBtnComponent implements OnInit
   onClick()
   {
     this.index = Operation.modulo(this.index + 1, this.states.length);
-    this.state = this.states[this.index];
 
     // if rotate is set we remove it
     if (this.button.nativeElement.classList.contains('rotate'))
@@ -39,6 +38,10 @@ export class SelectorBtnComponent implements OnInit
 
     void this.button.nativeElement.offsetWidth; // force a reflow
     this.button.nativeElement.classList.toggle('rotate');
+
+    // the transition time is 500
+    // at the half (when we don't see the text) we change the text
+    setTimeout(() => this.state = this.states[this.index], 250);
 
     this.stateChange.emit(this.state);
   }

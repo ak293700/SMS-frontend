@@ -1,5 +1,5 @@
 <app-edit-multiple [otherDatas]="otherProducts" (reset)="reset()" (save)="save()"
-                   (newSelection)="preview($event)">
+                   (newSelection)="preview($event)" [loading]="loading">
 
   <div id="common-field">
     <ul class="field-container">

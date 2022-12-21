@@ -80,6 +80,7 @@ export class EditOneProductComponent implements OnInit
 
   bundleItemAdditionalField: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
+  loading: boolean = true;
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private productReferencesService: ProductReferencesService)
@@ -123,6 +124,8 @@ export class EditOneProductComponent implements OnInit
     await this.fetchReferences(routedData.selectedIds);
     await this.fetchAllDiscounts();
     await this.fetchProduct(routedData.selectedId);
+
+    this.loading = false;
   }
 
   showDiscountOverlay()
