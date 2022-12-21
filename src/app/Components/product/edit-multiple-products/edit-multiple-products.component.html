@@ -1,4 +1,5 @@
-<app-edit-multiple [otherDatas]="otherProducts">
+<app-edit-multiple [otherDatas]="otherProducts" (reset)="reset()" (save)="save()"
+                   (newSelection)="preview($event)">
 
   <div id="common-field">
     <ul class="field-container">
@@ -34,13 +35,13 @@
         <div class="field-label-container">
           <label for="field-km" class="text">Km</label>
           <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
-          <app-selector-btn [states]="[OperationEnum.Equal, OperationEnum.Multiply]"
-                            [state]="OperationEnum.Equal">
+          <app-selector-btn [states]="dS.km.other.states"
+                            [state]="dS.km.other.state">
           </app-selector-btn>
         </div>
         <input pInputText id="field-km" type="number"
                [disabled]="!dS.km.active" [step]="0.01"
-               [ngModel]="dS.km.value"/>
+               [(ngModel)]="dS.km.value"/>
       </li>
 
       <li class="field-item">
