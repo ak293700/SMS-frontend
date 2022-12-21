@@ -131,4 +131,13 @@ export class Operation
 
     return res;
   }
+
+  // filter either with the name or with the id
+  static completeMethod(value: string, list: IdNameDto[], checkId: boolean = true): IdNameDto[]
+  {
+    value = value.toLowerCase();
+    const number: number = checkId ? Number(value) : NaN;
+    return list
+      .filter((obj: IdNameDto) => obj.id === number || obj.name.toLowerCase().includes(value));
+  }
 }

@@ -6,6 +6,7 @@ import {Operation} from "../../../../utils/Operation";
 import {OperationEnum} from "../../../../Enums/OperationEnum";
 import {MenuItem} from "primeng/api";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
+import {CommonRequestService} from "../../../Services/common-request.service";
 
 interface Field
 {
@@ -22,7 +23,7 @@ interface Field
     '../../../../styles/button.css',
     './edit-multiple-products.component.css'
   ],
-  providers: [ProductReferencesService, GetDiscountsService]
+  providers: [ProductReferencesService, GetDiscountsService, CommonRequestService]
 })
 export class EditMultipleProductsComponent implements OnInit
 {
@@ -65,7 +66,8 @@ export class EditMultipleProductsComponent implements OnInit
   discountOverlayVisible: boolean = false;
 
   constructor(private productReferencesService: ProductReferencesService,
-              private getDiscountsService: GetDiscountsService)
+              private getDiscountsService: GetDiscountsService,
+              private commonRequest: CommonRequestService)
   {
     this.discountContextMenuItems = [
       {
@@ -85,6 +87,7 @@ export class EditMultipleProductsComponent implements OnInit
       routedData.selectedIds = [7909, 7910, 7911, 7912];
 
     await this.fetchReferences(routedData.selectedIds);
+    this.initialAdditionalInformation.manufacturers = await this.commonRequest.fetchManufacturers();
     this.initialAdditionalInformation.discounts = await this.getDiscountsService.getDiscounts();
 
     this.additionalInformation = Operation.deepCopy(this.initialAdditionalInformation);
@@ -113,7 +116,10 @@ export class EditMultipleProductsComponent implements OnInit
   completeMethod(event: any, fieldName: string)
   {
     // @ts-ignore
-    this.additionalInformation[fieldName] = this.initialAdditionalInformation[fieldName]
-      .filter((obj: IdNameDto) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+    console.log(this.initialAdditionalInformation[fieldName])
+
+    // @ts-ignore
+    this.additionalInformation[fieldName] = Operation.completeMethod(event.query, // @ts-ignore
+      this.initialAdditionalInformation[fieldName]);
   }
 }

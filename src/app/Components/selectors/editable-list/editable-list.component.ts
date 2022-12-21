@@ -115,8 +115,7 @@ export class EditableListComponent implements OnInit, OnChanges
 
   completeMethod(event: any)
   {
-    this.suggestions = this.initialSuggestions
-      .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+    this.suggestions = Operation.completeMethod(event.query, this.initialSuggestions);
   }
 
   // call when adding a new item to the list

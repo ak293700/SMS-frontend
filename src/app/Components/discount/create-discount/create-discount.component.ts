@@ -70,8 +70,8 @@ export class CreateDiscountComponent implements OnInit
   completeMethod(event: any, fieldName: string)
   {
     // @ts-ignore
-    this.additionalInformation[fieldName] = this.initialAdditionalInformation[fieldName]
-      .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+    this.additionalInformation[fieldName] = Operation.completeMethod(event.query, // @ts-ignore
+      this.initialAdditionalInformation[fieldName]);
   }
 
   async create()
