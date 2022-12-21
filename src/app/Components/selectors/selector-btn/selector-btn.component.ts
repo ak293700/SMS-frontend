@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
 
 @Component({
@@ -9,7 +9,7 @@ import {Operation} from "../../../../utils/Operation";
     './selector-btn.component.css'
   ]
 })
-export class SelectorBtnComponent
+export class SelectorBtnComponent implements OnInit
 {
   // All the possible states of the button
   @Input() states: string[] = [];
@@ -23,7 +23,7 @@ export class SelectorBtnComponent
 
   private index: number = 0;
 
-  constructor()
+  ngOnInit(): void
   {
     this.index = this.states.findIndex(x => x == this.state);
   }
@@ -40,7 +40,6 @@ export class SelectorBtnComponent
     void this.button.nativeElement.offsetWidth; // force a reflow
     this.button.nativeElement.classList.toggle('rotate');
 
-    console.log(this.state);
+    this.stateChange.emit(this.state);
   }
-
 }

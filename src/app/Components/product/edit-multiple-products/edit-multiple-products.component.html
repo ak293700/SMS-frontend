@@ -28,9 +28,49 @@
                         [(ngModel)]="dS.manufacturer.value"
                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
         </p-autoComplete>
-        <app-selector-btn [states]="['+', '-']" [state]="'+'">
+      </li>
 
-        </app-selector-btn>
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-km" class="text">Km</label>
+          <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
+          <app-selector-btn [states]="[OperationEnum.Equal, OperationEnum.Multiply]"
+                            [state]="OperationEnum.Equal">
+          </app-selector-btn>
+        </div>
+        <input pInputText id="field-km" type="number"
+               [disabled]="!dS.km.active" [step]="0.01"
+               [ngModel]="dS.km.value"/>
+      </li>
+
+      <!--<li #discount class="field-item">
+        <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
+        <p-dialog [(visible)]="discountOverlayVisible"
+                  [maximizable]="true"
+                  [style]="{'width':'50vw', 'height': '80vh'}"
+                  [draggable]="false" [modal]="true">
+          <app-editable-list [(items)]="dS.availableDiscounts.value"
+                             [suggestions]="allDiscounts" [selectable]="true"
+                             [(selectedItem)]="dS.discount.value">
+          </app-editable-list>
+        </p-dialog>
+        <label for="field-discount" class="text">Remise</label>
+        <input pInputText id="field-discount" type="number" [step]="0.01"
+               [(ngModel)]="dS.discount.value"/>
+      </li>-->
+
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-discount" class="text">Remise</label>
+          <p-checkbox [(ngModel)]="dS.discount.active" [binary]="true"></p-checkbox>
+        </div>
+        <p-autoComplete id="field-discount" dataKey="id"
+                        field="name" [disabled]="!dS.discount.active"
+                        [suggestions]="additionalInformation.discounts"
+                        (completeMethod)="completeMethod($event, 'discounts')"
+                        [(ngModel)]="dS.discount.value"
+                        [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+        </p-autoComplete>
 
       </li>
     </ul>

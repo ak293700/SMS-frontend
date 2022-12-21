@@ -110,7 +110,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [6190, 7911, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -576,7 +576,8 @@ export class EditOneProductComponent implements OnInit
   }
 
 
-  // when the select discount dialog closed it is called
+  // it will update the discount field
+  // so when select a new discount he sees the changes
   async onSelectDiscountClose()
   {
     if (this.product.productType != ProductType.Simple)
@@ -588,7 +589,6 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.discount = undefined;
       return
     }
-
 
     try
     {

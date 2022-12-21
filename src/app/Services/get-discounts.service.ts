@@ -1,20 +1,20 @@
 import {Injectable} from '@angular/core';
+import {MessageService} from "primeng/api";
 import {IdNameDto} from "../../Dtos/IdNameDto";
 import axios from "axios";
 import {api} from "../GlobalUsings";
 import {HttpTools} from "../../utils/HttpTools";
 import {MessageServiceTools} from "../../utils/MessageServiceTools";
-import {MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductReferencesService
+export class GetDiscountsService
 {
 
   constructor(private messageService: MessageService) {}
 
-  private _productReferences: IdNameDto[] | undefined = undefined;
+  private _discounts: IdNameDto[] | undefined = undefined;
 
   // if set to true it means that the product references are being loaded
   private _isLoaded: boolean = true;
@@ -22,12 +22,14 @@ export class ProductReferencesService
   refresh(): void
   {
     this._isLoaded = true;
-    axios.get(`${api}/product/references`)
+
+    axios.get(`${api}/discount`)
       .then(response => {
+
         if (!HttpTools.IsValid(response.status))
           MessageServiceTools.httpFail(this.messageService, response.data);
         else
-          this._productReferences = response.data;
+          this._discounts = response.data;
 
         this._isLoaded = false;
       })
@@ -46,20 +48,20 @@ export class ProductReferencesService
       await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  async getProductReferences(): Promise<IdNameDto[]>
+  async getDiscounts(): Promise<IdNameDto[]>
   {
-    if (this._productReferences === undefined)
+    if (this._discounts === undefined)
       await this.fetch();
 
     // @ts-ignore
-    return this._productReferences;
+    return this._discounts;
   }
 
   push(id: number, name: string): void
   {
-    if (this._productReferences === undefined)
+    if (this._discounts === undefined)
       return;
 
-    this._productReferences.push({id, name});
+    this._discounts.push({id, name});
   }
 }

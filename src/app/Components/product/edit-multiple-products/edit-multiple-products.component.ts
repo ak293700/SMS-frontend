@@ -1,9 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ProductReferencesService} from "../../../Services/product-references.service";
-import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {ProductPopularity} from "../../../../Enums/ProductPopularity";
 import {Operation} from "../../../../utils/Operation";
+import {OperationEnum} from "../../../../Enums/OperationEnum";
+import {MenuItem} from "primeng/api";
+import {GetDiscountsService} from "../../../Services/get-discounts.service";
 
 interface Field
 {
@@ -19,7 +21,7 @@ interface Field
     '../../../../styles/button.css',
     './edit-multiple-products.component.css'
   ],
-  providers: [ProductReferencesService]
+  providers: [ProductReferencesService, GetDiscountsService]
 })
 export class EditMultipleProductsComponent implements OnInit
 {
@@ -30,38 +32,44 @@ export class EditMultipleProductsComponent implements OnInit
     manufacturers: IdNameDto[],
     popularities: IdNameDto[],
     availabilities: IdNameDto[],
-    availableDiscounts: IListItem[],
+    discounts: IdNameDto[]
   } = {
     manufacturers: [],
     popularities: [],
     availabilities: [],
-    availableDiscounts: []
+    discounts: []
   };
 
   additionalInformation = this.initialAdditionalInformation;
 
-  // declare 'fields' as it's attribute are of type Field
   dS: {
     manufacturer: Field, popularity: Field,
-    availability: Field,
+    availability: Field, km: Field, discount: Field,
+    availableDiscounts: Field
   } = {
     manufacturer: {value: undefined, active: false},
     popularity: {value: undefined, active: false},
     availability: {value: undefined, active: false},
+    km: {value: undefined, active: false},
+    discount: {value: undefined, active: false},
+    availableDiscounts: {value: undefined, active: false},
   }
 
-  fields: { active: boolean, value: any, label: string, types: string[], type: string }[] = [];
+  discountContextMenuItems: MenuItem[] = [];
+  discountOverlayVisible: boolean = false;
 
-  constructor(private productReferencesService: ProductReferencesService)
+  constructor(private productReferencesService: ProductReferencesService,
+              private getDiscountsService: GetDiscountsService)
   {
-    this.initialAdditionalInformation.popularities = ProductPopularity.toIdNameDto();
-
-    this.additionalInformation = Operation.deepCopy(this.initialAdditionalInformation);
-
-    this.fields = [
-      {active: false, value: undefined, label: 'Popularité', types: ['checkbox'], type: 'checkbox'},
-      {active: false, value: undefined, label: 'Km', types: ['decimal', 'factor'], type: 'decimal'},
+    this.discountContextMenuItems = [
+      {
+        label: 'Éditer',
+        icon: 'pi pi-pencil',
+        command: this.showDiscountOverlay.bind(this)
+      }
     ];
+
+    this.initialAdditionalInformation.popularities = ProductPopularity.toIdNameDto();
   }
 
   async ngOnInit()
@@ -71,6 +79,20 @@ export class EditMultipleProductsComponent implements OnInit
       routedData.selectedIds = [7909, 7910, 7911, 7912];
 
     await this.fetchReferences(routedData.selectedIds);
+    this.initialAdditionalInformation.discounts = await this.getDiscountsService.getDiscounts();
+
+    this.additionalInformation = Operation.deepCopy(this.initialAdditionalInformation);
+    console.log(this.additionalInformation.discounts);
+  }
+
+  get OperationEnum(): typeof OperationEnum
+  {
+    return OperationEnum;
+  }
+
+  showDiscountOverlay()
+  {
+    this.discountOverlayVisible = true;
   }
 
   async fetchReferences(ids: number[])
