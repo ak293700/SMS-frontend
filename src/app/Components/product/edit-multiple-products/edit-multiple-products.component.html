@@ -43,22 +43,6 @@
                [ngModel]="dS.km.value"/>
       </li>
 
-      <!--<li #discount class="field-item">
-        <p-contextMenu [model]="discountContextMenuItems" [target]="discount"></p-contextMenu>
-        <p-dialog [(visible)]="discountOverlayVisible"
-                  [maximizable]="true"
-                  [style]="{'width':'50vw', 'height': '80vh'}"
-                  [draggable]="false" [modal]="true">
-          <app-editable-list [(items)]="dS.availableDiscounts.value"
-                             [suggestions]="allDiscounts" [selectable]="true"
-                             [(selectedItem)]="dS.discount.value">
-          </app-editable-list>
-        </p-dialog>
-        <label for="field-discount" class="text">Remise</label>
-        <input pInputText id="field-discount" type="number" [step]="0.01"
-               [(ngModel)]="dS.discount.value"/>
-      </li>-->
-
       <li class="field-item">
         <div class="field-label-container">
           <label for="field-discount" class="text">Remise</label>
@@ -71,10 +55,21 @@
                         [(ngModel)]="dS.discount.value"
                         [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
         </p-autoComplete>
+      </li>
 
+      <li class="field-item" style="width: 430px">
+        <div class="field-label-container">
+          <label for="field-discount" class="text">Remise disponible</label>
+          <p-checkbox [(ngModel)]="dS.availableDiscounts.active" [binary]="true"></p-checkbox>
+          <app-selector-btn [states]="dS.availableDiscounts.other.states"
+                            [state]="dS.availableDiscounts.other.state">
+          </app-selector-btn>
+        </div>
+        <app-editable-list id="field-availableDiscounts" [disabled]="!dS.availableDiscounts.active"
+                           [(items)]="dS.availableDiscounts.value"
+                           [suggestions]="additionalInformation.discounts">
+        </app-editable-list>
       </li>
     </ul>
-
-
   </div>
 </app-edit-multiple>

@@ -11,6 +11,7 @@ interface Field
 {
   value: any;
   active: boolean;
+  other?: any;
 }
 
 
@@ -52,7 +53,12 @@ export class EditMultipleProductsComponent implements OnInit
     availability: {value: undefined, active: false},
     km: {value: undefined, active: false},
     discount: {value: undefined, active: false},
-    availableDiscounts: {value: undefined, active: false},
+    availableDiscounts: {
+      value: [], active: false, other: {
+        state: OperationEnum.Add,
+        states: [OperationEnum.Add, OperationEnum.Equal, OperationEnum.Subtract]
+      }
+    },
   }
 
   discountContextMenuItems: MenuItem[] = [];
@@ -82,7 +88,6 @@ export class EditMultipleProductsComponent implements OnInit
     this.initialAdditionalInformation.discounts = await this.getDiscountsService.getDiscounts();
 
     this.additionalInformation = Operation.deepCopy(this.initialAdditionalInformation);
-    console.log(this.additionalInformation.discounts);
   }
 
   get OperationEnum(): typeof OperationEnum
@@ -109,6 +114,6 @@ export class EditMultipleProductsComponent implements OnInit
   {
     // @ts-ignore
     this.additionalInformation[fieldName] = this.initialAdditionalInformation[fieldName]
-      .filter((obj: any) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
+      .filter((obj: IdNameDto) => obj.name.toLowerCase().includes(event.query.toLowerCase()));
   }
 }

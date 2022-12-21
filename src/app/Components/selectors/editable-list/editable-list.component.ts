@@ -49,6 +49,8 @@ export class EditableListComponent implements OnInit, OnChanges
   // the property to right in the right corner of the item
   @Input() padProperty: string | undefined = undefined;
 
+  @Input() disabled = false;
+
   menuItems: MenuItem[] = [];
 
   isDialogVisible: boolean = false;

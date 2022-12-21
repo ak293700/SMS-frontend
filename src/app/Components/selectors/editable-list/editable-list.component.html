@@ -24,7 +24,7 @@
     </li>
   </ul>
 
-  <p-autoComplete id="selector" dataKey="id"
+  <p-autoComplete id="selector" dataKey="id" [disabled]="disabled"
                   field="name" [suggestions]="suggestions"
                   (completeMethod)="completeMethod($event)"
                   [(ngModel)]="selectorItem"
