@@ -1,22 +1,33 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Operation} from "../../../../utils/Operation";
 
 @Component({
   selector: 'app-filter-fields',
   templateUrl: './filter-fields.component.html',
   styleUrls: ['../../../../styles/button.css', './filter-fields.component.css']
 })
-export class FilterFieldsComponent
+export class FilterFieldsComponent implements OnInit, OnChanges
 {
   @Input() filters: any[] = [];
+  initialFilters: any[] = [];
 
 
   @Output('applyFilters') applyFiltersEvent = new EventEmitter();
 
-  dropDownFilter(event: any, filter: any)
+
+  ngOnInit(): void
   {
-    // Todo does not works
-    filter.others =
-      filter.others.filter((other: any) => other.toLowerCase().includes(event.query.toLowerCase()));
+    this.initialFilters = Operation.deepCopy(this.filters);
+  }
+
+  ngOnChanges(): void
+  {
+    this.initialFilters = Operation.deepCopy(this.filters);
+  }
+
+  dropDownFilter(event: any, index: number)
+  {
+    this.filters[index].others = Operation.completeMethod(event.query, this.initialFilters[index].others);
   }
 
   async applyFilters()

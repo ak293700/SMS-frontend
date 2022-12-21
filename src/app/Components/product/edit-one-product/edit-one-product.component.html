@@ -1,5 +1,3 @@
-
-
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [detectChanges]="detectChanges.bind(this)"
                    (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()" [loading]="loading">

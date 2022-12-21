@@ -58,8 +58,7 @@ export class ProductFilterComponent implements OnInit
   constructor(private messageService: MessageService,
               private router: Router,
               private route: ActivatedRoute)
-  {
-  }
+  {}
 
   async ngOnInit(): Promise<void>
   {

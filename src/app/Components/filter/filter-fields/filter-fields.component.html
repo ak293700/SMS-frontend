@@ -1,6 +1,6 @@
 <div class="filter-container">
   <ul class="field-container">
-    <li *ngFor="let filter of filters" [ngSwitch]="filter.type" class="field-item">
+    <li *ngFor="let filter of filters; let index=index" [ngSwitch]="filter.type" class="field-item">
       <div class="field-label-container">
         <label class="text" for="filter-{{filter.label}}">{{filter.label}}</label>
         <p-checkbox [(ngModel)]="filter.active" [binary]="true"></p-checkbox>
@@ -29,12 +29,12 @@
       </p-calendar>
 
       <p-autoComplete *ngSwitchCase="'dropdown'" [(ngModel)]="filter.value" [disabled]="!filter.active"
-                      id="filter-{{filter.label}}" [suggestions]="filter.others"
-                      (completeMethod)="dropDownFilter($event, filter.label)"
+                      id="filter-{{filter.label}}" [suggestions]="filter.others" dataKey="id" field="name"
+                      (completeMethod)="dropDownFilter($event, index)"
                       [dropdown]="true">
         <ng-template let-suggestion pTemplate="item">
           <div class="ui-helper-clearfix">
-            <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion}}</div>
+            <div style="font-size:14px;float:left;margin:15px 10px 0 0">{{suggestion.name}}</div>
           </div>
         </ng-template>
       </p-autoComplete>

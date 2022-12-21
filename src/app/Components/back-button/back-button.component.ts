@@ -27,7 +27,8 @@ export class BackButtonComponent implements OnInit
     }
 
     // get the last route
-    const tmp: UrlTree | undefined = this.router.getCurrentNavigation()?.previousNavigation?.finalUrl;
+    const tmp: UrlTree | undefined = this.router.getCurrentNavigation()
+      ?.previousNavigation?.finalUrl;
     if (tmp === undefined)
     {
       this._routerLink = '..';
