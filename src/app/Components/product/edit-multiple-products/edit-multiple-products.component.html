@@ -66,7 +66,7 @@
 
     <div style="width: max-content; margin: auto">
       <label for="shop-specific-field" class="text" style="margin: 5px">Attribut de site</label>
-      <app-selector-btn [states]="['Tous', 'EPS', 'E+S']" [state]="chosenWebsite">
+      <app-selector-btn [states]="chosenWebsiteChoices" [(state)]="chosenWebsite">
       </app-selector-btn>
     </div>
 
@@ -77,12 +77,25 @@
           <label for="field-km" class="text">Km</label>
           <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
           <app-selector-btn [states]="dS.km.other.states"
-                            [state]="dS.km.other.state">
+                            [(state)]="dS.km.other.state">
           </app-selector-btn>
         </div>
         <input pInputText id="field-km" type="number"
                [disabled]="!dS.km.active" [step]="0.01"
                [(ngModel)]="dS.km.value"/>
+      </li>
+
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-promo" class="text">Promotion</label>
+          <p-checkbox [(ngModel)]="dS.promo.active" [binary]="true"></p-checkbox>
+          <app-selector-btn [states]="dS.promo.other.states"
+                            [(state)]="dS.promo.other.state">
+          </app-selector-btn>
+        </div>
+        <input pInputText id="field-promo" type="number"
+               [disabled]="!dS.promo.active" [step]="0.01"
+               [(ngModel)]="dS.promo.value"/>
       </li>
     </ul>
   </div>

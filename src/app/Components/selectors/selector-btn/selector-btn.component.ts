@@ -53,9 +53,7 @@ export class SelectorBtnComponent implements OnInit
     }, 200);
     setTimeout(() => {
       this.state = this.states[this.index]
+      this.stateChange.emit(this.state);
     }, 600);
-
-
-    this.stateChange.emit(this.state);
   }
 }

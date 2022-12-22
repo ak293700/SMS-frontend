@@ -15,6 +15,7 @@ import {ProductChangesRequestDto} from "../../../../Dtos/ProductChangesDtos/Prod
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {MyConfirmationService} from "../../../Services/my-confirmation.service";
+import {Shop} from "../../../../Enums/Shop";
 
 interface Field
 {
@@ -57,7 +58,7 @@ export class EditMultipleProductsComponent implements OnInit
   dS: {
     manufacturer: Field, popularity: Field,
     availability: Field, km: Field, discount: Field,
-    availableDiscounts: Field
+    availableDiscounts: Field, promo: Field
   };
 
   discountContextMenuItems: MenuItem[] = [];
@@ -65,7 +66,8 @@ export class EditMultipleProductsComponent implements OnInit
 
   loading: boolean = false;
 
-  chosenWebsite: string = 'Tous'
+  chosenWebsiteChoices: string[];
+  chosenWebsite: string;
 
   constructor(private productReferencesService: ProductReferencesService,
               private getDiscountsService: GetDiscountsService,
@@ -74,6 +76,9 @@ export class EditMultipleProductsComponent implements OnInit
               private myConfirmationService: MyConfirmationService)
   {
     this.loading = true;
+    this.chosenWebsiteChoices = ['Tous', 'EPS', 'E+S'];
+    this.chosenWebsite = this.chosenWebsiteChoices[0];
+
     // do it here only not to have the error
     this.reset();
 
@@ -92,7 +97,8 @@ export class EditMultipleProductsComponent implements OnInit
   {
     let routedData: { selectedIds: number[] } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7909, 7910, 7911, 7912];
+      routedData.selectedIds = [6190];
+    // routedData.selectedIds = [7909, 7910, 7911, 7912];
 
     await this.fetchReferences(routedData.selectedIds);
     this.initialAdditionalInformation.manufacturers = await this.commonRequest.fetchManufacturers();
@@ -149,6 +155,13 @@ export class EditMultipleProductsComponent implements OnInit
           states: [OperationEnum.Add, OperationEnum.Equal, OperationEnum.Subtract]
         }
       },
+      promo: {
+        value: undefined, active: false,
+        other: {
+          state: OperationEnum.Multiply,
+          states: [OperationEnum.Multiply, OperationEnum.Equal]
+        }
+      },
     }
   }
 
@@ -194,10 +207,9 @@ export class EditMultipleProductsComponent implements OnInit
   // find the number of product that will be affected
   private async _computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
   {
-    const changeProduct: string[] = ['manufacturer', 'popularity', 'availability',
-      'availableDiscounts', 'discount'];
+    const changeProduct: string[] = ['discount', 'availableDiscounts', 'manufacturer', 'popularity',];
     const changePropagation: string[] = ['discount'];
-    const changeShopSpecific: string[] = ['km', 'discount'];
+    const changeShopSpecific: string[] = ['km', 'discount', 'promo'];
 
     const changeTypes: ChangeType[] = [];
     for (const key in fields)
@@ -210,10 +222,6 @@ export class EditMultipleProductsComponent implements OnInit
         changeTypes.push(ChangeType.ShopSpecific);
     }
 
-    // changeTypes should only have unique values
-    changeTypes.filter((e, i) => changeTypes.indexOf(e) === i);
-
-    console.log(changeTypes);
     if (changeTypes.length == 0)
       return;
 
@@ -224,7 +232,18 @@ export class EditMultipleProductsComponent implements OnInit
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      return response.data;
+      const res: ProductChangesResponseDto = response.data;
+
+      // if we modify the product shop specific, but not the product properties themselves
+      // we should filter the shopCounts whether the shop we want
+      if (changeTypes.length == 1 && changeTypes[0] == ChangeType.ShopSpecific)
+      {
+        const chosenWebsite = this.getChosenWebsite();
+        console.log('chosenWebsite', chosenWebsite);
+        res.shopCounts = res.shopCounts!.filter(e => chosenWebsite.includes(e.shop));
+      }
+
+      return res;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.httpFail(this.messageService, e);
@@ -245,7 +264,7 @@ export class EditMultipleProductsComponent implements OnInit
     if (changesCount == undefined
       || changesCount.directChangesCount === 0
       && (changesCount.indirectChangesCount ?? 0) === 0
-      && (changesCount.shopSpecificChangesCount ?? 0) === 0)
+      && (changesCount.shopCounts ?? 0) === 0)
     {
       this.messageService.add({
         severity: 'info', summary: 'Pas de changement',
@@ -255,26 +274,45 @@ export class EditMultipleProductsComponent implements OnInit
       return;
     }
 
-    const message = `Vous allez modifier ${changesCount.directChangesCount} produits directement`
-      + (changesCount.indirectChangesCount ? ` et ${changesCount.indirectChangesCount} produits indirectement` : '')
-      + (changesCount.shopSpecificChangesCount
-        ? ` ce qui affecteras ${changesCount.shopSpecificChangesCount} modifications sur les sites` : '')
-      + '.<br/>Êtes-vous sûr de vouloir continuer ?';
-
-    if (!await this.myConfirmationService.newBlocking(message))
+    if (!await this.myConfirmationService.newBlocking(this.buildWarningMessage(changesCount)))
       return;
 
+  }
 
-    console.log(changesCount);
+  private buildWarningMessage(changesCount: ProductChangesResponseDto): string
+  {
+    // if we do not change an attribute that as an impact on the shop specific without being a shop specific
 
-    // const patch: PatchSimpleProductDto | PatchBundleDto = {
-    //
-    // };
+    let message = `Vous allez modifier ${changesCount.directChangesCount} produits directement`
+      + (changesCount.indirectChangesCount ? ` et ${changesCount.indirectChangesCount} produits indirectement` : '');
 
+    if (changesCount.shopCounts != null)
+      message += ' ce qui affecteras :'
+    else
+      message += '.';
+
+    for (const shopCount of changesCount.shopCounts ?? [])
+      message += `<br/>&#160;&#160;- ${shopCount.count} produits sur ${Shop.toString(shopCount.shop)}`
+
+    return message + '<br/>Êtes-vous sûr de vouloir continuer ?';
   }
 
   preview(index: number)
   {
     console.log(index);
+  }
+
+  getChosenWebsite(): Shop[]
+  {
+    console.log(this.chosenWebsite);
+    const index: number = this.chosenWebsiteChoices.findIndex(s => s == this.chosenWebsite);
+    if (index === 0)
+      return [Shop.Eps, Shop.Es];
+    if (index === 1)
+      return [Shop.Eps];
+    if (index === 2)
+      return [Shop.Es];
+
+    return [];
   }
 }
