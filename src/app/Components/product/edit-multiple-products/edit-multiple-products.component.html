@@ -63,14 +63,15 @@
   </div>
 
   <div id="shop-specific-field">
-    <div>
-      <label for="shop-specific-field">Attribut de site</label>
+
+    <div style="width: max-content; margin: auto">
+      <label for="shop-specific-field" class="text" style="margin: 5px">Attribut de site</label>
       <app-selector-btn [states]="['Tous', 'EPS', 'E+S']" [state]="chosenWebsite">
       </app-selector-btn>
-
     </div>
 
     <ul class="field-container">
+
       <li class="field-item">
         <div class="field-label-container">
           <label for="field-km" class="text">Km</label>
@@ -84,7 +85,6 @@
                [(ngModel)]="dS.km.value"/>
       </li>
     </ul>
-
   </div>
 
 

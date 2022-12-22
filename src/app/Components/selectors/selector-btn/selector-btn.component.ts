@@ -45,7 +45,7 @@ export class SelectorBtnComponent implements OnInit
     // at the half (when we don't see the text) we change the text
     let tmp = '';
     for (let i = 0; i < this.state.length; i++)
-      tmp += '&#160;';
+      tmp += '&#160;&#160;'; // * 2 because else it is two small
 
     // it's allow to keep the length while hiding but not seing the text
     setTimeout(() => {

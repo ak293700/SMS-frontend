@@ -31,10 +31,7 @@ span:after {
   50% {
     transform: rotateY(180deg);
   }
-  51% {
-    transform: rotateY(179deg);
-  }
   100% {
-    transform: rotateY(0deg);
+    transform: rotateY(360deg);
   }
 }
