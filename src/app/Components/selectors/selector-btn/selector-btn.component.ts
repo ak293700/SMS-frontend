@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
 
 @Component({
@@ -23,6 +23,8 @@ export class SelectorBtnComponent implements OnInit
 
   private index: number = 0;
 
+  constructor(private renderer: Renderer2) { }
+
   ngOnInit(): void
   {
     this.index = this.states.findIndex(x => x == this.state);
@@ -41,7 +43,18 @@ export class SelectorBtnComponent implements OnInit
 
     // the transition time is 500
     // at the half (when we don't see the text) we change the text
-    setTimeout(() => this.state = this.states[this.index], 250);
+    let tmp = '';
+    for (let i = 0; i < this.state.length; i++)
+      tmp += '&#160;';
+
+    // it's allow to keep the length while hiding but not seing the text
+    setTimeout(() => {
+      this.state = tmp;
+    }, 200);
+    setTimeout(() => {
+      this.state = this.states[this.index]
+    }, 600);
+
 
     this.stateChange.emit(this.state);
   }

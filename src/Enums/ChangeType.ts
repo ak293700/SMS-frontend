@@ -1,6 +1,6 @@
 export enum ChangeType
 {
-  ProductWithoutPropagation = 0,
-  ProductWithPropagation,
+  Product = 0,
   ShopSpecific,
+  Propagation,
 }

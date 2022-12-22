@@ -24,7 +24,6 @@ export class FilterFieldsComponent implements OnInit, OnChanges
   ngOnChanges(): void
   {
     this.initialFilters = Operation.deepCopy(this.filters);
-    console.log(this.filters)
   }
 
   dropDownFilter(event: any, index: number)

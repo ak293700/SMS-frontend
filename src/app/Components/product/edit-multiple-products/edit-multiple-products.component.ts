@@ -65,6 +65,8 @@ export class EditMultipleProductsComponent implements OnInit
 
   loading: boolean = false;
 
+  chosenWebsite: string = 'Tous'
+
   constructor(private productReferencesService: ProductReferencesService,
               private getDiscountsService: GetDiscountsService,
               private commonRequest: CommonRequestService,
@@ -192,19 +194,19 @@ export class EditMultipleProductsComponent implements OnInit
   // find the number of product that will be affected
   private async _computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
   {
-    const productWithoutPropagationFields: string[] = ['manufacturer', 'popularity', 'availability',
+    const changeProduct: string[] = ['manufacturer', 'popularity', 'availability',
       'availableDiscounts', 'discount'];
-    const productWithPropagationFields: string[] = ['discount'];
-    const shopSpecificFields: string[] = ['km'];
+    const changePropagation: string[] = ['discount'];
+    const changeShopSpecific: string[] = ['km', 'discount'];
 
     const changeTypes: ChangeType[] = [];
     for (const key in fields)
     {
-      if (productWithoutPropagationFields.includes(key))
-        changeTypes.push(ChangeType.ProductWithoutPropagation);
-      if (productWithPropagationFields.includes(key))
-        changeTypes.push(ChangeType.ProductWithPropagation);
-      if (shopSpecificFields.includes(key))
+      if (changeProduct.includes(key))
+        changeTypes.push(ChangeType.Product);
+      if (changePropagation.includes(key))
+        changeTypes.push(ChangeType.Propagation);
+      if (changeShopSpecific.includes(key))
         changeTypes.push(ChangeType.ShopSpecific);
     }
 

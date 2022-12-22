@@ -150,7 +150,7 @@
   <div id="shop-specific-field"
        [style.grid-template-columns]="'20% repeat('+ product.shopSpecifics.length.toString() +', 1fr)'">
 
-    <h2></h2>
+    <h2></h2> <!-- There to full the first case of the grid -->
     <h2 *ngFor="let shopSpecific of product.shopSpecifics"
         class="text">
       {{Shop.toString(shopSpecific.shop)}}

@@ -31,18 +31,6 @@
         </p-autoComplete>
       </li>
 
-      <li class="field-item">
-        <div class="field-label-container">
-          <label for="field-km" class="text">Km</label>
-          <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
-          <app-selector-btn [states]="dS.km.other.states"
-                            [state]="dS.km.other.state">
-          </app-selector-btn>
-        </div>
-        <input pInputText id="field-km" type="number"
-               [disabled]="!dS.km.active" [step]="0.01"
-               [(ngModel)]="dS.km.value"/>
-      </li>
 
       <li class="field-item">
         <div class="field-label-container">
@@ -73,4 +61,31 @@
       </li>
     </ul>
   </div>
+
+  <div id="shop-specific-field">
+    <div>
+      <label for="shop-specific-field">Attribut de site</label>
+      <app-selector-btn [states]="['Tous', 'EPS', 'E+S']" [state]="chosenWebsite">
+      </app-selector-btn>
+
+    </div>
+
+    <ul class="field-container">
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-km" class="text">Km</label>
+          <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
+          <app-selector-btn [states]="dS.km.other.states"
+                            [state]="dS.km.other.state">
+          </app-selector-btn>
+        </div>
+        <input pInputText id="field-km" type="number"
+               [disabled]="!dS.km.active" [step]="0.01"
+               [(ngModel)]="dS.km.value"/>
+      </li>
+    </ul>
+
+  </div>
+
+
 </app-edit-multiple>
