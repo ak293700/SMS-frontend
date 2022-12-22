@@ -51,7 +51,7 @@
           <label for="field-discount" class="text">Remise disponible</label>
           <p-checkbox [(ngModel)]="dS.availableDiscounts.active" [binary]="true"></p-checkbox>
           <app-selector-btn [states]="dS.availableDiscounts.other.states"
-                            [state]="dS.availableDiscounts.other.state">
+                            [(index)]="dS.availableDiscounts.other.index">
           </app-selector-btn>
         </div>
         <app-editable-list id="field-availableDiscounts" [disabled]="!dS.availableDiscounts.active"
@@ -66,7 +66,7 @@
 
     <div style="width: max-content; margin: auto">
       <label for="shop-specific-field" class="text" style="margin: 5px">Attribut de site</label>
-      <app-selector-btn [states]="chosenWebsiteChoices" [(state)]="chosenWebsite">
+      <app-selector-btn [states]="chosenWebsiteChoices" [(index)]="chosenWebsiteIndex">
       </app-selector-btn>
     </div>
 
@@ -77,7 +77,7 @@
           <label for="field-km" class="text">Km</label>
           <p-checkbox [(ngModel)]="dS.km.active" [binary]="true"></p-checkbox>
           <app-selector-btn [states]="dS.km.other.states"
-                            [(state)]="dS.km.other.state">
+                            [(index)]="dS.km.other.index">
           </app-selector-btn>
         </div>
         <input pInputText id="field-km" type="number"
@@ -90,7 +90,7 @@
           <label for="field-promo" class="text">Promotion</label>
           <p-checkbox [(ngModel)]="dS.promo.active" [binary]="true"></p-checkbox>
           <app-selector-btn [states]="dS.promo.other.states"
-                            [(state)]="dS.promo.other.state">
+                            [(index)]="dS.promo.other.index">
           </app-selector-btn>
         </div>
         <input pInputText id="field-promo" type="number"
@@ -99,6 +99,4 @@
       </li>
     </ul>
   </div>
-
-
 </app-edit-multiple>

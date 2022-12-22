@@ -1,4 +1,4 @@
-import {ChangeType} from "../../Enums/ChangeType";
+import {ChangeType} from "../../../Enums/ChangeType";
 
 export interface ProductChangesRequestDto
 {

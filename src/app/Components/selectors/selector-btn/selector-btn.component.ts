@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
 
 @Component({
@@ -14,20 +14,22 @@ export class SelectorBtnComponent implements OnInit
   // All the possible states of the button
   @Input() states: string[] = [];
 
-  // The current state of the button
-  @Input() state: string = '';
-  @Output() stateChange: EventEmitter<string> = new EventEmitter<string>();
+  // The index state of the button
+  @Input() index: number = 0;
+  @Output() indexChange: EventEmitter<number> = new EventEmitter<number>();
+
+  // the current state of the button
+  state: string = '';
 
   // @ts-ignore
   @ViewChild('button') button: ElementRef;
 
-  private index: number = 0;
 
-  constructor(private renderer: Renderer2) { }
+  constructor() { }
 
   ngOnInit(): void
   {
-    this.index = this.states.findIndex(x => x == this.state);
+    this.state = this.states[this.index];
   }
 
   onClick()
@@ -52,8 +54,8 @@ export class SelectorBtnComponent implements OnInit
       this.state = tmp;
     }, 200);
     setTimeout(() => {
-      this.state = this.states[this.index]
-      this.stateChange.emit(this.state);
+      this.state = this.states[this.index];
+      this.indexChange.emit(this.index);
     }, 600);
   }
 }

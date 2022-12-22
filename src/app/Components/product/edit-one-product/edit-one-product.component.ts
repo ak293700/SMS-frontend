@@ -164,7 +164,7 @@ export class EditOneProductComponent implements OnInit
 
     try
     {
-      // fetch the discount available for the producst
+      // fetch the discount available for the product
       const response = await axios.get<IdNameDto[]>(`${api}/discount/available/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -466,7 +466,7 @@ export class EditOneProductComponent implements OnInit
     try
     {
       const ids = availableDiscounts.map(d => d.id);
-      const response: AxiosResponse = await axios.post(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
+      const response: AxiosResponse = await axios.patch(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
       if (!HttpTools.IsValid(response.status))
       {
         MessageServiceTools.httpFail(this.messageService, response);

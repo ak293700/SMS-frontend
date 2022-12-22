@@ -1,4 +1,4 @@
-import {ShopCountDto} from "../ShopDtos/ShopCountDto";
+import {ShopCountDto} from "../../ShopDtos/ShopCountDto";
 
 export interface ProductChangesResponseDto
 {

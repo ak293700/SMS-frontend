@@ -8,14 +8,15 @@ import {MenuItem, MessageService} from "primeng/api";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
 import {ChangeType} from "../../../../Enums/ChangeType";
-import {ProductChangesResponseDto} from "../../../../Dtos/ProductChangesDtos/ProductChangesResponseDto";
+import {ProductChangesResponseDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesResponseDto";
 import axios, {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
-import {ProductChangesRequestDto} from "../../../../Dtos/ProductChangesDtos/ProductChangesRequestDto";
+import {ProductChangesRequestDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesRequestDto";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {MyConfirmationService} from "../../../Services/my-confirmation.service";
 import {Shop} from "../../../../Enums/Shop";
+import {ProductMultipleChangesDto} from "../../../../Dtos/ProductDtos/ProductMultipleChangesDto";
 
 interface Field
 {
@@ -67,7 +68,7 @@ export class EditMultipleProductsComponent implements OnInit
   loading: boolean = false;
 
   chosenWebsiteChoices: string[];
-  chosenWebsite: string;
+  chosenWebsiteIndex: number;
 
   constructor(private productReferencesService: ProductReferencesService,
               private getDiscountsService: GetDiscountsService,
@@ -77,7 +78,7 @@ export class EditMultipleProductsComponent implements OnInit
   {
     this.loading = true;
     this.chosenWebsiteChoices = ['Tous', 'EPS', 'E+S'];
-    this.chosenWebsite = this.chosenWebsiteChoices[0];
+    this.chosenWebsiteIndex = 0;
 
     // do it here only not to have the error
     this.reset();
@@ -144,22 +145,25 @@ export class EditMultipleProductsComponent implements OnInit
       km: {
         value: undefined, active: false,
         other: {
-          state: OperationEnum.Multiply,
+          index: 0,
           states: [OperationEnum.Multiply, OperationEnum.Equal]
+            .map(e => OperationEnum.toString(e))
         }
       },
       discount: {value: undefined, active: false},
       availableDiscounts: {
         value: [], active: false, other: {
-          state: OperationEnum.Add,
+          index: 0,
           states: [OperationEnum.Add, OperationEnum.Equal, OperationEnum.Subtract]
+            .map(e => OperationEnum.toString(e))
         }
       },
       promo: {
         value: undefined, active: false,
         other: {
-          state: OperationEnum.Multiply,
+          index: 0,
           states: [OperationEnum.Multiply, OperationEnum.Equal]
+            .map(e => OperationEnum.toString(e))
         }
       },
     }
@@ -256,7 +260,6 @@ export class EditMultipleProductsComponent implements OnInit
     const fields = this.buildDiff();
 
     console.log(fields);
-
     if (fields == undefined)
       return;
 
@@ -277,8 +280,9 @@ export class EditMultipleProductsComponent implements OnInit
     if (!await this.myConfirmationService.newBlocking(this.buildWarningMessage(changesCount)))
       return;
 
-  }
+    await this._save(fields);
 
+  }
   private buildWarningMessage(changesCount: ProductChangesResponseDto): string
   {
     // if we do not change an attribute that as an impact on the shop specific without being a shop specific
@@ -297,6 +301,55 @@ export class EditMultipleProductsComponent implements OnInit
     return message + '<br/>Êtes-vous sûr de vouloir continuer ?';
   }
 
+  private async _save(fields: object): Promise<void>
+  {
+    const request: ProductMultipleChangesDto = this.buildRequest(fields);
+    console.log('request', request);
+
+    return;
+    try
+    {
+      const response = await axios.patch(`${api}/product/multiple`, request);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.messageService.add({
+        severity: 'success', summary: 'Sauvegarde effectuée',
+        detail: `Les changements ont bien été effectués`
+      });
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+  private buildRequest(fields: object): ProductMultipleChangesDto
+  {
+    const request: ProductMultipleChangesDto = {
+      ids: this.otherProducts.map(p => p.id)
+    };
+
+    for (const field in fields)
+    {
+      // @ts-ignore
+
+      let value = fields[field].value;
+      switch (field)
+      {
+        case 'availableDiscounts': // @ts-ignore
+          value = {data: value.map((e: IdNameDto) => e.id), operation: fields[field].operation};
+          break;
+        default:
+
+      }
+      // @ts-ignore
+      request[field] = value;
+    }
+
+    return ProductMultipleChangesDto.build(request);
+  }
+
+
   preview(index: number)
   {
     console.log(index);
@@ -304,13 +357,11 @@ export class EditMultipleProductsComponent implements OnInit
 
   getChosenWebsite(): Shop[]
   {
-    console.log(this.chosenWebsite);
-    const index: number = this.chosenWebsiteChoices.findIndex(s => s == this.chosenWebsite);
-    if (index === 0)
+    if (this.chosenWebsiteIndex === 0)
       return [Shop.Eps, Shop.Es];
-    if (index === 1)
+    if (this.chosenWebsiteIndex === 1)
       return [Shop.Eps];
-    if (index === 2)
+    if (this.chosenWebsiteIndex === 2)
       return [Shop.Es];
 
     return [];
