@@ -144,8 +144,8 @@ export class ProductFilterComponent implements OnInit
   {
     try
     {
-      let response = await axios.get(`${api}/SelectProduct/filter`, {responseType: 'json'});
-      if (response.status !== 200)
+      let response = await axios.get(`${api}/SelectProduct/filter`);
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       let tmp: any[] = response.data;

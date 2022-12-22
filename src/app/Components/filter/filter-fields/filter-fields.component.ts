@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
+import {IdNameDto} from "../../../../Dtos/IdNameDto";
 
 @Component({
   selector: 'app-filter-fields',
@@ -23,11 +24,18 @@ export class FilterFieldsComponent implements OnInit, OnChanges
   ngOnChanges(): void
   {
     this.initialFilters = Operation.deepCopy(this.filters);
+    console.log(this.filters)
   }
 
   dropDownFilter(event: any, index: number)
   {
-    this.filters[index].others = Operation.completeMethod(event.query, this.initialFilters[index].others);
+    // We transform it into a collection of IdNameDto so Operation.completeMethod works
+    const values = this.initialFilters[index].others
+      .map((e: any, i: number) => {return {id: i, name: e}})
+
+    // Then re transform it to a collection of string
+    this.filters[index].others = Operation.completeMethod(event.query, values, false)
+      .map((x: IdNameDto) => x.name);
   }
 
   async applyFilters()

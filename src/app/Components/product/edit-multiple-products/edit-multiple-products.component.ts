@@ -115,8 +115,7 @@ export class EditMultipleProductsComponent implements OnInit
     this.allProductReferences = await this.productReferencesService.getProductReferences();
 
     this.otherProducts = this.allProductReferences
-      .filter((e: IdNameDto) => ids.includes(e.id))
-      .sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
+      .filter((e: IdNameDto) => ids.includes(e.id));
   }
 
   // Look in additionalInformation
