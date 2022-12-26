@@ -5,9 +5,5 @@
 <app-filter-fields [filters]="filters" (applyFilters)="applyFilters()"></app-filter-fields>
 
 <app-filter-table (onSelectData)="editDiscount($event)" (onLazyLoad)="loadLazy($event)"
-                  [loading]="loading" [datas]="discounts"></app-filter-table>
-
-<div class="flex-center">
-  <p-button (click)="editSelection()" label="Modifier la sélection" styleClass="btn-hover-main"
-            [style.margin.px]="40"></p-button>
-</div>
+                  [loading]="loading" [datas]="discounts" [selectedDatas]="selectedDiscounts">
+</app-filter-table>

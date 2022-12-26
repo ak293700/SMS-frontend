@@ -83,7 +83,7 @@ export class EditOneProductComponent implements OnInit
 
   loading: boolean = true;
 
-  dialItems = [
+  dialItems: MenuItem[] = [
     {
       icon: 'pi pi-trash',
       command: () => this.delete()

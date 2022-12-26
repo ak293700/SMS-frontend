@@ -8,6 +8,7 @@ import {api} from "../../../GlobalUsings";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {FieldType} from "../../../../Enums/FieldType";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
+import {HttpTools} from "../../../../utils/HttpTools";
 
 @Component({
   selector: 'app-discount-filter',
@@ -30,8 +31,8 @@ export class DiscountFilterComponent implements OnInit
 
   // The products we did select. After it should be a list of ids.
   selectedDiscounts: any = {
-    data: [], // the selected product (only the ones in the current page)
-    ids: [] // all the selected product (including the ones not in the current filter)
+    data: [], // the selected discount (only the ones in the current page)
+    ids: [] // all the selected discounts (including the ones not in the current filter)
   };
 
   // boolean
@@ -178,8 +179,8 @@ export class DiscountFilterComponent implements OnInit
       // get the ids of the products of the page
       const ids = this.discounts.filteredIds.slice(begin, end);
       const url = UrlBuilder.create(`${api}/SelectDiscount/filter/values`).addParam('ids', ids).build();
-      const response = await axios.get(url, {responseType: 'json'});
-      if (response.status !== 200)
+      const response = await axios.get(url);
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       // Update the productsPageData
@@ -188,12 +189,13 @@ export class DiscountFilterComponent implements OnInit
       // Update the selected data
       this.selectedDiscounts.data = this.discounts.pageData
         .filter((product: any) => this.selectedDiscounts.ids.includes(product.id));
-
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
+    } finally
+    {
+      this.loading = false;
     }
-    this.loading = false;
   }
 
   // reformat the data received from the server
@@ -222,9 +224,6 @@ export class DiscountFilterComponent implements OnInit
 
     switch (field)
     {
-      case 'discountType':
-        tooltip = discount.id;
-        break;
       case 'numberOfProducts':
         tooltip = discount.productReferences;
         break;
@@ -238,19 +237,9 @@ export class DiscountFilterComponent implements OnInit
 
   async editDiscount(discount: any)
   {
-    const selectedIds = this.selectedDiscounts.ids;
-    const selectedDiscountId = discount.id.value
-    const selected = {selectedIds: selectedIds, selectedId: selectedDiscountId};
-
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: selected
+      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id.value}
     });
-  }
-
-  async editSelection()
-  {
-    // go to child route 'edit/multiple'
-    await this.router.navigate(['../edit/multiple'], {relativeTo: this.route});
   }
 }

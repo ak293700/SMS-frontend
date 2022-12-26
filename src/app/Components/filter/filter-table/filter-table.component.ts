@@ -56,7 +56,7 @@ export class FilterTableComponent implements OnInit, OnChanges
       {
         label: 'Éditer',
         icon: 'pi pi-fw pi-pencil',
-        command: () => this.editProduct(this.contextMenuSelectedProduct)
+        command: () => this.editData(this.contextMenuSelectedProduct)
       }
     ];
   }
@@ -168,8 +168,8 @@ export class FilterTableComponent implements OnInit, OnChanges
     this.areAllSelected = false;
   }
 
-  editProduct(product: any)
+  editData(data: any)
   {
-    this.selectDataEvent.emit(product);
+    this.selectDataEvent.emit(data);
   }
 }

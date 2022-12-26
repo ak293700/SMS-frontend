@@ -1,19 +1,21 @@
 import {Component, OnInit} from '@angular/core';
 import {Operation} from "../../../../utils/Operation";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {DiscountType} from "../../../../Enums/DiscountType";
 import {
   LiteDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
 import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../selectors/editable-list/editable-list.component";
+import {HttpTools} from "../../../../utils/HttpTools";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -41,14 +43,26 @@ export class EditOneDiscountComponent implements OnInit
 
   additionalInformation = this.initialAdditionalInformation;
 
+  dialItems: MenuItem[] = [];
+
+  loading = true;
+
   constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+              private confirmationService: ConfirmationService,
+              private router: Router)
   {
+    this.dialItems = [
+      {
+        icon: 'pi pi-trash',
+        command: () => this.delete()
+      }];
   }
 
   async ngOnInit(): Promise<void>
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
+
+    console.log('routedData', routedData);
     if (routedData.selectedIds == undefined)
       routedData.selectedIds = [3890, 1, 2];
 
@@ -64,6 +78,7 @@ export class EditOneDiscountComponent implements OnInit
     await this.fetchOtherDiscounts(routedData.selectedIds);
     await this.fetchDiscount(routedData.selectedId);
 
+    this.loading = false;
   }
 
   get DiscountType(): typeof DiscountType
@@ -75,8 +90,8 @@ export class EditOneDiscountComponent implements OnInit
   {
     try
     {
-      const getTypeResponse = await axios.get<DiscountType>(`${api}/discount/type/${id}`);
-      if (getTypeResponse.status !== 200)
+      const getTypeResponse = await axios.get(`${api}/discount/type/${id}`);
+      if (!HttpTools.IsValid(getTypeResponse.status))
         MessageServiceTools.httpFail(this.messageService, getTypeResponse);
 
       let endpoint: string = 'distributorDiscount';
@@ -221,5 +236,30 @@ export class EditOneDiscountComponent implements OnInit
     // @ts-ignore
     this.additionalInformation[fieldName] = Operation.completeMethod(event.query, // @ts-ignore
       this.initialAdditionalInformation[fieldName]);
+  }
+
+  async delete(): Promise<void>
+  {
+    if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+      "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
+      return;
+
+    try
+    {
+      const response: AxiosResponse = await axios.delete(`${api}/product/${this.discount.id}`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      // remove this product from the list
+      this.otherDiscounts = this.otherDiscounts.filter(p => p.id != this.discount.id);
+      if (this.otherDiscounts.length > 0)
+        await this.fetchDiscount(this.otherDiscounts[0].id);
+      else
+        await this.router.navigate(['/discount/filter']);
+
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
   }
 }
