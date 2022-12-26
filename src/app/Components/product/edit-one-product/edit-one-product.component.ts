@@ -81,6 +81,7 @@ export class EditOneProductComponent implements OnInit
   bundleItemAdditionalField: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
   loading: boolean = true;
+
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private productReferencesService: ProductReferencesService)
@@ -306,44 +307,57 @@ export class EditOneProductComponent implements OnInit
   // This function does the actual work of saving the changes to the database
   private async _save(changes: IChanges)
   {
-    if (!await this.saveDiscount(changes.diffObj.discount))
-      return this.messageService.add({
-        severity: 'error', summary: 'Erreur',
-        detail: 'Erreur lors de la de la sauvegarde de la remise'
-      });
-
-    if (!await this.saveDiscountCanUse(changes.diffObj.availableDiscounts))
-      return this.messageService.add({
-        severity: 'error', summary: 'Erreur',
-        detail: 'Erreur lors de la de la sauvegarde des remises disponible'
-      });
-
-    let namespace: any = PatchSimpleProductDto;
-    let endpoint = 'simpleproduct';
-    if (this.product.productType === ProductType.Bundle)
-    {
-      namespace = PatchBundleDto;
-      endpoint = 'bundle';
-    }
-
-    // start creating the patch object
-    const shopSpecificChanges = changes.diffObj.shopSpecifics ?? []; // '?? []' is to prevent errors
-    delete changes.diffObj.shopSpecifics; // remove it not to be included in patchProduct
-
-    const patchProduct: PatchProductDto = namespace.build(changes.diffObj);
-    const shopSpecificPatches: PatchShopSpecificDto[] = [];
-    for (const shopSpecificChange of shopSpecificChanges)
-    {
-      if (Operation.countProperties(shopSpecificChange) > 1) // more than the id
-        shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
-    }
-
-    const bundleItems: CreateBundleItemDto[] = changes.diffObj.items;
-    if (bundleItems !== undefined) // @ts-ignore
-      bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
-
+    this.loading = true;
     try
     {
+      if (changes.diffObj.discount !== undefined)
+      {
+        const newDiscount = changes.diffObj.discount;
+        if (newDiscount !== this.initialSimpleProduct.discount)
+        {
+          if (newDiscount == null) // if set to null
+            changes.diffObj.selectedDiscountId = null;
+          else if (changes.diffObj.discount.id !== this.initialSimpleProduct.discount?.id) // if set to another discount
+            changes.diffObj.selectedDiscountId = changes.diffObj.discount.id;
+        }
+      }
+
+      if (!await this.saveDiscount(changes.diffObj.discount))
+        return this.messageService.add({
+          severity: 'error', summary: 'Erreur',
+          detail: 'Erreur lors de la de la sauvegarde de la remise'
+        });
+
+      if (!await this.saveDiscountCanUse(changes.diffObj.availableDiscounts))
+        return this.messageService.add({
+          severity: 'error', summary: 'Erreur',
+          detail: 'Erreur lors de la de la sauvegarde des remises disponible'
+        });
+
+      let namespace: any = PatchSimpleProductDto;
+      let endpoint = 'simpleproduct';
+      if (this.product.productType === ProductType.Bundle)
+      {
+        namespace = PatchBundleDto;
+        endpoint = 'bundle';
+      }
+
+      // start creating the patch object
+      const shopSpecificChanges = changes.diffObj.shopSpecifics ?? []; // '?? []' is to prevent errors
+      delete changes.diffObj.shopSpecifics; // remove it not to be included in patchProduct
+
+      const patchProduct: PatchProductDto = namespace.build(changes.diffObj);
+      const shopSpecificPatches: PatchShopSpecificDto[] = [];
+      for (const shopSpecificChange of shopSpecificChanges)
+      {
+        if (Operation.countProperties(shopSpecificChange) > 1) // more than the id
+          shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
+      }
+
+      const bundleItems: CreateBundleItemDto[] = changes.diffObj.items;
+      if (bundleItems !== undefined) // @ts-ignore
+        bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
+
       // Detect if patch is empty - more than 1 because of the id
       if (Operation.countProperties(patchProduct) > 1)
       {
@@ -371,12 +385,16 @@ export class EditOneProductComponent implements OnInit
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
+    } finally
+    {
+      this.loading = false;
     }
   }
 
   save()
   {
     const changes = this.detectChanges();
+    console.log('changes', changes);
 
     if (changes.count == 0)
     {
@@ -394,6 +412,7 @@ export class EditOneProductComponent implements OnInit
   // return can everything went well
   async saveDiscount(discount: any): Promise<boolean>
   {
+    console.log('discount', discount);
     if (discount == undefined)
       return true;
 
@@ -490,7 +509,12 @@ export class EditOneProductComponent implements OnInit
     this.product.popularity = this.dummyStruct.popularity.id; // popularity
 
     if (this.product.productType == ProductType.Simple)
+    {
       this.simpleProduct.availability = this.dummyStruct.availability.id; // availability
+      if (this.simpleProduct.discount === undefined)
+        this.simpleProduct.discount = undefined; // discountType
+      this.simpleProduct.selectedDiscountId = this.dummyStruct.selectedDiscount?.id ?? null; // discount
+    }
     else if (this.product.productType == ProductType.Bundle)
     {
       this.bundle.items = this.dummyStruct.bundleItems
@@ -518,7 +542,10 @@ export class EditOneProductComponent implements OnInit
 
     // merge all changes into one
     return changes.reduce((acc, val) =>
-    { return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}}, {diffObj: {}, count: 0});
+      {
+        return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}
+      },
+      {diffObj: {}, count: 0});
   }
 
   discountValue(): number
@@ -586,6 +613,9 @@ export class EditOneProductComponent implements OnInit
     if (this.product.productType != ProductType.Simple)
       return;
 
+    console.log(this.dummyStruct.selectedDiscount);
+    console.log(this.simpleProduct.discount);
+
     // discount were or has been set to null
     if (this.dummyStruct.selectedDiscount == undefined)
     {
@@ -601,6 +631,7 @@ export class EditOneProductComponent implements OnInit
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.simpleProduct.discount = response.data;
+      console.log(this.simpleProduct.discount);
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);

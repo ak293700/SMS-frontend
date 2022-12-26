@@ -7,7 +7,7 @@ export interface SimpleProductDto extends ProductDto
   discount?: LiteDiscountDto;
   supplierReference: string;
   pureReference: string;
-  selectedDiscountId: number;
+  selectedDiscountId: number | null;
   manufacturerCategoryId: number;
   stock: number;
   averageStockPrice: number;

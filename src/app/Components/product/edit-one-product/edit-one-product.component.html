@@ -103,11 +103,12 @@
         <label for="field-discount" class="text">Remise</label>
         <input *ngIf="simpleProduct.discount != undefined" pInputText id="field-discount" type="number" [step]="0.01"
                [disabled]="simpleProduct.discount!.isNetPrice"
-               [placeholder]="initialSimpleProduct.discount!.value.toString()"
+               [placeholder]="initialSimpleProduct.discount != undefined
+               ? initialSimpleProduct.discount.value.toString() : '0'"
                [(ngModel)]="simpleProduct.discount!.value"
                [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
                         + '\n'
-                        + 'Prix net: ' + initialSimpleProduct.discount!.isNetPrice">
+                        + 'Prix net: ' + simpleProduct.discount!.isNetPrice">
         <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
       </li>
       <li class="field-item">

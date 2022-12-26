@@ -16,8 +16,6 @@ import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITable
 })
 export class DiscountFilterComponent implements OnInit
 {
-  // @Output('onSelectData') selectDataEvent: EventEmitter<any> = new EventEmitter<any>();
-
   filters: any[] = [];
 
   discounts: DataTableVector =

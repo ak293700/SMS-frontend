@@ -65,6 +65,8 @@ export class Operation
   // shouldn't be counted in the diff
   static detectChanges(obj: any, initialObj: any, keep: string[] = []): IChanges
   {
+    if (typeof obj !== typeof initialObj || obj != initialObj && (obj == null || initialObj == null))
+      return {diffObj: obj, count: 1};
 
     if (Operation.isPrimitive(obj))
     {
@@ -73,7 +75,6 @@ export class Operation
 
       return {diffObj: undefined, count: 0};
     }
-
 
     if (Array.isArray(obj)) // array are either equal or not
     {
@@ -100,7 +101,7 @@ export class Operation
     // if obj is an object
     for (const key in obj)
     {
-      if (keep.includes(key))
+      if (keep.includes(key)) // often use for the id
       {
         diffObj[key] = obj[key];
         continue;
