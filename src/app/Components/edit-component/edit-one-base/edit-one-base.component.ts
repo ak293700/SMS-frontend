@@ -4,12 +4,6 @@ import {EditBaseComponent} from "../edit-base/edit-base.component";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
 
-/*@Component({
-  selector: 'app-edit-one-base',
-  templateUrl: './edit-one-base.component.html',
-  styleUrls: ['./edit-one-base.component.css']
-})*/
-
 @Component({
   selector: 'app-edit-one-base',
   templateUrl: '../edit-base/edit-base.component.html',
@@ -17,6 +11,7 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 })
 export class EditOneBaseComponent extends EditBaseComponent
 {
+
   @Input() detectChanges: () => IChanges = () => { return {diffObj: [], count: 0}; };
 
   constructor(messageService: MessageService,

@@ -25,6 +25,7 @@ import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -82,9 +83,22 @@ export class EditOneProductComponent implements OnInit
 
   loading: boolean = true;
 
+  dialItems = [
+    {
+      icon: 'pi pi-trash',
+      command: () => this.delete()
+    },
+    {
+      icon: 'pi pi-pencil',
+      command: () => {}
+    },
+  ];
+
+
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private productReferencesService: ProductReferencesService)
+              private productReferencesService: ProductReferencesService,
+              private router: Router)
   {
     this.discountContextMenuItems = [
       {
@@ -107,6 +121,7 @@ export class EditOneProductComponent implements OnInit
       }
     ];
   }
+
 
   async ngOnInit()
   {
@@ -633,6 +648,32 @@ export class EditOneProductComponent implements OnInit
       this.simpleProduct.discount = response.data;
       console.log(this.simpleProduct.discount);
     } catch (e: any)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
+  }
+
+  // delete the product
+  async delete(): Promise<void>
+  {
+    if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+      "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
+      return;
+
+    try
+    {
+      const response: AxiosResponse = await axios.delete(`${api}/product/${this.product.id}`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      // remove this product from the list
+      this.otherProducts = this.otherProducts.filter(p => p.id != this.product.id);
+      if (this.otherProducts.length > 0)
+        await this.fetchProduct(this.otherProducts[0].id);
+      else
+        await this.router.navigate(['/product/filter']);
+
+    } catch (e: any | AxiosError)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }

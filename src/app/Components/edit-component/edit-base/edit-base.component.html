@@ -8,6 +8,8 @@
 
 <div class="grid-container" *ngIf="!loading">
   <main>
+
+
     <ng-content></ng-content>
 
     <div class="flex-center changes-footer">
@@ -15,6 +17,9 @@
               (click)="reset()"></button>
       <button pButton label="Enregistrer" class="p-button-success"
               (click)="save()"></button>
+
+      <p-speedDial *ngIf="dialItems.length > 0" class="speed-dial" [model]="dialItems" [radius]="120"
+                   direction="down-left" type="quarter-circle"></p-speedDial>
     </div>
   </main>
   <aside>

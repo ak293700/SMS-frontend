@@ -21,6 +21,7 @@
 
 main {
   padding-top: 2rem;
+  position: relative;
 }
 
 aside {
@@ -73,4 +74,11 @@ aside {
 
   box-shadow: 0 1px 5px 0 var(--third-color) inset;
   background-color: var(--main-color);
+}
+
+
+.speed-dial {
+  position: fixed;
+  top: 25px;
+  right: calc(64px + 25px);
 }

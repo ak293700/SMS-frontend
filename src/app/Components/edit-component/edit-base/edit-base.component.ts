@@ -1,13 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {Operation} from "../../../../utils/Operation";
 
-/*@Component({
-  selector: 'app-edit-base',
-  templateUrl: './edit-base.component.html',
-  styleUrls: ['./edit-base.component.css']
-})*/
 @Component({template: '',}) // being abstract it has no selector, no style and no template
 export abstract class EditBaseComponent
 {
@@ -25,8 +20,9 @@ export abstract class EditBaseComponent
 
   protected constructor(protected messageService: MessageService,
                         protected confirmationService: ConfirmationService)
-  {
-  }
+  {}
+
+  @Input() dialItems: MenuItem[] = [];
 
   abstract goToData(id: number): void;
 

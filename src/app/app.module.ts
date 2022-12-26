@@ -47,6 +47,7 @@ import {SelectorBtnComponent} from './Components/selectors/selector-btn/selector
 import {SettingsComponent} from './Components/settings/settings.component';
 import {CreateDistributorComponent} from './Components/distributor/create-distributor/create-distributor.component';
 import {DistributorFilterComponent} from './Components/distributor/distributor-filter/distributor-filter.component';
+import {SpeedDialModule} from "primeng/speeddial";
 
 @NgModule({
   declarations: [
@@ -95,7 +96,8 @@ import {DistributorFilterComponent} from './Components/distributor/distributor-f
     ConfirmDialogModule,
     DialogModule,
     StepsModule,
-    RippleModule
+    RippleModule,
+    SpeedDialModule
   ],
   providers: [
     {

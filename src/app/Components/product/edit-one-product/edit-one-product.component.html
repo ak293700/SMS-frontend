@@ -1,6 +1,7 @@
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [detectChanges]="detectChanges.bind(this)"
-                   (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()" [loading]="loading">
+                   (newSelection)="fetchProduct($event)" (reset)="reset()" (save)="save()" [loading]="loading"
+                   [dialItems]="dialItems">
   <h2 class="text" style="margin-bottom: 3rem">{{ProductType.toString(product.productType)}}</h2>
 
   <div id="common-field">
