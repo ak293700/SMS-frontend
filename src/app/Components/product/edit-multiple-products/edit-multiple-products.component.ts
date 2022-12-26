@@ -17,6 +17,7 @@ import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {MyConfirmationService} from "../../../Services/my-confirmation.service";
 import {Shop} from "../../../../Enums/Shop";
 import {ProductMultipleChangesDto} from "../../../../Dtos/ProductDtos/ProductMultipleChangesDto";
+import {ShopSpecificMultipleChangesDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificMultipleChangesDto";
 
 interface Field
 {
@@ -25,6 +26,7 @@ interface Field
   other?: any;
 }
 
+const shopSpecificFields: string[] = ['km', 'promotion', 'active'];
 
 @Component({
   selector: 'app-edit-multiple-products',
@@ -59,7 +61,7 @@ export class EditMultipleProductsComponent implements OnInit
   dS: {
     manufacturer: Field, popularity: Field,
     availability: Field, km: Field, discount: Field,
-    availableDiscounts: Field, promo: Field, active: Field
+    availableDiscounts: Field, promotion: Field, active: Field
   };
 
   discountContextMenuItems: MenuItem[] = [];
@@ -158,7 +160,7 @@ export class EditMultipleProductsComponent implements OnInit
             .map(e => Operand.toString(e))
         }
       },
-      promo: {
+      promotion: {
         value: undefined, active: false,
         other: {
           index: 0,
@@ -166,7 +168,7 @@ export class EditMultipleProductsComponent implements OnInit
             .map(e => Operand.toString(e))
         }
       },
-      active: {value: undefined, active: false}
+      active: {value: false, active: false}
     }
   }
 
@@ -214,7 +216,7 @@ export class EditMultipleProductsComponent implements OnInit
   {
     const changeProduct: string[] = ['discount', 'availableDiscounts', 'manufacturer', 'popularity',];
     const changePropagation: string[] = ['discount'];
-    const changeShopSpecific: string[] = ['km', 'discount', 'promo'];
+    const changeShopSpecific: string[] = shopSpecificFields.concat(['discount']);
 
     const changeTypes: ChangeType[] = [];
     for (const key in fields)
@@ -244,7 +246,6 @@ export class EditMultipleProductsComponent implements OnInit
       if (changeTypes.length == 1 && changeTypes[0] == ChangeType.ShopSpecific)
       {
         const chosenWebsite = this.getChosenWebsite();
-        console.log('chosenWebsite', chosenWebsite);
         res.shopCounts = res.shopCounts!.filter(e => chosenWebsite.includes(e.shop));
       }
 
@@ -257,10 +258,8 @@ export class EditMultipleProductsComponent implements OnInit
 
   async save()
   {
-    console.log(this.dS);
     const fields = this.buildDiff();
 
-    console.log(fields);
     if (fields == undefined)
       return;
 
@@ -329,22 +328,29 @@ export class EditMultipleProductsComponent implements OnInit
       ids: this.otherProducts.map(p => p.id)
     };
 
+    const website = this.getChosenWebsite().length == 1 ? this.getChosenWebsite()[0] : undefined;
+    const shopSpecific: ShopSpecificMultipleChangesDto = {shop: website};
+
     for (const field in fields)
     {
       // @ts-ignore
       let value = fields[field].value;
-      switch (field)
-      {
-        case 'availableDiscounts': // @ts-ignore
-          const operation = Operand.toEnum(fields[field].other.states[fields[field].other.index]);
-          value = {data: value.map((e: IdNameDto) => e.id), operand: operation};
-          break;
-        default:
-
+      if (field === 'availableDiscounts' || field === 'km' || field === 'promotion')
+      { // @ts-ignore
+        const operation = Operand.toEnum(fields[field].other.states[fields[field].other.index]);
+        value = {data: value, operand: operation};
       }
-      // @ts-ignore
-      request[field] = value;
+      else if (field === 'availableDiscounts')
+        value.data = value.data.map((e: IdNameDto) => e.id);
+
+      if (shopSpecificFields.includes(field)) // @ts-ignore
+        shopSpecific[field] = value;
+      else // @ts-ignore
+        request[field] = value;
     }
+
+    if (Object.keys(shopSpecific).length > 1)
+      request.shopSpecific = shopSpecific;
 
     return ProductMultipleChangesDto.build(request);
   }

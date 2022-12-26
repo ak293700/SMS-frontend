@@ -88,14 +88,14 @@
       <li class="field-item">
         <div class="field-label-container">
           <label for="field-promo" class="text">Promotion</label>
-          <p-checkbox [(ngModel)]="dS.promo.active" [binary]="true"></p-checkbox>
-          <app-selector-btn [states]="dS.promo.other.states"
-                            [(index)]="dS.promo.other.index">
+          <p-checkbox [(ngModel)]="dS.promotion.active" [binary]="true"></p-checkbox>
+          <app-selector-btn [states]="dS.promotion.other.states"
+                            [(index)]="dS.promotion.other.index">
           </app-selector-btn>
         </div>
         <input pInputText id="field-promo" type="number"
-               [disabled]="!dS.promo.active" [step]="0.01"
-               [(ngModel)]="dS.promo.value"/>
+               [disabled]="!dS.promotion.active" [step]="0.01"
+               [(ngModel)]="dS.promotion.value"/>
       </li>
 
       <li class="field-item">
