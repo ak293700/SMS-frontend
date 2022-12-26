@@ -668,6 +668,8 @@ export class EditOneProductComponent implements OnInit
 
       // remove this product from the list
       this.otherProducts = this.otherProducts.filter(p => p.id != this.product.id);
+      this.productReferencesService.refresh(); // reload the product references
+
       if (this.otherProducts.length > 0)
         await this.fetchProduct(this.otherProducts[0].id);
       else

@@ -16,6 +16,7 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {Router} from "@angular/router";
+import {GetDiscountsService} from "../../../Services/get-discounts.service";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -49,7 +50,8 @@ export class EditOneDiscountComponent implements OnInit
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private router: Router)
+              private router: Router,
+              private getDiscountsService: GetDiscountsService)
   {
     this.dialItems = [
       {
@@ -246,12 +248,14 @@ export class EditOneDiscountComponent implements OnInit
 
     try
     {
-      const response: AxiosResponse = await axios.delete(`${api}/product/${this.discount.id}`);
+      const response: AxiosResponse = await axios.delete(`${api}/discount/${this.discount.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       // remove this product from the list
       this.otherDiscounts = this.otherDiscounts.filter(p => p.id != this.discount.id);
+      this.getDiscountsService.refresh(); // reload the discounts references
+
       if (this.otherDiscounts.length > 0)
         await this.fetchDiscount(this.otherDiscounts[0].id);
       else

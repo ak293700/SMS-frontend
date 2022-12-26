@@ -241,9 +241,10 @@ export class DiscountFilterComponent implements OnInit
 
   async editDiscount(discount: any)
   {
+    console.log(discount);
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id.value}
+      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id}
     });
   }
 }

@@ -1,6 +1,7 @@
 <app-edit-one-base *ngIf="discount !== undefined"
                    [otherDatas]="otherDiscounts" [data]="discount" [detectChanges]="detectChanges.bind(this)"
-                   (newSelection)="fetchDiscount($event)" (reset)="reset()" (save)="save()">
+                   (newSelection)="fetchDiscount($event)" (reset)="reset()" (save)="save()"
+                   [dialItems]="dialItems">
   <h2 class="text" style="margin-bottom: 3rem">{{ DiscountType.toString(discount.discountType) }}</h2>
 
   <div id="common-field">
