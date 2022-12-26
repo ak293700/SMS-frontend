@@ -1,6 +1,6 @@
 import {Operand} from "../Enums/Operand";
 
-export interface RequestWithOperationDto<T>
+export interface RequestWithOperandDto<T>
 {
   data: T;
   operand: Operand;
