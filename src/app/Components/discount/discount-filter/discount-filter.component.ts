@@ -63,7 +63,7 @@ export class DiscountFilterComponent implements OnInit
     this.discounts.header = [
       {
         label: 'Id',
-        field: 'id',
+        field: '_id',
         type: FieldType.Integer,
         suffix: '',
       },
@@ -188,7 +188,7 @@ export class DiscountFilterComponent implements OnInit
 
       // Update the selected data
       this.selectedDiscounts.data = this.discounts.pageData
-        .filter((product: any) => this.selectedDiscounts.ids.includes(product.id));
+        .filter((curr: any) => this.selectedDiscounts.ids.includes(curr.id));
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);
@@ -205,11 +205,15 @@ export class DiscountFilterComponent implements OnInit
     const res: IEnumerableToITableData[] = []; // row1, row2, ...
     for (const data of datas)
     {
-      let row: IEnumerableToITableData = {id: data.id}; // id, name, ...
+      let row: IEnumerableToITableData = {
+        id: data.id,
+        _id: {value: data.id, tooltip: ''}
+      };
       for (const header of this.discounts.header)
       {
         const field = header.field;
-        row[field] = this._formatOneData(data, field);
+        if (!field.startsWith('_'))
+          row[field] = this._formatOneData(data, field);
       }
       res.push(row);
     }
