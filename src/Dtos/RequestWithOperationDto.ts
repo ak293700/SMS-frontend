@@ -1,7 +1,7 @@
-import {OperationEnum} from "../Enums/OperationEnum";
+import {Operand} from "../Enums/Operand";
 
 export interface RequestWithOperationDto<T>
 {
   data: T;
-  operation: OperationEnum;
+  operand: Operand;
 }

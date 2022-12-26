@@ -34,11 +34,11 @@ export class SelectorBtnComponent implements OnInit
 
   onClick()
   {
-    this.index = Operation.modulo(this.index + 1, this.states.length);
-
-    // if rotate is set we remove it
+    // if rotate is set we exit
     if (this.button.nativeElement.classList.contains('rotate'))
-      this.button.nativeElement.classList.remove('rotate');
+      return;
+
+    this.index = Operation.modulo(this.index + 1, this.states.length);
 
     void this.button.nativeElement.offsetWidth; // force a reflow
     this.button.nativeElement.classList.toggle('rotate');
@@ -50,12 +50,15 @@ export class SelectorBtnComponent implements OnInit
       tmp += '&#160;&#160;'; // * 2 because else it is two small
 
     // it's allow to keep the length while hiding but not seing the text
-    setTimeout(() => {
+    setTimeout(() => { // wait the transition to set the fake text (so we don't see it)
       this.state = tmp;
     }, 200);
-    setTimeout(() => {
+    setTimeout(() => { // wait the transition to set the real text (so we see it appear)
       this.state = this.states[this.index];
       this.indexChange.emit(this.index);
     }, 600);
+    setTimeout(() => { // wait the end to remove the class
+      this.button.nativeElement.classList.remove('rotate');
+    }, 800);
   }
 }

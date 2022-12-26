@@ -54,7 +54,7 @@ export class FilterTableComponent implements OnInit, OnChanges
   {
     this.contextMenuItems = [
       {
-        label: 'Edit',
+        label: 'Éditer',
         icon: 'pi pi-fw pi-pencil',
         command: () => this.editProduct(this.contextMenuSelectedProduct)
       }

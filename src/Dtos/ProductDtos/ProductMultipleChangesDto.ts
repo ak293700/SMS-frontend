@@ -14,7 +14,7 @@ export interface ProductMultipleChangesDto
 
 export namespace ProductMultipleChangesDto
 {
-  const NullablePropertyWrapperDtoProperties: string[] = ["selectedDiscountId", "availableDiscounts"];
+  const NullablePropertyWrapperDtoProperties: string[] = ["selectedDiscountId"];
 
   export function build(obj: any): ProductMultipleChangesDto
   {

@@ -97,6 +97,16 @@
                [disabled]="!dS.promo.active" [step]="0.01"
                [(ngModel)]="dS.promo.value"/>
       </li>
+
+      <li class="field-item">
+        <div class="field-label-container">
+          <label for="field-active" class="text">Actif</label>
+          <p-checkbox [(ngModel)]="dS.active.active" [binary]="true"></p-checkbox>
+        </div>
+        <p-checkbox id="field-active" [disabled]="!dS.active.active"
+                    [(ngModel)]="dS.active.value"
+                    [binary]="true"></p-checkbox>
+      </li>
     </ul>
   </div>
 </app-edit-multiple>

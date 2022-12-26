@@ -3,7 +3,7 @@ import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ProductReferencesService} from "../../../Services/product-references.service";
 import {ProductPopularity} from "../../../../Enums/ProductPopularity";
 import {Operation} from "../../../../utils/Operation";
-import {OperationEnum} from "../../../../Enums/OperationEnum";
+import {Operand} from "../../../../Enums/Operand";
 import {MenuItem, MessageService} from "primeng/api";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
@@ -59,7 +59,7 @@ export class EditMultipleProductsComponent implements OnInit
   dS: {
     manufacturer: Field, popularity: Field,
     availability: Field, km: Field, discount: Field,
-    availableDiscounts: Field, promo: Field
+    availableDiscounts: Field, promo: Field, active: Field
   };
 
   discountContextMenuItems: MenuItem[] = [];
@@ -109,9 +109,9 @@ export class EditMultipleProductsComponent implements OnInit
     this.loading = false;
   }
 
-  get OperationEnum(): typeof OperationEnum
+  get OperationEnum(): typeof Operand
   {
-    return OperationEnum;
+    return Operand;
   }
 
   showDiscountOverlay()
@@ -146,26 +146,27 @@ export class EditMultipleProductsComponent implements OnInit
         value: undefined, active: false,
         other: {
           index: 0,
-          states: [OperationEnum.Multiply, OperationEnum.Equal]
-            .map(e => OperationEnum.toString(e))
+          states: [Operand.Multiply, Operand.Equal]
+            .map(e => Operand.toString(e))
         }
       },
       discount: {value: undefined, active: false},
       availableDiscounts: {
         value: [], active: false, other: {
           index: 0,
-          states: [OperationEnum.Add, OperationEnum.Equal, OperationEnum.Subtract]
-            .map(e => OperationEnum.toString(e))
+          states: [Operand.Add, Operand.Subtract, Operand.Equal]
+            .map(e => Operand.toString(e))
         }
       },
       promo: {
         value: undefined, active: false,
         other: {
           index: 0,
-          states: [OperationEnum.Multiply, OperationEnum.Equal]
-            .map(e => OperationEnum.toString(e))
+          states: [Operand.Multiply, Operand.Equal]
+            .map(e => Operand.toString(e))
         }
       },
+      active: {value: undefined, active: false}
     }
   }
 
@@ -306,7 +307,6 @@ export class EditMultipleProductsComponent implements OnInit
     const request: ProductMultipleChangesDto = this.buildRequest(fields);
     console.log('request', request);
 
-    return;
     try
     {
       const response = await axios.patch(`${api}/product/multiple`, request);
@@ -332,12 +332,12 @@ export class EditMultipleProductsComponent implements OnInit
     for (const field in fields)
     {
       // @ts-ignore
-
       let value = fields[field].value;
       switch (field)
       {
         case 'availableDiscounts': // @ts-ignore
-          value = {data: value.map((e: IdNameDto) => e.id), operation: fields[field].operation};
+          const operation = Operand.toEnum(fields[field].other.states[fields[field].other.index]);
+          value = {data: value.map((e: IdNameDto) => e.id), operand: operation};
           break;
         default:
 
