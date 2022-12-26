@@ -17,7 +17,6 @@ export namespace ITableData
 
 export interface IEnumerableToITableData
 {
-
   [prop: string]: ITableData | number;
 
   id: number;

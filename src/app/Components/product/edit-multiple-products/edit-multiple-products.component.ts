@@ -280,8 +280,9 @@ export class EditMultipleProductsComponent implements OnInit
     if (!await this.myConfirmationService.newBlocking(this.buildWarningMessage(changesCount)))
       return;
 
+    this.loading = true;
     await this._save(fields);
-
+    this.loading = false;
   }
   private buildWarningMessage(changesCount: ProductChangesResponseDto): string
   {
@@ -331,11 +332,24 @@ export class EditMultipleProductsComponent implements OnInit
     const website = this.getChosenWebsite().length == 1 ? this.getChosenWebsite()[0] : undefined;
     const shopSpecific: ShopSpecificMultipleChangesDto = {shop: website};
 
-    for (const field in fields)
+    for (let field in fields)
     {
       // @ts-ignore
       let value = fields[field].value;
-      if (field === 'availableDiscounts' || field === 'km' || field === 'promotion')
+      if (['manufacturer', 'popularity'].includes(field))
+      {
+        value = value.id;
+      }
+      if (['manufacturer'].includes(field))
+      {
+        field = field + 'Id';
+      }
+      if (['discount'].includes(field))
+      {
+        field = 'selectedDiscountId';
+        value = value?.id ?? null;
+      }
+      if (['availableDiscounts', 'km', 'promotion'].includes(field))
       { // @ts-ignore
         const operation = Operand.toEnum(fields[field].other.states[fields[field].other.index]);
         value = {data: value, operand: operation};

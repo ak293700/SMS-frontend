@@ -32,28 +32,6 @@
   </ul>
 </div>
 
-<!--<div *ngIf="discount.discountType === DiscountType.Derogation" id="common-field-derogation">
-  <ul class="field-container">
-    <li class="field-item">
-      <label for="field-manufacturer" class="text">Fabricant</label>
-      <p-autoComplete id="field-manufacturer" dataKey="id"
-                      field="name" [suggestions]="additionalInformation.manufacturers"
-                      (completeMethod)="completeMethod($event, 'manufacturers')"
-                      [(ngModel)]="dummyStruct.manufacturer"
-                      [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
-      </p-autoComplete>
-    </li>
-
-    <li class="field-item">
-      <label for="field-distributors" class="text">Distributeurs autorisés</label>
-      <app-editable-list id="field-distributors"
-                         [suggestions]="additionalInformation.distributors"
-                         [(items)]="dummyStruct.distributors">
-      </app-editable-list>
-    </li>
-  </ul>
-</div>-->
-
 <div *ngIf="discountType === DiscountType.Derogation" id="common-field-derogation">
   <ul class="field-container">
     <li class="field-item">
@@ -91,5 +69,4 @@
 </div>
 
 
-<p-button (click)="create()" label="Créer" styleClass="btn-hover-main"
-          [style.margin.px]="40"></p-button>
+<p-button (click)="create()" label="Créer" styleClass="btn-hover-main" [style.margin.px]="40"></p-button>

@@ -45,6 +45,8 @@ import {EditMultipleComponent} from './Components/edit-component/edit-multiple/e
 import {RippleModule} from "primeng/ripple";
 import {SelectorBtnComponent} from './Components/selectors/selector-btn/selector-btn.component';
 import {SettingsComponent} from './Components/settings/settings.component';
+import {CreateDistributorComponent} from './Components/distributor/create-distributor/create-distributor.component';
+import {DistributorFilterComponent} from './Components/distributor/distributor-filter/distributor-filter.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,8 @@ import {SettingsComponent} from './Components/settings/settings.component';
     EditMultipleComponent,
     SelectorBtnComponent,
     SettingsComponent,
+    CreateDistributorComponent,
+    DistributorFilterComponent,
   ],
   imports: [
     BrowserModule,

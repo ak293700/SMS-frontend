@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Route, RouterModule, Routes} from '@angular/router';
 import {LoginPageComponent} from "./Components/login-page/login-page.component";
 import {ProductFilterComponent} from "./Components/product/product-filter/product-filter.component";
 import {
@@ -13,66 +13,86 @@ import {ReferralComponent} from "./Components/referral/referral.component";
 import {CreateBundleComponent} from "./Components/product/create-product/create-bundle/create-bundle.component";
 import {CreateDiscountComponent} from "./Components/discount/create-discount/create-discount.component";
 import {SettingsComponent} from "./Components/settings/settings.component";
+import {CreateDistributorComponent} from "./Components/distributor/create-distributor/create-distributor.component";
+import {DistributorFilterComponent} from "./Components/distributor/distributor-filter/distributor-filter.component";
 
+const createOrUpdateRoute: Route = {
+  path: '',
+  component: ReferralComponent, data: {
+    rails: [
+      {label: 'Création', link: 'create'},
+      {label: 'Modification', link: 'filter'}
+    ],
+    backButton: {link: '/home'}
+  }
+};
+
+const homeRoute: Route = {
+  path: 'home',
+  component: ReferralComponent, data: {
+    rails: [
+      {label: 'Produits', link: '/product/'},
+      {label: 'Remises', link: '/discount/'},
+      {label: 'Distributeurs', link: '/distributor'},
+      {label: 'Paramètres', link: '/settings'}
+    ],
+    backButton: {show: false}
+  }
+};
+
+const productRoute: Route = {
+  path: 'product',
+  children: [
+    createOrUpdateRoute,
+    {path: 'create', component: CreateBundleComponent},
+    {path: 'filter', component: ProductFilterComponent},
+    {
+      path: 'edit', children: [
+        {path: '', redirectTo: '/home', pathMatch: 'full'},
+        {path: 'multiple', component: EditMultipleProductsComponent},
+        {path: 'one', component: EditOneProductComponent},
+      ]
+    },
+  ]
+};
+
+const discountRoute: Route = {
+  path: 'discount', children: [
+    createOrUpdateRoute,
+    {path: 'create', component: CreateDiscountComponent},
+    {path: 'filter', component: DiscountFilterComponent},
+    {
+      path: 'edit', children: [
+        {path: '', redirectTo: '/home', pathMatch: 'full'},
+        {path: 'multiple', component: DiscountFilterComponent},
+        {path: 'one', component: EditOneDiscountComponent},
+      ]
+    },
+  ]
+};
+
+const distributorRoute: Route = {
+  path: 'distributor', children: [
+    createOrUpdateRoute,
+    {path: 'create', component: CreateDistributorComponent},
+    {path: 'filter', component: DistributorFilterComponent},
+    {
+      path: 'edit', children: [
+        {path: '', redirectTo: '/home', pathMatch: 'full'},
+        {path: 'multiple', component: DiscountFilterComponent},
+        {path: 'one', component: EditOneDiscountComponent},
+      ]
+    },
+  ]
+};
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', component: LoginPageComponent},
-  {
-    path: 'home', component: ReferralComponent, data: {
-      rails: [
-        {label: 'Produits', link: '/product/'},
-        {label: 'Remises', link: '/discount/'},
-        {label: 'Paramètres', link: '/settings'}
-      ],
-      backButton: {show: false}
-    }
-  },
-  {
-    path: 'product',
-    children: [
-      {
-        path: '', component: ReferralComponent, data: {
-          rails: [
-            {label: 'Création', link: 'bundle'},
-            {label: 'Modification', link: 'filter'}
-          ],
-          backButton: {link: '/home'}
-        }
-      },
-      {path: 'bundle', component: CreateBundleComponent},
-      {path: 'filter', component: ProductFilterComponent},
-      {
-        path: 'edit', children: [
-          {path: '', redirectTo: '/home', pathMatch: 'full'},
-          {path: 'multiple', component: EditMultipleProductsComponent},
-          {path: 'one', component: EditOneProductComponent},
-        ]
-      },
-    ]
-  },
-  {
-    path: 'discount', children: [
-      {
-        path: '', component: ReferralComponent, data: {
-          rails: [
-            {label: 'Création', link: 'create'},
-            {label: 'Modification', link: 'filter'}
-          ],
-          backButton: {link: '/home'}
-        }
-      },
-      {path: 'create', component: CreateDiscountComponent},
-      {path: 'filter', component: DiscountFilterComponent},
-      {
-        path: 'edit', children: [
-          {path: '', redirectTo: '/home', pathMatch: 'full'},
-          {path: 'multiple', component: DiscountFilterComponent},
-          {path: 'one', component: EditOneDiscountComponent},
-        ]
-      },
-    ]
-  },
+  homeRoute,
+  productRoute,
+  discountRoute,
+  distributorRoute,
   {path: 'settings', component: SettingsComponent},
   {path: 'filter', component: FilterFieldsComponent},
   // {path: '**', redirectTo: 'login'}
