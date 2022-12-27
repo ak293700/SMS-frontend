@@ -141,4 +141,46 @@ export class Operation
     return list
       .filter((obj: IdNameDto) => obj.id === number || obj.name.toLowerCase().includes(value));
   }
+
+  static deepMerge(objs: any[]): any
+  {
+    if (objs.length === 0)
+      return {};
+
+    let diff: any = objs[0];
+    for (let i = 1; i < objs.length; i++)
+    {
+      console.log('deepmerge', diff, objs[i]);
+      diff = this._deepMerge(diff, objs[i]);
+    }
+
+    return diff;
+  }
+
+  private static _deepMerge(first: any, second: any): any
+  {
+    console.log('_deepMerge', first, second);
+
+    if (Operation.isPrimitive(first))
+      return second;
+
+    if (second === undefined)
+      return first;
+
+    if (typeof first !== typeof second)
+      throw new Error("Cannot merge two different types");
+
+    if (Array.isArray(first))
+      return first.concat(second);
+
+    let res: any = {};
+    let keys = Object.keys(first).concat(Object.keys(second));
+    // remove the duplicates
+    keys.filter((key, index) => keys.indexOf(key) === index)
+
+    for (const key of keys)
+      res[key] = this._deepMerge(first[key], second[key]);
+
+    return res;
+  }
 }

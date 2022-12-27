@@ -139,7 +139,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7911, 7021, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -555,8 +555,24 @@ export class EditOneProductComponent implements OnInit
   {
     this.reformatProduct();
 
+    const changes: IChanges[] = [];
+
+    const product = Operation.deepCopy(this.product);
+    const initialProduct = Operation.deepCopy(this.initialProduct);
+
+    // determine which shop specific are new
+    const newShopSpecific = product.shopSpecifics.filter(ss => ss.id == -1);
+    product.shopSpecifics = product.shopSpecifics.filter(ss => ss.id != -1);
+    initialProduct.shopSpecifics = initialProduct.shopSpecifics.filter(ss => ss.id != -1);
+
+    // console.log('product', product);
+    // console.log('initialProduct', initialProduct);
+    // console.log('newShopSpecific', newShopSpecific);
+
+    changes.push({diffObj: {shopSpecifics: newShopSpecific}, count: newShopSpecific.length});
+
     // push every change into the changes array
-    const changes = [Operation.detectChanges(this.product, this.initialProduct, ['id'])];
+    changes.push(Operation.detectChanges(product, initialProduct, ['id']));
 
     if (this.product.productType == ProductType.Simple)
     {
@@ -567,12 +583,18 @@ export class EditOneProductComponent implements OnInit
       changes.push(tmp);
     }
 
+    console.log(changes);
+
+    // do deep merge of all changes
+    const merge = Operation.deepMerge(changes.map(change => change.diffObj));
+    return {diffObj: merge, count: changes.reduce((acc, change) => acc + change.count, 0)}
+
     // merge all changes into one
-    return changes.reduce((acc, val) =>
-      {
-        return {diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}
-      },
-      {diffObj: {}, count: 0});
+    // return changes.reduce((acc, val) =>
+    //   {
+    //     return { diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}
+    //   },
+    //   {diffObj: {}, count: 0});
   }
 
   discountValue(): number

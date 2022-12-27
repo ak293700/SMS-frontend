@@ -42,6 +42,7 @@ export class EditOneBaseComponent extends EditBaseComponent
   reset()
   {
     const changes = this.detectChanges();
+    console.log('changes', changes);
     if (changes.count == 0)
       return this.messageService.add({
         severity: 'info',
