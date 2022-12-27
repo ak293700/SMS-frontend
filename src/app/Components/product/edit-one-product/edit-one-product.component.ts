@@ -539,13 +539,11 @@ export class EditOneProductComponent implements OnInit
   {
     for (const newShopSpecific of newShopSpecifics)
     {
-      console.log('newShopSpecific', newShopSpecific);
       try
       {
         const response: AxiosResponse = await axios.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
         if (!HttpTools.IsValid(response.status))
-          return MessageServiceTools.httpFail(this.messageService, response);
-
+           MessageServiceTools.httpFail(this.messageService, response);
       } catch (e: any | AxiosError)
       {
         MessageServiceTools.axiosFail(this.messageService, e);
