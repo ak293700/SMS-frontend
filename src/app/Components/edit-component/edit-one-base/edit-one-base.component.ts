@@ -43,7 +43,11 @@ export class EditOneBaseComponent extends EditBaseComponent
   {
     const changes = this.detectChanges();
     if (changes.count == 0)
-      return this.resetEvent.emit();
+      return this.messageService.add({
+        severity: 'info',
+        summary: 'Aucun changement',
+        detail: 'Aucun changement à abandonner'
+      });
 
     const message = changes.count == 1
       ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`

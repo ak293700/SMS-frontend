@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
 import {ConfirmationService} from "primeng/api";
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class MyConfirmationService
 {
-
-  constructor(private confirmationService: ConfirmationService) { }
+  constructor(private confirmationService: ConfirmationService)
+  {}
 
   newBlocking(message: string): Promise<boolean>
   {

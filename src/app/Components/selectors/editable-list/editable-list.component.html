@@ -1,5 +1,3 @@
-<p-contextMenu [model]="menuItems" [global]="true"></p-contextMenu>
-
 <p-dialog *ngIf="currentItem !== undefined" [(visible)]="isDialogVisible" [modal]="true" (onHide)="onCloseEditDialog()">
   <ul class="field-container">
     <li *ngFor="let additionalField of additionalFields" [ngSwitch]="additionalField.type" class="field-item">
@@ -14,7 +12,8 @@
   </ul>
 </p-dialog>
 
-<div class="editable-list-container">
+<p-contextMenu [model]="menuItems" [global]="true" [target]="editableList"></p-contextMenu>
+<div class="editable-list-container" #editableList>
   <ul class="item-container">
     <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item" (click)="onSelect(item)"
         (contextmenu)="onContextMenu($event, item)" [ngClass]="{'selected': item.id === _selectedItem?.id,

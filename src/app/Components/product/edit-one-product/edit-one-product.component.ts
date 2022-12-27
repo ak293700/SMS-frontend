@@ -26,6 +26,7 @@ import {ProductReferencesService} from "../../../Services/product-references.ser
 import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
 import {Router} from "@angular/router";
+import {ShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -89,10 +90,21 @@ export class EditOneProductComponent implements OnInit
       command: () => this.delete()
     },
     {
-      icon: 'pi pi-pencil',
-      command: () => {}
+      icon: 'pi pi-plus',
+      command: () => this.newShopSpecificRequest()
     },
   ];
+
+
+  newShopStruct: {
+    visible: boolean,
+    availableShop: IdNameDto[],
+    selectedShop: IdNameDto | undefined,
+  } = {
+    visible: false,
+    availableShop: [],
+    selectedShop: undefined
+  }
 
 
   constructor(private messageService: MessageService,
@@ -127,7 +139,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [6190, 7911, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -628,9 +640,6 @@ export class EditOneProductComponent implements OnInit
     if (this.product.productType != ProductType.Simple)
       return;
 
-    console.log(this.dummyStruct.selectedDiscount);
-    console.log(this.simpleProduct.discount);
-
     // discount were or has been set to null
     if (this.dummyStruct.selectedDiscount == undefined)
     {
@@ -679,5 +688,72 @@ export class EditOneProductComponent implements OnInit
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
+  }
+
+  newShopSpecificRequest(): void
+  {
+    // get the key value of the Shop enum, and only that (so not the namespace)
+    // filter, so it keep only the shop that are not already created
+    this.newShopStruct.availableShop = Object
+      .values(Shop)
+      .filter(e => typeof e === 'string')
+      .map((e, i) => { return {id: i, name: e as string} })
+      .filter(e => Operation.firstOrDefault(this.product.shopSpecifics,
+        ss => ss.shop === e.id) == undefined);
+
+    if (this.newShopStruct.availableShop.length == 0)
+    { // if the product is already created on every website we can't create a new one
+      return this.messageService.add({
+        severity: 'warn',
+        summary: 'Opération impossible',
+        detail: 'Tout les shops sont déjà créés'
+      });
+    }
+
+    this.newShopStruct.visible = true;
+
+    console.log(this.newShopStruct);
+  }
+
+  // create a new shop specific
+  createNewShopSpecific(cancel: boolean = false): void
+  {
+    this.newShopStruct.visible = false; // doing that there will call
+    if (cancel)
+      return;
+
+    if (this.newShopStruct.selectedShop == undefined)
+    {
+      return this.messageService.add({
+        'severity': 'erreur',
+        'summary': 'Opération impossible',
+        'detail': 'Aucun shop sélectionné'
+      });
+    }
+
+    let name = '';
+    let km = 1.34;
+    if (this.product.shopSpecifics.length > 0)
+    {
+      const firstShop = this.product.shopSpecifics[0];
+      name = firstShop.name;
+      km = firstShop.km * 0.95;
+    }
+
+    // push a new shop specific
+    const newShopSpecific: ShopSpecificDto = {
+      id: -1,
+      name: name,
+      idPrestaShop: null,
+      shop: this.newShopStruct.selectedShop.id,
+      km: km,
+      promotion: 0,
+      active: false,
+      categoriesId: []
+    };
+
+    console.log(newShopSpecific);
+    this.initialProduct.shopSpecifics.push(newShopSpecific);
+    this.product.shopSpecifics.push(Operation.deepCopy(newShopSpecific));
   }
 }
