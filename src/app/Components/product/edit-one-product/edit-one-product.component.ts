@@ -27,6 +27,7 @@ import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/Bundle
 import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
 import {Router} from "@angular/router";
 import {ShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificDto";
+import {CreateShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/CreateShopSpecificDto";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -139,7 +140,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7911, 7021, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -370,11 +371,16 @@ export class EditOneProductComponent implements OnInit
       }
 
       // start creating the patch object
-      const shopSpecificChanges = changes.diffObj.shopSpecifics ?? []; // '?? []' is to prevent errors
+      let shopSpecificChanges = changes.diffObj.shopSpecifics ?? []; // '?? []' is to prevent errors
       delete changes.diffObj.shopSpecifics; // remove it not to be included in patchProduct
+
+      // split shopSpecificChanges whether id == -1 or not
+      const newShopSpecifics = shopSpecificChanges.filter((ss: any) => ss.id == -1);
+      shopSpecificChanges = shopSpecificChanges.filter((ss: any) => ss.id != -1);
 
       const patchProduct: PatchProductDto = namespace.build(changes.diffObj);
       const shopSpecificPatches: PatchShopSpecificDto[] = [];
+
       for (const shopSpecificChange of shopSpecificChanges)
       {
         if (Operation.countProperties(shopSpecificChange) > 1) // more than the id
@@ -399,6 +405,8 @@ export class EditOneProductComponent implements OnInit
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
+
+      await this.createShopSpecific(newShopSpecifics);
 
       if (this.product.productType === ProductType.Bundle && bundleItems !== undefined)
       {
@@ -439,7 +447,6 @@ export class EditOneProductComponent implements OnInit
   // return can everything went well
   async saveDiscount(discount: any): Promise<boolean>
   {
-    console.log('discount', discount);
     if (discount == undefined)
       return true;
 
@@ -528,6 +535,24 @@ export class EditOneProductComponent implements OnInit
     return true;
   }
 
+  async createShopSpecific(newShopSpecifics: CreateShopSpecificDto[]): Promise<void>
+  {
+    for (const newShopSpecific of newShopSpecifics)
+    {
+      console.log('newShopSpecific', newShopSpecific);
+      try
+      {
+        const response: AxiosResponse = await axios.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
+        if (!HttpTools.IsValid(response.status))
+          return MessageServiceTools.httpFail(this.messageService, response);
+
+      } catch (e: any | AxiosError)
+      {
+        MessageServiceTools.axiosFail(this.messageService, e);
+      }
+    }
+  }
+
   // Some product fields are not directly model
   // This function does the bridge between the model and the product
   reformatProduct()
@@ -565,11 +590,8 @@ export class EditOneProductComponent implements OnInit
     product.shopSpecifics = product.shopSpecifics.filter(ss => ss.id != -1);
     initialProduct.shopSpecifics = initialProduct.shopSpecifics.filter(ss => ss.id != -1);
 
-    // console.log('product', product);
-    // console.log('initialProduct', initialProduct);
-    // console.log('newShopSpecific', newShopSpecific);
-
-    changes.push({diffObj: {shopSpecifics: newShopSpecific}, count: newShopSpecific.length});
+    if (newShopSpecific.length > 0)
+      changes.push({diffObj: {shopSpecifics: newShopSpecific}, count: newShopSpecific.length});
 
     // push every change into the changes array
     changes.push(Operation.detectChanges(product, initialProduct, ['id']));
@@ -583,18 +605,11 @@ export class EditOneProductComponent implements OnInit
       changes.push(tmp);
     }
 
-    console.log(changes);
-
-    // do deep merge of all changes
-    const merge = Operation.deepMerge(changes.map(change => change.diffObj));
-    return {diffObj: merge, count: changes.reduce((acc, change) => acc + change.count, 0)}
-
-    // merge all changes into one
-    // return changes.reduce((acc, val) =>
-    //   {
-    //     return { diffObj: {...acc.diffObj, ...val.diffObj}, count: acc.count + val.count}
-    //   },
-    //   {diffObj: {}, count: 0});
+    // do deepmerge on all changes
+    return {
+      diffObj: Operation.deepMerge(changes.map(change => change.diffObj)),
+      count: changes.reduce((acc, change) => acc + change.count, 0)
+    }
   }
 
   discountValue(): number

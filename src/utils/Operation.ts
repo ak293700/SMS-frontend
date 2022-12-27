@@ -38,7 +38,7 @@ export class Operation
 
   static countProperties(obj: any): number
   {
-    return Object.keys(obj).length;
+    return Object.values(obj).filter(key => key !== undefined).length;
   }
 
   static firstOrDefault<T>(array: T[], predicate: (value: T) => boolean = () => true)
@@ -99,7 +99,12 @@ export class Operation
     let count = 0;
     let diffObj: any = {};
     // if obj is an object
-    for (const key in obj)
+
+    // get all teh keys of bth objects
+    let keys = Object.keys(obj).concat(Object.keys(initialObj));
+    keys = keys.filter((key, index) => keys.indexOf(key) === index)
+
+    for (const key of keys)
     {
       if (keep.includes(key)) // often use for the id
       {
@@ -149,18 +154,13 @@ export class Operation
 
     let diff: any = objs[0];
     for (let i = 1; i < objs.length; i++)
-    {
-      console.log('deepmerge', diff, objs[i]);
       diff = this._deepMerge(diff, objs[i]);
-    }
 
     return diff;
   }
 
   private static _deepMerge(first: any, second: any): any
   {
-    console.log('_deepMerge', first, second);
-
     if (Operation.isPrimitive(first))
       return second;
 
@@ -174,9 +174,9 @@ export class Operation
       return first.concat(second);
 
     let res: any = {};
+    // get the key of the two objects
     let keys = Object.keys(first).concat(Object.keys(second));
-    // remove the duplicates
-    keys.filter((key, index) => keys.indexOf(key) === index)
+    keys = keys.filter((key, index) => keys.indexOf(key) === index)
 
     for (const key of keys)
       res[key] = this._deepMerge(first[key], second[key]);

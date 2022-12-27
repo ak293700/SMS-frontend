@@ -39,7 +39,7 @@ export class EditOneBaseComponent extends EditBaseComponent
       this.newSelectionEvent.emit(id);
   }
 
-  reset()
+  override reset()
   {
     const changes = this.detectChanges();
     console.log('changes', changes);
