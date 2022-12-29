@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService, PrimeIcons} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
@@ -87,11 +87,19 @@ export class EditOneProductComponent implements OnInit
 
   dialItems: MenuItem[] = [
     {
-      icon: 'pi pi-trash',
+      icon: PrimeIcons.TRASH,
       command: () => this.delete()
     },
     {
-      icon: 'pi pi-plus',
+      icon: PrimeIcons.UPLOAD,
+      command: () => this.forcePrestaPush()
+    },
+    {
+      icon: PrimeIcons.REFRESH,
+      command: () => this.refresh()
+    },
+    {
+      icon: PrimeIcons.PLUS,
       command: () => this.newShopSpecificRequest()
     },
   ];
@@ -140,7 +148,8 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7909, 7910, 7911, 7912];
+    // routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -406,7 +415,11 @@ export class EditOneProductComponent implements OnInit
           return MessageServiceTools.httpFail(this.messageService, response);
       }
 
-      await this.createShopSpecific(newShopSpecifics);
+      if (!await this.createShopSpecific(newShopSpecifics))
+        return this.messageService.add({
+          severity: 'error', summary: 'Erreur',
+          detail: 'Erreur lors de la de la sauvegarde du nouveau shopSpecific'
+        });
 
       if (this.product.productType === ProductType.Bundle && bundleItems !== undefined)
       {
@@ -535,7 +548,7 @@ export class EditOneProductComponent implements OnInit
     return true;
   }
 
-  async createShopSpecific(newShopSpecifics: CreateShopSpecificDto[]): Promise<void>
+  async createShopSpecific(newShopSpecifics: CreateShopSpecificDto[]): Promise<boolean>
   {
     for (const newShopSpecific of newShopSpecifics)
     {
@@ -543,12 +556,18 @@ export class EditOneProductComponent implements OnInit
       {
         const response: AxiosResponse = await axios.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
         if (!HttpTools.IsValid(response.status))
-           MessageServiceTools.httpFail(this.messageService, response);
+        {
+          MessageServiceTools.httpFail(this.messageService, response);
+          return false;
+        }
       } catch (e: any | AxiosError)
       {
         MessageServiceTools.axiosFail(this.messageService, e);
+        return false;
       }
     }
+
+    return true;
   }
 
   // Some product fields are not directly model
@@ -621,18 +640,30 @@ export class EditOneProductComponent implements OnInit
   // Smart fields
   get purchasePrice()
   {
-    if (this.product.productType === ProductType.Simple)
-      return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
-    else
+    if (this.product.productType === ProductType.Bundle)
       return this.bundle.purchasePrice;
+
+    const discount: LiteDiscountDto | undefined = this.simpleProduct.discount;
+    if (discount == null)
+      return this.simpleProduct.cataloguePrice;
+
+    if (discount.isNetPrice)
+      return discount.value;
+
+    return this.simpleProduct.cataloguePrice * (1 - this.discountValue());
   }
 
-  set purchasePrice(value: number)
+  // value: the newly set purchase price
+  set purchasePrice(purchasePrice: number)
   {
-    if (this.simpleProduct.discount == null)
+    const discount: LiteDiscountDto | undefined = this.simpleProduct.discount;
+    if (discount == null)
       return;
 
-    this.simpleProduct.discount.value = 1 - value / this.simpleProduct.cataloguePrice;
+    if (discount.isNetPrice)
+      discount.value = purchasePrice;
+    else
+      discount.value = 1 - purchasePrice / this.simpleProduct.cataloguePrice;
   }
 
   getSalePriceIt(index: number): number
@@ -758,13 +789,11 @@ export class EditOneProductComponent implements OnInit
       return;
 
     if (this.newShopStruct.selectedShop == undefined)
-    {
       return this.messageService.add({
         'severity': 'erreur',
         'summary': 'Opération impossible',
         'detail': 'Aucun shop sélectionné'
       });
-    }
 
     let name = '';
     let km = 1.34;
@@ -790,5 +819,37 @@ export class EditOneProductComponent implements OnInit
     console.log(newShopSpecific);
     this.initialProduct.shopSpecifics.push(newShopSpecific);
     this.product.shopSpecifics.push(Operation.deepCopy(newShopSpecific));
+  }
+
+  async refresh()
+  {
+    this.loading = true;
+    await this.fetchManufacturers(); // Do it first so the dummy struct is well initialized
+    await this.productReferencesService.refresh()
+    await this.fetchReferences(this.otherProducts.map(p => p.id));
+    await this.fetchAllDiscounts();
+    await this.fetchProduct(this.product.id);
+    this.loading = false;
+  }
+
+  async forcePrestaPush()
+  {
+    try
+    {
+      const response = await axios.post(`${api}/product/force_presta_update/${this.product.id}`);
+      if (!HttpTools.IsValid(response.status))
+        return MessageServiceTools.httpFail(this.messageService, response);
+
+      this.messageService.add(
+        {
+          'severity': 'info',
+          'summary': 'Opération en attente',
+          'detail': 'Le produit va être mis à jour sur Prestashop sous peu'
+        });
+
+    } catch (e: any | AxiosError)
+    {
+      MessageServiceTools.axiosFail(this.messageService, e);
+    }
   }
 }

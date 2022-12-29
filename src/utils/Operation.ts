@@ -152,7 +152,7 @@ export class Operation
     if (objs.length === 0)
       return {};
 
-    let diff: any = objs[0];
+    let diff: any = Operation.deepCopy(objs[0]);
     for (let i = 1; i < objs.length; i++)
       diff = this._deepMerge(diff, objs[i]);
 
@@ -161,7 +161,7 @@ export class Operation
 
   private static _deepMerge(first: any, second: any): any
   {
-    if (Operation.isPrimitive(first))
+    if (first == undefined)
       return second;
 
     if (second === undefined)

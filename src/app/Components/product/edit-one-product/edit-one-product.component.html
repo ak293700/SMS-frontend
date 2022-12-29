@@ -1,5 +1,6 @@
 <!--there to create a new shop specific-->
 <p-dialog [(visible)]="newShopStruct.visible"
+          [style]="{'min-height':'50vh'}"
           [draggable]="false" [modal]="true" class="field-container">
 
   <div class="field-item">
@@ -65,7 +66,7 @@
 
       <li class="field-item">
         <label for="field-cataloguePrice" class="text">Prix tarif</label>
-        <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR"
+        <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR" locale="fr-FR"
                        [placeholder]="product.cataloguePrice.toString()" [step]="0.01"
                        [(ngModel)]="product.cataloguePrice"
                        [disabled]="product.productType === ProductType.Bundle">
@@ -74,7 +75,7 @@
 
       <li class="field-item">
         <label for="field-salePrice" class="text">Prix d'achat (HT)</label>
-        <p-inputNumber id="field-salePrice" mode="currency" currency="EUR"
+        <p-inputNumber id="field-salePrice" mode="currency" currency="EUR" locale="fr-FR"
                        [placeholder]="purchasePrice.toString()" [step]="0.01"
                        [(ngModel)]="purchasePrice"
                        [disabled]="product.productType === ProductType.Bundle || simpleProduct.discount == null">
@@ -117,14 +118,17 @@
           </app-editable-list>
         </p-dialog>
         <label for="field-discount" class="text">Remise</label>
-        <input *ngIf="simpleProduct.discount != undefined" pInputText id="field-discount" type="number" [step]="0.01"
-               [disabled]="simpleProduct.discount!.isNetPrice"
-               [placeholder]="initialSimpleProduct.discount != undefined
-               ? initialSimpleProduct.discount.value.toString() : '0'"
-               [(ngModel)]="simpleProduct.discount!.value"
-               [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
+        <p-inputNumber *ngIf="simpleProduct.discount != undefined" id="field-discount"
+                       [mode]="simpleProduct.discount.isNetPrice ? 'currency' : 'decimal'"
+                       [step]="0.01" currency="EUR" locale="fr-FR"
+                       [placeholder]="initialSimpleProduct.discount != undefined ?
+                        initialSimpleProduct.discount.value.toString() : '0'"
+                       [(ngModel)]="simpleProduct.discount!.value"
+                       [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
                         + '\n'
                         + 'Prix net: ' + simpleProduct.discount!.isNetPrice">
+        </p-inputNumber>
+
         <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
       </li>
       <li class="field-item">
@@ -136,7 +140,7 @@
       </li>
       <li class="field-item">
         <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
-        <p-inputNumber id="field-averageStockPrice" mode="currency" currency="EUR"
+        <p-inputNumber id="field-averageStockPrice" mode="currency" currency="EUR" locale="fr-FR"
                        [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
                        [(ngModel)]="simpleProduct.averageStockPrice">
         </p-inputNumber>
@@ -206,7 +210,7 @@
 
     <label class="text">Prix de vente (TTC)</label>
     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-                   mode="currency" currency="EUR" [step]="0.01"
+                   mode="currency" currency="EUR" locale="fr-FR" [step]="0.01"
                    [placeholder]="getSalePriceIt(i).toString()"
                    [ngModel]="getSalePriceIt(i)"
                    (ngModelChange)="setSalePriceIt(i, $event)">

@@ -7,4 +7,5 @@ export interface CreateShopSpecificDto
   idPrestashop: number | null;
   km: number;
   promotion: number;
+  active: boolean;
 }
