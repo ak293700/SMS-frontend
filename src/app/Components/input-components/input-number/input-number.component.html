@@ -2,6 +2,6 @@
                [step]="step" currency="EUR" locale="fr-FR"
                [suffix]="suffix" [useGrouping]="false"
                [placeholder]="placeholder"
-               [ngModel]="_value"
+               [ngModel]="_value" [disabled]="disabled"
                (ngModelChange)="valueOnChange($event)">
 </p-inputNumber>

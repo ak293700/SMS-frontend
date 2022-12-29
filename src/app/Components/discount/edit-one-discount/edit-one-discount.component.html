@@ -21,9 +21,7 @@
       <li class="field-item">
         <label class="text">Valeur</label>
         <app-input-number [(value)]="discount.value"
-                          [mode]="discount.isNetPrice
-                          ?  'currency'
-                          : 'percent'">
+                          [mode]="discount.isNetPrice ?  'currency' : 'percent'">
         </app-input-number>
       </li>
 

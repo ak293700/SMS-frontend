@@ -66,29 +66,29 @@
 
       <li class="field-item">
         <label for="field-cataloguePrice" class="text">Prix tarif</label>
-        <p-inputNumber id="field-cataloguePrice" mode="currency" currency="EUR" locale="fr-FR"
-                       [placeholder]="product.cataloguePrice.toString()" [step]="0.01"
-                       [(ngModel)]="product.cataloguePrice"
-                       [disabled]="product.productType === ProductType.Bundle">
-        </p-inputNumber>
+        <app-input-number id="field-cataloguePrice" [(value)]="product.cataloguePrice"
+                          [placeholder]="product.cataloguePrice.toString()"
+                          [mode]="'currency'"
+                          [disabled]="product.productType === ProductType.Bundle">
+        </app-input-number>
       </li>
 
       <li class="field-item">
         <label for="field-salePrice" class="text">Prix d'achat (HT)</label>
-        <p-inputNumber id="field-salePrice" mode="currency" currency="EUR" locale="fr-FR"
-                       [placeholder]="purchasePrice.toString()" [step]="0.01"
-                       [(ngModel)]="purchasePrice"
-                       [disabled]="product.productType === ProductType.Bundle || simpleProduct.discount == null">
-        </p-inputNumber>
+        <app-input-number id="field-salePrice" [(value)]="purchasePrice"
+                          [placeholder]="purchasePrice.toString()"
+                          [mode]="'currency'"
+                          [disabled]="product.productType === ProductType.Bundle || simpleProduct.discount == null">
+        </app-input-number>
       </li>
 
       <li class="field-item">
         <label for="field-deee" class="text">Deee</label>
-        <p-inputNumber id="field-deee" mode="currency" currency="EUR" [step]="0.01"
-                       [placeholder]="initialProduct.deee.toString()"
-                       [(ngModel)]="product.deee"
-                       [disabled]="product.productType === ProductType.Bundle">
-        </p-inputNumber>
+        <app-input-number id="field-deee" mode="currency"
+                          [placeholder]="initialProduct.deee.toString()"
+                          [(value)]="product.deee"
+                          [disabled]="product.productType === ProductType.Bundle">
+        </app-input-number>
       </li>
     </ul>
   </div>
@@ -118,16 +118,13 @@
           </app-editable-list>
         </p-dialog>
         <label for="field-discount" class="text">Remise</label>
-        <p-inputNumber *ngIf="simpleProduct.discount != undefined" id="field-discount"
-                       [mode]="simpleProduct.discount.isNetPrice ? 'currency' : 'decimal'"
-                       [step]="0.01" currency="EUR" locale="fr-FR"
-                       [placeholder]="initialSimpleProduct.discount != undefined ?
-                        initialSimpleProduct.discount.value.toString() : '0'"
-                       [(ngModel)]="simpleProduct.discount!.value"
-                       [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)
-                        + '\n'
-                        + 'Prix net: ' + simpleProduct.discount!.isNetPrice">
-        </p-inputNumber>
+        <app-input-number *ngIf="simpleProduct.discount != undefined" id="field-discount"
+                          [(value)]="simpleProduct.discount!.value"
+                          [placeholder]="initialSimpleProduct.discount != undefined ?
+                          initialSimpleProduct.discount.value.toString() : '0'"
+                          [mode]="simpleProduct.discount.isNetPrice ? 'currency' : 'percent'"
+                          [pTooltip]="'Type de remise: ' + DiscountType.toString(simpleProduct.discount!.discountType)">
+        </app-input-number>
 
         <span *ngIf="simpleProduct.discount == undefined" class="text">Pas de remise</span>
       </li>
@@ -140,10 +137,10 @@
       </li>
       <li class="field-item">
         <label for="field-averageStockPrice" class="text">Prix moyen du stock</label>
-        <p-inputNumber id="field-averageStockPrice" mode="currency" currency="EUR" locale="fr-FR"
-                       [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
-                       [(ngModel)]="simpleProduct.averageStockPrice">
-        </p-inputNumber>
+        <app-input-number id="field-averageStockPrice" mode="currency"
+                          [placeholder]="initialSimpleProduct.averageStockPrice.toString()"
+                          [(value)]="simpleProduct.averageStockPrice">
+        </app-input-number>
       </li>
       <li class="field-item">
         <label for="field-availability" class="text">Disponibilité</label>
@@ -209,18 +206,17 @@
     </p-checkbox>
 
     <label class="text">Prix de vente (TTC)</label>
-    <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-                   mode="currency" currency="EUR" locale="fr-FR" [step]="0.01"
-                   [placeholder]="getSalePriceIt(i).toString()"
-                   [ngModel]="getSalePriceIt(i)"
-                   (ngModelChange)="setSalePriceIt(i, $event)">
-    </p-inputNumber>
+    <app-input-number *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                      mode="currency" [placeholder]="getSalePriceIt(i).toString()"
+                      [value]="getSalePriceIt(i)"
+                      (valueChange)="setSalePriceIt(i, $event)">
+    </app-input-number>
 
     <label class="text">Taux de marge (%)</label>
-    <input pInputText *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-           type="number" [step]="0.01"
-           [placeholder]="getMarginRate(i).toString()"
-           [ngModel]="getMarginRate(i)"
-           (ngModelChange)="setMarginRate(i, $event)"/>
+    <app-input-number *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                      mode="percent" [placeholder]="getMarginRate(i).toString()"
+                      [value]="getMarginRate(i)"
+                      (valueChange)="setMarginRate(i, $event)">
+    </app-input-number>
   </div>
 </app-edit-one-base>

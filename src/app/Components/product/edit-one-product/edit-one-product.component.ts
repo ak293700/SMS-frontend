@@ -148,8 +148,8 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7909, 7910, 7911, 7912];
-    // routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
+      // routedData.selectedIds = [7909, 7910, 7911, 7912];
+      routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -684,15 +684,14 @@ export class EditOneProductComponent implements OnInit
   }
 
   // return the margin rate in percent
-  getMarginRate(index: number)
+  getMarginRate(index: number): number
   {
     const salePriceEt = this.getSalePriceIt(index) / 1.2;
-    return (PricingTool.calculateMarginRate(salePriceEt, this.purchasePrice) * 100).toFixed(2);
+    return PricingTool.calculateMarginRate(salePriceEt, this.purchasePrice);
   }
 
-  setMarginRate(index: number, value: number): void
+  setMarginRate(index: number, marginRate: number): void
   {
-    const marginRate = value / 100;
     const salePriceEt = this.purchasePrice / (1 - marginRate);
 
     this.setSalePriceIt(index, salePriceEt * 1.2);

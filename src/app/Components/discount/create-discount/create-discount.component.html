@@ -9,10 +9,6 @@
 
     <li class="field-item">
       <label class="text">Valeur</label>
-      <p-inputNumber [mode]="discount.isNetPrice ? 'currency' : 'decimal'"
-                     [step]="0.01" currency="EUR" locale="fr-FR"
-                     [(ngModel)]="discount.value">
-      </p-inputNumber>
       <app-input-number [(value)]="discount.value"
                         [mode]="discount.isNetPrice ? 'currency' : 'percent'">
       </app-input-number>

@@ -24,6 +24,8 @@ export class InputNumberComponent implements OnChanges
 
   suffix: string = '';
 
+  @Input() disabled: boolean = false;
+
   ngOnChanges(changes: SimpleChanges): void
   {
     this._mode = InputNumberMode.Decimal;
