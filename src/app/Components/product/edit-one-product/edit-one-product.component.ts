@@ -638,7 +638,7 @@ export class EditOneProductComponent implements OnInit
   }
 
   // Smart fields
-  get purchasePrice()
+  get purchasePrice(): number
   {
     if (this.product.productType === ProductType.Bundle)
       return this.bundle.purchasePrice;

@@ -49,6 +49,7 @@ import {CreateDistributorComponent} from './Components/distributor/create-distri
 import {DistributorFilterComponent} from './Components/distributor/distributor-filter/distributor-filter.component';
 import {SpeedDialModule} from "primeng/speeddial";
 import {DropdownModule} from "primeng/dropdown";
+import {InputNumberComponent} from './Components/input-components/input-number/input-number.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import {DropdownModule} from "primeng/dropdown";
     SettingsComponent,
     CreateDistributorComponent,
     DistributorFilterComponent,
+    InputNumberComponent,
   ],
   imports: [
     BrowserModule,

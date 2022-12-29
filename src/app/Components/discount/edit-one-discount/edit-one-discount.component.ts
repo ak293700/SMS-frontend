@@ -17,12 +17,14 @@ import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {Router} from "@angular/router";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
+import {InputNumberMode} from "../../input-components/input-number/InputNumberMode";
 
 @Component({
   selector: 'app-edit-one-discount',
   templateUrl: './edit-one-discount.component.html',
   styleUrls: ['./edit-one-discount.component.css', '../../../../styles/button.css',
-    '../../../../styles/main-color-background.css']
+    '../../../../styles/main-color-background.css'],
+  providers: [GetDiscountsService]
 })
 export class EditOneDiscountComponent implements OnInit
 {
@@ -117,6 +119,8 @@ export class EditOneDiscountComponent implements OnInit
 
   reset()
   {
+    console.log('discount.value', this.discount.value);
+
     this.discount = Operation.deepCopy(this.initialDiscount);
     this.initDummyStruct();
 
@@ -136,6 +140,8 @@ export class EditOneDiscountComponent implements OnInit
 
   save()
   {
+    console.log('discount.value', this.discount.value);
+    return;
     const changes = this.detectChanges();
     if (changes.count == 0)
     {
@@ -265,5 +271,10 @@ export class EditOneDiscountComponent implements OnInit
     {
       MessageServiceTools.axiosFail(this.messageService, e);
     }
+  }
+
+  get InputNumberMode(): typeof InputNumberMode
+  {
+    return InputNumberMode;
   }
 }
