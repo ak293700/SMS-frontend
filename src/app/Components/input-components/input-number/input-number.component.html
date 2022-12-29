@@ -1,6 +1,6 @@
 <p-inputNumber [mode]="_mode"
                [step]="step" currency="EUR" locale="fr-FR"
-               [suffix]="suffix"
+               [suffix]="suffix" [useGrouping]="false"
                [placeholder]="placeholder"
                [ngModel]="_value"
                (ngModelChange)="valueOnChange($event)">

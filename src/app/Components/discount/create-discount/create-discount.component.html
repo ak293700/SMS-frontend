@@ -13,6 +13,9 @@
                      [step]="0.01" currency="EUR" locale="fr-FR"
                      [(ngModel)]="discount.value">
       </p-inputNumber>
+      <app-input-number [(value)]="discount.value"
+                        [mode]="discount.isNetPrice ? 'currency' : 'percent'">
+      </app-input-number>
     </li>
 
     <li class="field-item" pTooltip="Quantité sur laquelle la remise est disponible">

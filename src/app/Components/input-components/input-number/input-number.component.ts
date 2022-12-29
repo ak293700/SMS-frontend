@@ -14,7 +14,7 @@ export class InputNumberComponent implements OnChanges
   _value: number = 0;
 
   // The type of value to display
-  @Input() mode: InputNumberMode = InputNumberMode.Decimal;
+  @Input() mode: string = InputNumberMode.Decimal;
   // The mode translate to a string
   _mode: string = 'decimal';
 
@@ -26,18 +26,18 @@ export class InputNumberComponent implements OnChanges
 
   ngOnChanges(changes: SimpleChanges): void
   {
-    this._mode = 'decimal';
+    this._mode = InputNumberMode.Decimal;
     this.suffix = '';
 
     if (this.mode == InputNumberMode.Currency)
-      this._mode = 'currency';
+      this._mode = InputNumberMode.Currency;
     else if (this.mode == InputNumberMode.Percent)
       this.suffix = '%';
 
     this.fromUserValue();
   }
 
-  // convert _value to value
+  // set _value accordingly to value
   toUserValue()
   {
     if (this.mode == InputNumberMode.Percent)
@@ -46,7 +46,7 @@ export class InputNumberComponent implements OnChanges
       this.value = this._value;
   }
 
-  // convert value to _value
+  // set value accordingly to _value
   fromUserValue()
   {
     if (this.mode == InputNumberMode.Percent)
