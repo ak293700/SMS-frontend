@@ -2,6 +2,9 @@ export class PricingTool
 {
   static calculateMarginRate(salePriceEt: number, purchasePrice: number)
   {
+    if (salePriceEt == 0)
+      return 0;
+
     return (salePriceEt - purchasePrice) / salePriceEt;
   }
 
