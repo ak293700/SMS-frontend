@@ -76,7 +76,7 @@ export class DiscountFilterComponent implements OnInit
       {
         label: 'Valeur',
         field: 'value',
-        type: FieldType.Percentage,
+        type: FieldType.None,
         suffix: '',
       },
       {
@@ -232,7 +232,17 @@ export class DiscountFilterComponent implements OnInit
         tooltip = discount.productReferences;
         break;
       case 'value':
-        tooltip = `${(discount.value * 100).toFixed(3)}%`;
+        const value = discount.value;
+        if (discount.isNetPrice)
+        {
+          data = `${(value).toFixed(2)}€`;
+          tooltip = `${(value)}€`;
+        }
+        else
+        {
+          data = `${(value * 100).toFixed(2)}%`;
+          tooltip = `${(value * 100).toFixed(3)}%`;
+        }
         break;
     }
 
