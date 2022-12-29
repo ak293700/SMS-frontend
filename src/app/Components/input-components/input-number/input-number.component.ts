@@ -30,11 +30,15 @@ export class InputNumberComponent implements OnChanges
   {
     this._mode = InputNumberMode.Decimal;
     this.suffix = '';
+    this.step = 0.01;
 
     if (this.mode == InputNumberMode.Currency)
       this._mode = InputNumberMode.Currency;
     else if (this.mode == InputNumberMode.Percent)
+    {
       this.suffix = '%';
+      this.step = 0.1;
+    }
 
     this.fromUserValue();
   }

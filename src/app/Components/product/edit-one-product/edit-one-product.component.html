@@ -187,10 +187,17 @@
     </p-inputNumber>
 
     <label class="text">Km</label>
-    <input pInputText *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
-           type="number" [step]="0.01"
-           [placeholder]=" initialProduct.shopSpecifics[i].km.toString()"
-           [(ngModel)]="shopSpecific.km"/>
+    <!--    <input pInputText *ngFor="let shopSpecific of product.shopSpecifics; let i=index"-->
+    <!--           type="number" [step]="0.01"-->
+    <!--           [placeholder]=" initialProduct.shopSpecifics[i].km.toString()"-->
+    <!--           [(ngModel)]="shopSpecific.km"/>-->
+
+    <app-input-number *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
+                      mode="percent"
+                      [placeholder]=" initialProduct.shopSpecifics[i].km.toString()"
+                      [(value)]="shopSpecific.km">
+    </app-input-number>
+
 
     <label class="text">Promotion</label>
     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
