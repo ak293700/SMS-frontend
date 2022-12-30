@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import axios, {AxiosError} from "axios";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
-import {api, defaultImage} from "../../../GlobalUsings";
+import {api} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
@@ -244,7 +244,7 @@ export class ProductFilterComponent implements OnInit
         const field = header.field;
         row[field] = this._formatOneData(data, field);
       }
-      row['photo'] = ITableData.build(data.photo !== "" ? data.photo : defaultImage);
+      row['photo'] = ITableData.build(data.photo);
       res.push(row);
     }
 
@@ -264,9 +264,9 @@ export class ProductFilterComponent implements OnInit
         data = firstShop?.name;
         break;
       case 'idPrestashop':
-        data = firstShop?.idPrestaShop;
+        data = firstShop?.idPrestashop;
         tooltip = shopSpecific
-          .map((ss) => `${Shop.toString(ss.shop)}: ${ss.idPrestaShop}`)
+          .map((ss) => `${Shop.toString(ss.shop)}: ${ss.idPrestashop}`)
           .join("\n");
         break;
       case 'mainCategory':

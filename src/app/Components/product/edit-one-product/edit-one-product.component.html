@@ -182,8 +182,8 @@
     <label class="text">Id Prestashop</label>
     <p-inputNumber *ngFor="let shopSpecific of product.shopSpecifics; let i=index"
                    [useGrouping]="false"
-                   [placeholder]="initialProduct.shopSpecifics[i].idPrestaShop?.toString() ?? ''"
-                   [(ngModel)]="shopSpecific.idPrestaShop">
+                   [placeholder]="initialProduct.shopSpecifics[i].idPrestashop?.toString() ?? ''"
+                   [(ngModel)]="shopSpecific.idPrestashop">
     </p-inputNumber>
 
     <label class="text">Km</label>

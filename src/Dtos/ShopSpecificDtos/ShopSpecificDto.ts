@@ -4,7 +4,7 @@ export interface ShopSpecificDto
 {
   id: number;
   name: string;
-  idPrestaShop: number | null;
+  idPrestashop: number | null;
   shop: Shop;
   km: number;
   promotion: number;

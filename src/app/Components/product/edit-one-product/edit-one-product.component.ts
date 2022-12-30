@@ -148,8 +148,8 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      // routedData.selectedIds = [7909, 7910, 7911, 7912];
-      routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
+      routedData.selectedIds = [7909, 7910, 7911, 7912];
+    // routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -338,6 +338,9 @@ export class EditOneProductComponent implements OnInit
     this.product = Operation.deepCopy(this.initialProduct);
     this.initDummyStruct();
 
+    this.additionalInformation.availableDiscounts =
+      Operation.deepCopy(this.initialAdditionalInformation.availableDiscounts);
+
     this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
   }
 
@@ -410,7 +413,8 @@ export class EditOneProductComponent implements OnInit
 
       for (const shopSpecificPatch of shopSpecificPatches)
       {
-        const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
+        // const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
+        const response: AxiosResponse = await axios.patch('https://localhost:7093/api/ShopSpecific', shopSpecificPatch, {headers: {'Content-Type': 'application/json'}});
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
@@ -720,7 +724,6 @@ export class EditOneProductComponent implements OnInit
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.simpleProduct.discount = response.data;
-      console.log(this.simpleProduct.discount);
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -776,8 +779,6 @@ export class EditOneProductComponent implements OnInit
     }
 
     this.newShopStruct.visible = true;
-
-    console.log(this.newShopStruct);
   }
 
   // create a new shop specific
@@ -807,7 +808,7 @@ export class EditOneProductComponent implements OnInit
     const newShopSpecific: ShopSpecificDto = {
       id: -1,
       name: name,
-      idPrestaShop: null,
+      idPrestashop: null,
       shop: this.newShopStruct.selectedShop.id,
       km: km,
       promotion: 0,
@@ -815,7 +816,6 @@ export class EditOneProductComponent implements OnInit
       categoriesId: []
     };
 
-    console.log(newShopSpecific);
     this.initialProduct.shopSpecifics.push(newShopSpecific);
     this.product.shopSpecifics.push(Operation.deepCopy(newShopSpecific));
   }

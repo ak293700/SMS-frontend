@@ -47,7 +47,7 @@
         <p-tableCheckbox [value]="data"></p-tableCheckbox>
       </td>
       <td *ngIf="isPhoto" style="width: 100px">
-        <img [src]="data.photo.value" class="shadow-4" width="100%"/>
+        <img [src]="data.photo.value" class="shadow-4" width="100%" (error)="fixImageUrl($event)"/>
       <td *ngFor="let col of columns" [pTooltip]="data[col.field].tooltip">
         {{ data[col.field].value | prettier: col }}
       </td>

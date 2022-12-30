@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {MenuItem} from "primeng/api";
 import {IHeader} from "../../../../Dtos/IHeader";
 import {IEnumerableToITableData} from "../../../../Interfaces/ITableData";
+import {defaultImage} from "../../../GlobalUsings";
 
 export interface DataTableVector
 {
@@ -171,5 +172,10 @@ export class FilterTableComponent implements OnInit, OnChanges
   editData(data: any)
   {
     this.selectDataEvent.emit(data);
+  }
+
+  fixImageUrl(event: any)
+  {
+    event.target.src = defaultImage;
   }
 }
