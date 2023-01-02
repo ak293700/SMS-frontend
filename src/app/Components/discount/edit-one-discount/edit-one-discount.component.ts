@@ -10,7 +10,6 @@ import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/Li
 import axios, {AxiosError, AxiosResponse} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
-import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../selectors/editable-list/editable-list.component";
@@ -18,6 +17,8 @@ import {HttpTools} from "../../../../utils/HttpTools";
 import {Router} from "@angular/router";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {InputNumberMode} from "../../input-components/input-number/InputNumberMode";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {CommonRequestService} from "../../../Services/common-request.service";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -53,7 +54,9 @@ export class EditOneDiscountComponent implements OnInit
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private router: Router,
-              private getDiscountsService: GetDiscountsService)
+              private getDiscountsService: GetDiscountsService,
+              private httpClient: HttpClientWrapperService,
+              private commonRequest: CommonRequestService)
   {
     this.dialItems = [
       {
@@ -131,7 +134,7 @@ export class EditOneDiscountComponent implements OnInit
   private async _save(changes: IChanges)
   {
     // If everything works
-    if (await CommonRequest.patchDiscount(changes.diffObj, this.discount.discountType, this.messageService))
+    if (await this.commonRequest.patchDiscount(changes.diffObj, this.discount.discountType))
     {
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
       await this.fetchDiscount(this.discount.id);
@@ -206,7 +209,7 @@ export class EditOneDiscountComponent implements OnInit
 
   async fetchManufacturers()
   {
-    const manufacturers: IdNameDto[] | void = await CommonRequest.fetchManufacturers(this.messageService);
+    const manufacturers: IdNameDto[] | void = await this.commonRequest.fetchManufacturers();
 
     this.additionalInformation.manufacturers = manufacturers;
     this.initialAdditionalInformation.manufacturers = Operation.deepCopy(manufacturers);
@@ -214,7 +217,7 @@ export class EditOneDiscountComponent implements OnInit
 
   async fetchDistributors()
   {
-    const distributors: IdNameDto[] | void = await CommonRequest.fetchDistributors(this.messageService);
+    const distributors: IdNameDto[] | void = await this.commonRequest.fetchDistributors();
 
     this.additionalInformation.distributors = distributors;
     this.initialAdditionalInformation.distributors = Operation.deepCopy(distributors);

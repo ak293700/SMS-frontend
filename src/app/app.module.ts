@@ -17,7 +17,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {SliderModule} from "primeng/slider";
 import {CalendarModule} from "primeng/calendar";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AutoCompleteModule} from "primeng/autocomplete";
 import {ContextMenuModule} from "primeng/contextmenu";
 import {ToastModule} from "primeng/toast";
@@ -50,6 +50,7 @@ import {DistributorFilterComponent} from './Components/distributor/distributor-f
 import {SpeedDialModule} from "primeng/speeddial";
 import {DropdownModule} from "primeng/dropdown";
 import {InputNumberComponent} from './Components/input-components/input-number/input-number.component';
+import {ServerRequestInterceptor} from "./Interceptors/server-request.interceptor";
 
 @NgModule({
   declarations: [
@@ -101,12 +102,17 @@ import {InputNumberComponent} from './Components/input-components/input-number/i
     StepsModule,
     RippleModule,
     SpeedDialModule,
-    DropdownModule
+    DropdownModule,
   ],
   providers: [
     {
       provide: RouteReuseStrategy,
       useClass: CustomRouteReuseStrategy
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ServerRequestInterceptor,
+      multi: true
     }
   ],
   bootstrap: [RoutingAppComponent]

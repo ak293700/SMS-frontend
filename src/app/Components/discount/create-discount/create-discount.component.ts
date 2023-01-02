@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {DiscountType} from "../../../../Enums/DiscountType";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {Operation} from "../../../../utils/Operation";
-import {CommonRequest} from "../../../../utils/CommonRequest";
 import {ConfirmationService, MessageService} from "primeng/api";
 import axios, {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
@@ -12,6 +11,7 @@ import {CreateDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/
 import {
   CreateDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/CreateDistributorDiscountDto";
+import {CommonRequestService} from "../../../Services/common-request.service";
 
 @Component({
   selector: 'app-create-discount',
@@ -43,14 +43,17 @@ export class CreateDiscountComponent implements OnInit
   additionalInformation = this.initialAdditionalInformation;
 
   constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+              private confirmationService: ConfirmationService,
+              private commonRequest: CommonRequestService)
   {}
 
   async ngOnInit()
   {
     this.initialAdditionalInformation.discountTypes = DiscountType.toIdNameDto();
-    this.initialAdditionalInformation.manufacturers = await CommonRequest.fetchManufacturers(this.messageService);
-    this.initialAdditionalInformation.distributors = await CommonRequest.fetchDistributors(this.messageService);
+
+
+    this.initialAdditionalInformation.manufacturers = await this.commonRequest.fetchManufacturers();
+    this.initialAdditionalInformation.distributors = await this.commonRequest.fetchDistributors();
 
     this.additionalInformation = Operation.deepCopy(this.initialAdditionalInformation);
 

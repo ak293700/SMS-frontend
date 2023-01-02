@@ -19,7 +19,6 @@ import {PatchShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/PatchShopS
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {DiscountType} from "../../../../Enums/DiscountType";
 import {PricingTool} from "../../../../utils/PricingTool";
-import {CommonRequest} from "../../../../utils/CommonRequest";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
@@ -28,6 +27,8 @@ import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
 import {Router} from "@angular/router";
 import {ShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificDto";
 import {CreateShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/CreateShopSpecificDto";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {CommonRequestService} from "../../../Services/common-request.service";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -119,7 +120,9 @@ export class EditOneProductComponent implements OnInit
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
               private productReferencesService: ProductReferencesService,
-              private router: Router)
+              private router: Router,
+              private httpClient: HttpClientWrapperService,
+              private commonRequest: CommonRequestService)
   {
     this.discountContextMenuItems = [
       {
@@ -176,17 +179,18 @@ export class EditOneProductComponent implements OnInit
     try
     {
       // Get the products itself
-      const response = await axios.get(`${api}/product/${id}`);
+      const response = await this.httpClient.get(`${api}/product/${id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+        return MessageServiceTools.newHttpFail(this.messageService, response);
 
-      this.initialProduct = response.data;
+      this.initialProduct = response.body;
       this.product = Operation.deepCopy(this.initialProduct);
 
       await this.fetchAvailableDiscounts();
       this.initDummyStruct();
     } catch (e: any)
     {
+      console.log('error', e);
       MessageServiceTools.axiosFail(this.messageService, e);
     }
   }
@@ -269,7 +273,7 @@ export class EditOneProductComponent implements OnInit
 
   async fetchManufacturers()
   {
-    const manufacturers: IdNameDto[] | void = await CommonRequest.fetchManufacturers(this.messageService);
+    const manufacturers: IdNameDto[] | void = await this.commonRequest.fetchManufacturers();
 
     this.additionalInformation.manufacturers = manufacturers;
     this.initialAdditionalInformation.manufacturers = Operation.deepCopy(manufacturers);
@@ -519,9 +523,7 @@ export class EditOneProductComponent implements OnInit
     }
     else // Save the discount
     {
-      if (!await CommonRequest.patchDiscount(discount,
-        this.simpleProduct.discount?.discountType!,
-        this.messageService))
+      if (!await this.commonRequest.patchDiscount(discount, this.simpleProduct.discount?.discountType!))
         return false;
     }
 

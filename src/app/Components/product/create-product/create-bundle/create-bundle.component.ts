@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {MessageService} from "primeng/api";
 import {IdNameDto} from "../../../../../Dtos/IdNameDto";
 import {ProductPopularity} from "../../../../../Enums/ProductPopularity";
-import {CommonRequest} from "../../../../../utils/CommonRequest";
 import {IListItem} from "../../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
@@ -12,6 +11,8 @@ import {api} from "../../../../GlobalUsings";
 import {HttpTools} from "../../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../../utils/MessageServiceTools";
 import {Operation} from "../../../../../utils/Operation";
+import {HttpClientWrapperService} from "../../../../Services/http-client-wrapper.service";
+import {CommonRequestService} from "../../../../Services/common-request.service";
 
 @Component({
   selector: 'app-create-bundle',
@@ -42,7 +43,9 @@ export class CreateBundleComponent implements OnInit
   additionalFields: { fieldName: string, label: string, type: string, default?: any }[] = [];
 
   constructor(private messageService: MessageService,
-              private productReferencesService: ProductReferencesService)
+              private productReferencesService: ProductReferencesService,
+              private httpClient: HttpClientWrapperService,
+              private commonRequest: CommonRequestService)
   {
     this.additionalFields = [
       {fieldName: 'quantity', label: 'Quantité', type: 'number', default: 1},
@@ -53,7 +56,7 @@ export class CreateBundleComponent implements OnInit
   {
     this.productReferences = await this.productReferencesService.getProductReferences();
     this.additionalInformation.popularities = ProductPopularity.toIdNameDto();
-    this.additionalInformation.manufacturers = await CommonRequest.fetchManufacturers(this.messageService);
+    this.additionalInformation.manufacturers = await this.commonRequest.fetchManufacturers();
   }
 
   completeMethod(event: any, fieldName: string)
