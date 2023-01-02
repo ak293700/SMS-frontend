@@ -59,7 +59,6 @@ export class AuthGuard implements CanActivate
       // A Jwt token
       let response =
         await this.http.post(`${api}/Auth/login`, {email: email, password: password});
-      console.log(response);
 
       this.session_token = response.body as string;
     } catch (e)
@@ -129,5 +128,23 @@ export class AuthGuard implements CanActivate
       throw new Error('The session token is undefined');
 
     this.jwt_content = jwtDecode(this.session_token);
+
+    // We convert the long to a shorter version
+    for (const key in this.jwt_content)
+    {
+      const formattedKey: string | undefined = key.split('/').pop();
+      if (formattedKey === undefined || formattedKey === key) // if the key is already good we skip it
+        continue;
+
+      const element = this.jwt_content[key];
+      delete this.jwt_content[key];
+      this.jwt_content[formattedKey] = element;
+    }
   }
+
+  getJwtContent(): any
+  {
+    return Operation.deepCopy(this.jwt_content);
+  }
+
 }

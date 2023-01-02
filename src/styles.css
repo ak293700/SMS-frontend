@@ -45,6 +45,10 @@ body, html {
   flex-direction: column;
 }
 
+.flex-gap-20 {
+  gap: 20px;
+}
+
 .reset-button {
   background: none;
   border: none;
