@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AuthGuard} from "../Guards/auth.guard";
 import {Role} from "../../Enums/Role";
+import {UserDto} from "../../Dtos/UserDtos/UserDto";
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +13,19 @@ export class CurrentUserService
 
   get roles(): Role[]
   {
-    const jwt_content = this.authGuard.getJwtContent();
-    if (jwt_content === undefined)
-      throw new Error('The jwt content is undefined');
-    console.log(jwt_content);
-
-    return jwt_content.role.map((role: number) => Role[role]);
+    return this.authGuard.getJwtContent()
+      .role
+      .map((role: number) => Role[role]);
   }
 
+  get user(): UserDto
+  {
+    const jwt_content = this.authGuard.getJwtContent();
 
+    return {
+      id: Number(jwt_content.nameidentifier),
+      email: jwt_content.emailAddress as string,
+      roles: this.roles as Role[],
+    }
+  }
 }

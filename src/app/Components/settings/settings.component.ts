@@ -10,7 +10,6 @@ import {MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../utils/MessageServiceTools";
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {CurrentUserService} from "../../Services/current-user.service";
-import {Operation} from "../../../utils/Operation";
 
 @Component({
   selector: 'app-settings',
@@ -23,6 +22,8 @@ import {Operation} from "../../../utils/Operation";
 })
 export class SettingsComponent implements OnInit
 {
+  currentUser: UserDto;
+
   users: UserDto[] = [];
 
   // Use to add do the diff of the user and add
@@ -31,19 +32,20 @@ export class SettingsComponent implements OnInit
   possibleRoles: IdNameDto[];
 
   constructor(private authGuard: AuthGuard,
-              private currentUser: CurrentUserService,
+              private currentUserService: CurrentUserService,
               private router: Router,
               private http: HttpClientWrapperService,
               private messageService: MessageService)
   {
-    // this.possibleRoles = Object.keys(Role).map(key => ({id: Role[key], name: Role.toString(Role[key])}));
     this.possibleRoles = [];
     const roles = Object.keys(Role);
     const middle = Math.ceil(roles.length / 2);
     for (let i = 0; i < middle; i++)
-    {
       this.possibleRoles.push({id: Number(roles[i]), name: roles[i + middle]});
-    }
+
+    this.currentUser = this.currentUserService.user;
+
+    console.log(this.currentUser);
   }
 
   async ngOnInit(): Promise<void>
@@ -68,13 +70,21 @@ export class SettingsComponent implements OnInit
 
   isAdmin()
   {
-    return this.currentUser.roles.includes(Role.Admin);
+    return this.currentUserService.roles.includes(Role.Admin);
   }
 
   initDummyStruct()
   {
-    console.log('this.users', this.users);
-    this.dummyUsers = Operation.deepCopy(this.users);
-    console.log('this.dummyUsers', this.dummyUsers);
+    this.dummyUsers = this.users
+      .map((user: UserDto) => {
+        return {
+          id: user.id,
+          email: user.email,
+          roles: user.roles
+            .map((role: Role) => {return {id: Role[role], label: role};})
+        };
+      });
+
+    console.log(this.dummyUsers);
   }
 }

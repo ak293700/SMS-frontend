@@ -1,17 +1,16 @@
 <app-back-button [routerLink]="'/home'"></app-back-button>
 
 <main class="flex-center flex flex-column flex-gap-20">
-  <p-button icon="pi pi-sign-out" iconPos="right" (click)="logOut()"
+  <p-button icon="pi pi-sign-out" iconPos="right" (click)="logOut()" class="log-out-btn"
             label="Se déconnecter" styleClass="btn-hover-main">
   </p-button>
 
   <div *ngIf="isAdmin" class="flex-center flex-column flex-gap-20">
 
     <div *ngFor="let user of dummyUsers" class="flex-center flex-gap-20">
-
       <input pInputText type="text" [(ngModel)]="user.email"/>
-      <app-editable-list [suggestions]="possibleRoles" [(items)]="user.role">
-      </app-editable-list>
+      <app-editable-list [suggestions]="possibleRoles" [(items)]="user.roles"
+                         [disabled]="user.id === currentUser.id"></app-editable-list>
     </div>
 
     <p-button icon="pi pi-plus" iconPos="right"
