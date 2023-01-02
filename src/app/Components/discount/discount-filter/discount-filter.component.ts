@@ -10,6 +10,7 @@ import {FieldType} from "../../../../Enums/FieldType";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {IdNameDto} from "../../../../Dtos/IdNameDto";
 
 @Component({
   selector: 'app-discount-filter',
@@ -256,7 +257,13 @@ export class DiscountFilterComponent implements OnInit
     console.log(discount);
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedDiscounts.ids, selectedId: discount.id}
+      state:
+        {
+          selectedIds: this.selectedDiscounts.ids
+            .sort((a: IdNameDto, b: IdNameDto) =>
+              this.discounts.filteredIds.indexOf(a.id) - this.discounts.filteredIds.indexOf(b.id)),
+          selectedId: discount.id
+        }
     });
   }
 }

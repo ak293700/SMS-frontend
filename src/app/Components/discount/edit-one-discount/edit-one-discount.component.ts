@@ -179,7 +179,7 @@ export class EditOneDiscountComponent implements OnInit
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.otherDiscounts = response.body;
+      this.otherDiscounts = response.body.sort((a: IdNameDto, b: IdNameDto) => ids.indexOf(a.id) - ids.indexOf(b.id));
       this.otherDiscounts.forEach(d => d.name = `${d.name} (${d.id})`);
 
       // reorder otherProducts by as 'ids'

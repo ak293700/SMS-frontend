@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
-import {Observable} from 'rxjs';
 import {AuthGuard} from "./auth.guard";
 
 @Injectable({
@@ -12,11 +11,11 @@ export class LoginGuard implements CanActivate
               private router: Router)
   {}
 
-  canActivate(
+  async canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree
+    state: RouterStateSnapshot): Promise<boolean | UrlTree>
   {
-    if (this.authGuard.checkAuth())
+    if (await this.authGuard.checkAuth())
       return this.router.parseUrl('/home');
 
     return true;

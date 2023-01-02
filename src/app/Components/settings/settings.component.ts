@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {AuthGuard} from "../../Guards/auth.guard";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-settings',
@@ -11,5 +13,13 @@ import {Component} from '@angular/core';
 })
 export class SettingsComponent
 {
+  constructor(private authGuard: AuthGuard,
+              private router: Router)
+  {}
 
+  async logOut()
+  {
+    this.authGuard.reset();
+    await this.router.navigate(['/login']);
+  }
 }

@@ -113,11 +113,6 @@ export class EditMultipleProductsComponent implements OnInit
     this.loading = false;
   }
 
-  get OperationEnum(): typeof Operand
-  {
-    return Operand;
-  }
-
   showDiscountOverlay()
   {
     this.discountOverlayVisible = true;

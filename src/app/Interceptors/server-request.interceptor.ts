@@ -12,11 +12,9 @@ export class ServerRequestInterceptor implements HttpInterceptor
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>>
   {
-    // If it is a request to the server, and we are logged in (we have a token)
-    if (!request.url.startsWith(api) || !this.authGuard.checkAuth())
+    if (!request.url.startsWith(api))
       return next.handle(request);
 
-    console.log('intercepted');
     request = request.clone({
       setHeaders: {
         // We add the token to the request
@@ -27,4 +25,25 @@ export class ServerRequestInterceptor implements HttpInterceptor
     // log the generated url
     return next.handle(request);
   }
+
+  /*private async _intercept(request: HttpRequest<unknown>, next: HttpHandler): Promise<HttpEvent<unknown>>
+  {
+    // If it is a request to the server, and we are logged in (we have a token)
+    if (!request.url.startsWith(api) || !await this.authGuard.checkAuth())
+      return lastValueFrom(next.handle(request));
+
+    // If the token is about to expire, we re fetch it
+    if (this.authGuard.willExpireSoon())
+      await this.authGuard.initFromCookie();
+
+    request = request.clone({
+      setHeaders: {
+        // We add the token to the request
+        Authorization: `Bearer ${this.authGuard.sessionToken}`
+      }
+    });
+
+    // log the generated url
+    return lastValueFrom(next.handle(request));
+  }*/
 }

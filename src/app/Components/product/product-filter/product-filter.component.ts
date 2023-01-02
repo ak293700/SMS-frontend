@@ -16,6 +16,7 @@ import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {IdNameDto} from "../../../../Dtos/IdNameDto";
 
 /*
   * This component is used to display the filter form.
@@ -326,7 +327,13 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedProducts.ids, selectedId: product.id}
+      state:
+        {
+          selectedIds: this.selectedProducts.ids
+            .sort((a: IdNameDto, b: IdNameDto) =>
+              this.products.filteredIds.indexOf(a.id) - this.products.filteredIds.indexOf(b.id)),
+          selectedId: product.id
+        }
     });
   }
 
@@ -334,7 +341,12 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/multiple'], {
       relativeTo: this.route,
-      state: {selectedIds: this.selectedProducts.ids}
+      state:
+        {
+          selectedIds: this.selectedProducts.ids
+            .sort((a: IdNameDto, b: IdNameDto) =>
+              this.products.filteredIds.indexOf(a.id) - this.products.filteredIds.indexOf(b.id))
+        }
     });
   }
 }
