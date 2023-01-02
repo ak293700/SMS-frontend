@@ -9,7 +9,7 @@ import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
 import {ChangeType} from "../../../../Enums/ChangeType";
 import {ProductChangesResponseDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesResponseDto";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {ProductChangesRequestDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesRequestDto";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -18,6 +18,7 @@ import {MyConfirmationService} from "../../../Services/my-confirmation.service";
 import {Shop} from "../../../../Enums/Shop";
 import {ProductMultipleChangesDto} from "../../../../Dtos/ProductDtos/ProductMultipleChangesDto";
 import {ShopSpecificMultipleChangesDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificMultipleChangesDto";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 
 interface Field
 {
@@ -76,7 +77,8 @@ export class EditMultipleProductsComponent implements OnInit
               private getDiscountsService: GetDiscountsService,
               private commonRequest: CommonRequestService,
               private messageService: MessageService,
-              private myConfirmationService: MyConfirmationService)
+              private myConfirmationService: MyConfirmationService,
+              private http: HttpClientWrapperService)
   {
     this.loading = true;
     this.chosenWebsiteChoices = ['Tous', 'EPS', 'E+S'];
@@ -235,11 +237,11 @@ export class EditMultipleProductsComponent implements OnInit
     try
     {
       const data: ProductChangesRequestDto = {ids: this.otherProducts.map(e => e.id), changeTypes};
-      const response = await axios.post(`${api}/product/changes`, data);
+      const response = await this.http.post(`${api}/product/changes`, data);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      const res: ProductChangesResponseDto = response.data;
+      const res: ProductChangesResponseDto = response.body;
 
       // if we modify the product shop specific, but not the product properties themselves
       // we should filter the shopCounts whether the shop we want
@@ -309,7 +311,7 @@ export class EditMultipleProductsComponent implements OnInit
 
     try
     {
-      const response = await axios.patch(`${api}/product/multiple`, request);
+      const response = await this.http.patch(`${api}/product/multiple`, request);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 

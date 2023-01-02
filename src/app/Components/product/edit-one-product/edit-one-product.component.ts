@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
-import axios, {AxiosError, AxiosResponse} from "axios";
+import {AxiosError} from "axios";
 import {ConfirmationService, MenuItem, MessageService, PrimeIcons} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -122,7 +122,8 @@ export class EditOneProductComponent implements OnInit
               private productReferencesService: ProductReferencesService,
               private router: Router,
               private httpClient: HttpClientWrapperService,
-              private commonRequest: CommonRequestService)
+              private commonRequest: CommonRequestService,
+              private http: HttpClientWrapperService)
   {
     this.discountContextMenuItems = [
       {
@@ -181,7 +182,7 @@ export class EditOneProductComponent implements OnInit
       // Get the products itself
       const response = await this.httpClient.get(`${api}/product/${id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.newHttpFail(this.messageService, response);
+        return MessageServiceTools.httpFail(this.messageService, response);
 
       this.initialProduct = response.body;
       this.product = Operation.deepCopy(this.initialProduct);
@@ -207,11 +208,11 @@ export class EditOneProductComponent implements OnInit
     try
     {
       // fetch the discount available for the product
-      const response = await axios.get<IdNameDto[]>(`${api}/discount/available/${this.product.id}`);
+      const response = await this.http.get(`${api}/discount/available/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.initialAdditionalInformation.availableDiscounts = response.data
+      this.initialAdditionalInformation.availableDiscounts = response.body
         .map((d: IdNameDto) => ({id: d.id, label: d.name}));
       this.additionalInformation.availableDiscounts = Operation.deepCopy(this.initialAdditionalInformation.availableDiscounts);
     } catch (e: any | AxiosError)
@@ -225,11 +226,11 @@ export class EditOneProductComponent implements OnInit
   {
     try
     {
-      const response = await axios.get<IdNameDto[]>(`${api}/discount`);
+      const response = await this.http.get(`${api}/discount`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.allDiscounts = response.data;
+      this.allDiscounts = response.body;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -410,15 +411,15 @@ export class EditOneProductComponent implements OnInit
       // Detect if patch is empty - more than 1 because of the id
       if (Operation.countProperties(patchProduct) > 1)
       {
-        const response: AxiosResponse = await axios.patch(`${api}/${endpoint}/`, patchProduct);
+        const response = await this.http.patch(`${api}/${endpoint}/`, patchProduct);
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
 
       for (const shopSpecificPatch of shopSpecificPatches)
       {
-        // const response: AxiosResponse = await axios.patch(`${api}/shopSpecific/`, shopSpecificPatch);
-        const response: AxiosResponse = await axios.patch('https://localhost:7093/api/ShopSpecific', shopSpecificPatch, {headers: {'Content-Type': 'application/json'}});
+        // Todo: without {headers: {'Content-Type': 'application/json'}}
+        const response = await this.http.patch(`${api}/api/ShopSpecific`, shopSpecificPatch,);
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
@@ -431,7 +432,7 @@ export class EditOneProductComponent implements OnInit
 
       if (this.product.productType === ProductType.Bundle && bundleItems !== undefined)
       {
-        const response: AxiosResponse = await axios.post(`${api}/bundle/items/${patchProduct.id}`, bundleItems);
+        const response = await this.http.post(`${api}/bundle/items/${patchProduct.id}`, bundleItems);
         if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
       }
@@ -486,14 +487,14 @@ export class EditOneProductComponent implements OnInit
     try
     {
       // Get the number of product that use this discount
-      const response: AxiosResponse = await axios.get(`${api}/discount/productsInUse/number/${id}`, discount);
+      const response = await this.http.get(`${api}/discount/productsInUse/number/${id}`, discount);
       if (!HttpTools.IsValid(response.status))
       {
         MessageServiceTools.httpFail(this.messageService, response);
         return false;
       }
 
-      numberOfProductInUse = response.data;
+      numberOfProductInUse = response.body;
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -538,7 +539,7 @@ export class EditOneProductComponent implements OnInit
     try
     {
       const ids = availableDiscounts.map(d => d.id);
-      const response: AxiosResponse = await axios.patch(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
+      const response = await this.http.patch(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
       if (!HttpTools.IsValid(response.status))
       {
         MessageServiceTools.httpFail(this.messageService, response);
@@ -560,7 +561,7 @@ export class EditOneProductComponent implements OnInit
     {
       try
       {
-        const response: AxiosResponse = await axios.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
+        const response = await this.http.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
         if (!HttpTools.IsValid(response.status))
         {
           MessageServiceTools.httpFail(this.messageService, response);
@@ -720,12 +721,11 @@ export class EditOneProductComponent implements OnInit
 
     try
     {
-      const response: AxiosResponse = await axios
-        .get<LiteDiscountDto>(`${api}/discount/${this.dummyStruct.selectedDiscount.id}`);
+      const response = await this.http.get(`${api}/discount/${this.dummyStruct.selectedDiscount.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.simpleProduct.discount = response.data;
+      this.simpleProduct.discount = response.body;
     } catch (e: any)
     {
       MessageServiceTools.axiosFail(this.messageService, e);
@@ -741,7 +741,7 @@ export class EditOneProductComponent implements OnInit
 
     try
     {
-      const response: AxiosResponse = await axios.delete(`${api}/product/${this.product.id}`);
+      const response = await this.http.delete(`${api}/product/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
@@ -837,7 +837,7 @@ export class EditOneProductComponent implements OnInit
   {
     try
     {
-      const response = await axios.post(`${api}/product/force_presta_update/${this.product.id}`);
+      const response = await this.http.post(`${api}/product/force_presta_update/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 

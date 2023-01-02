@@ -1,4 +1,4 @@
-import {AxiosError, AxiosResponse} from "axios";
+import {AxiosError} from "axios";
 import {MessageService} from "primeng/api";
 import {HttpTools} from "./HttpTools";
 import {HttpResponse} from "@angular/common/http";
@@ -10,15 +10,7 @@ export class MessageServiceTools
     messageService.add({severity: 'error', summary: 'Network error', detail: message});
   }
 
-  static httpFail(messageService: MessageService, response: AxiosResponse | undefined)
-  {
-    if (response == undefined)
-      messageService.add({severity: 'warn', summary: 'Request issue', detail: 'Error during request to the server'});
-    else
-      messageService.add({severity: 'warn', summary: response.statusText, detail: response.data});
-  }
-
-  static newHttpFail(messageService: MessageService, response: HttpResponse<any> | undefined)
+  static httpFail(messageService: MessageService, response: HttpResponse<any> | undefined)
   {
     if (response == undefined)
       messageService.add({severity: 'warn', summary: 'Request issue', detail: 'Error during request to the server'});

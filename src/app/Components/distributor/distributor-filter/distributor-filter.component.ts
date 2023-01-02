@@ -3,11 +3,12 @@ import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {FieldType} from "../../../../Enums/FieldType";
 import {MessageService} from "primeng/api";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {IEnumerableToITableData} from "../../../../Interfaces/ITableData";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 
 @Component({
   selector: 'app-distributor-filter',
@@ -34,7 +35,8 @@ export class DistributorFilterComponent implements OnInit
       // So data of every page of the tab.
     };
 
-  constructor(private messageService: MessageService)
+  constructor(private messageService: MessageService,
+              private http: HttpClientWrapperService)
   {}
 
   async ngOnInit(): Promise<void>
@@ -83,11 +85,11 @@ export class DistributorFilterComponent implements OnInit
   {
     try
     {
-      const response = await axios.get(`${api}/distributor`);
+      const response = await this.http.get(`${api}/distributor`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response.data);
+        return MessageServiceTools.httpFail(this.messageService, response.body);
 
-      this.fullData = response.data;
+      this.fullData = response.body;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.networkError(this.messageService, e.message);

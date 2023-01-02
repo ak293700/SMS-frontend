@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {MessageService} from "primeng/api";
 import {IdNameDto} from "../../Dtos/IdNameDto";
-import axios from "axios";
 import {api} from "../GlobalUsings";
 import {HttpTools} from "../../utils/HttpTools";
 import {MessageServiceTools} from "../../utils/MessageServiceTools";
+import {HttpClientWrapperService} from "./http-client-wrapper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,9 @@ import {MessageServiceTools} from "../../utils/MessageServiceTools";
 export class GetDiscountsService
 {
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService,
+              private http: HttpClientWrapperService)
+  {}
 
   private _discounts: IdNameDto[] | undefined = undefined;
 
@@ -23,13 +25,13 @@ export class GetDiscountsService
   {
     this._isLoaded = true;
 
-    axios.get(`${api}/discount`)
+    this.http.get(`${api}/discount`)
       .then(response => {
 
         if (!HttpTools.IsValid(response.status))
-          MessageServiceTools.httpFail(this.messageService, response.data);
+          MessageServiceTools.httpFail(this.messageService, response.body);
         else
-          this._discounts = response.data;
+          this._discounts = response.body;
 
         this._isLoaded = false;
       })

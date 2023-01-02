@@ -30,7 +30,7 @@ export class CommonRequestService
       // Get the products itself
       const response = await this.httpClient.get(`${api}/Manufacturer/`);
       if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.newHttpFail(this.messageService, response);
+        MessageServiceTools.httpFail(this.messageService, response);
 
       return response.body;
     } catch (e: any)
@@ -48,7 +48,7 @@ export class CommonRequestService
       // Get the products itself
       const response = await this.httpClient.get(`${api}/Distributor/`);
       if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.newHttpFail(this.messageService, response);
+        MessageServiceTools.httpFail(this.messageService, response);
 
       return response.body;
     } catch (e: any)
@@ -91,7 +91,7 @@ export class CommonRequestService
         const response = await this.httpClient.patch(`${api}/${endpoint}/`, patchDiscount);
         if (!HttpTools.IsValid(response.status))
         {
-          MessageServiceTools.newHttpFail(this.messageService, response);
+          MessageServiceTools.httpFail(this.messageService, response);
           return false;
         }
       }
@@ -102,7 +102,7 @@ export class CommonRequestService
           distributorIds);
         if (!HttpTools.IsValid(response.status))
         {
-          MessageServiceTools.newHttpFail(this.messageService, response);
+          MessageServiceTools.httpFail(this.messageService, response);
           return false;
         }
       }

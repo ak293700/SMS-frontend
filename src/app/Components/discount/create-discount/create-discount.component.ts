@@ -3,7 +3,7 @@ import {DiscountType} from "../../../../Enums/DiscountType";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {Operation} from "../../../../utils/Operation";
 import {ConfirmationService, MessageService} from "primeng/api";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
@@ -12,6 +12,7 @@ import {
   CreateDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/CreateDistributorDiscountDto";
 import {CommonRequestService} from "../../../Services/common-request.service";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 
 @Component({
   selector: 'app-create-discount',
@@ -44,7 +45,8 @@ export class CreateDiscountComponent implements OnInit
 
   constructor(private messageService: MessageService,
               private confirmationService: ConfirmationService,
-              private commonRequest: CommonRequestService)
+              private commonRequest: CommonRequestService,
+              private http: HttpClientWrapperService)
   {}
 
   async ngOnInit()
@@ -98,9 +100,9 @@ export class CreateDiscountComponent implements OnInit
 
     try
     {
-      const response = await axios.post(`${api}/${endpoint}`, discount);
+      const response = await this.http.post(`${api}/${endpoint}`, discount);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+        MessageServiceTools.httpFail(this.messageService, response);
 
       this.messageService.add({severity: 'success', summary: 'Succès', detail: 'Produit créé'});
       this.discount = {

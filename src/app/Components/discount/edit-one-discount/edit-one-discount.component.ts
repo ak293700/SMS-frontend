@@ -7,7 +7,7 @@ import {
   LiteDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
 import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
-import axios, {AxiosError, AxiosResponse} from "axios";
+import {AxiosError} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
@@ -19,6 +19,7 @@ import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {InputNumberMode} from "../../input-components/input-number/InputNumberMode";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -56,7 +57,8 @@ export class EditOneDiscountComponent implements OnInit
               private router: Router,
               private getDiscountsService: GetDiscountsService,
               private httpClient: HttpClientWrapperService,
-              private commonRequest: CommonRequestService)
+              private commonRequest: CommonRequestService,
+              private http: HttpClientWrapperService)
   {
     this.dialItems = [
       {
@@ -97,20 +99,20 @@ export class EditOneDiscountComponent implements OnInit
   {
     try
     {
-      const getTypeResponse = await axios.get(`${api}/discount/type/${id}`);
+      const getTypeResponse = await this.http.get(`${api}/discount/type/${id}`);
       if (!HttpTools.IsValid(getTypeResponse.status))
         MessageServiceTools.httpFail(this.messageService, getTypeResponse);
 
       let endpoint: string = 'distributorDiscount';
-      if (getTypeResponse.data == DiscountType.Derogation)
+      if (getTypeResponse.body == DiscountType.Derogation)
         endpoint = 'derogation';
 
-      const response = await axios.get<LiteDistributorDiscountDto | LiteDerogationDto>(`${api}/${endpoint}/${id}`);
-      if (response.status !== 200)
+      const response = await this.http.get(`${api}/${endpoint}/${id}`);
+      if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
 
-      this.initialDiscount = response.data;
-      this.initialDiscount.discountType = getTypeResponse.data; // we set the type because it is not send by the server
+      this.initialDiscount = response.body;
+      this.initialDiscount.discountType = getTypeResponse.body; // we set the type because it is not send by the server
       this.discount = Operation.deepCopy(this.initialDiscount);
 
       this.initDummyStruct();
@@ -173,11 +175,11 @@ export class EditOneDiscountComponent implements OnInit
   {
     try
     {
-      const response = await axios.post<IdNameDto[]>(`${api}/discount/providers`, ids);
-      if (response.status !== 200)
+      const response = await this.http.post(`${api}/discount/providers`, ids);
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.otherDiscounts = response.data;
+      this.otherDiscounts = response.body;
       this.otherDiscounts.forEach(d => d.name = `${d.name} (${d.id})`);
 
       // reorder otherProducts by as 'ids'
@@ -257,7 +259,7 @@ export class EditOneDiscountComponent implements OnInit
 
     try
     {
-      const response: AxiosResponse = await axios.delete(`${api}/discount/${this.discount.id}`);
+      const response: HttpResponse<any> = await this.http.delete(`${api}/discount/${this.discount.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 

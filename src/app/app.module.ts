@@ -8,7 +8,7 @@ import {LoginPageComponent} from './Components/login-page/login-page.component';
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProductFilterComponent} from './Components/product/product-filter/product-filter.component';
-import {SharedModule} from "primeng/api";
+import {ConfirmationService, MessageService, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -105,6 +105,8 @@ import {ServerRequestInterceptor} from "./Interceptors/server-request.intercepto
     DropdownModule,
   ],
   providers: [
+    MessageService,
+    ConfirmationService,
     {
       provide: RouteReuseStrategy,
       useClass: CustomRouteReuseStrategy

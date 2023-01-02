@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 import {CookieService} from "ngx-cookie-service";
-import axios from "axios";
 import jwtDecode from "jwt-decode";
 import {Operation} from "../../utils/Operation";
 import {api} from "../GlobalUsings";
+import {HttpClientWrapperService} from "../Services/http-client-wrapper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,8 @@ export class AuthGuard implements CanActivate
 
 
   constructor(private cookieService: CookieService,
-              private router: Router)
+              private router: Router,
+              private http: HttpClientWrapperService)
   { }
 
 
@@ -60,9 +61,9 @@ export class AuthGuard implements CanActivate
     {
       // A Jwt token
       let response =
-        await axios.post(`${api}/Auth/login`, {email: email, password: password});
+        await this.http.post(`${api}/Auth/login`, {email: email, password: password});
 
-      this.session_token = response.data as string;
+      this.session_token = response.body as string;
     } catch (e)
     {
 

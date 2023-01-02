@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {IdNameDto} from "../../Dtos/IdNameDto";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../GlobalUsings";
 import {HttpTools} from "../../utils/HttpTools";
 import {MessageServiceTools} from "../../utils/MessageServiceTools";
 import {MessageService} from "primeng/api";
 import {ProductType} from "../../Enums/ProductType";
+import {HttpClientWrapperService} from "./http-client-wrapper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,9 @@ import {ProductType} from "../../Enums/ProductType";
 export class ProductReferencesService
 {
 
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService,
+              private http: HttpClientWrapperService)
+  {}
 
   private _productReferences: IdNameDto[] | undefined = undefined;
   private _productTypes: { [prop: number]: ProductType; } = {};
@@ -28,12 +31,12 @@ export class ProductReferencesService
     this._productTypes = {};
     this._shopSpecificPerProduct = {};
 
-    axios.get(`${api}/product/references`)
+    this.http.get(`${api}/product/references`)
       .then(response => {
         if (!HttpTools.IsValid(response.status))
-          MessageServiceTools.httpFail(this.messageService, response.data);
+          MessageServiceTools.httpFail(this.messageService, response.body);
         else
-          this._productReferences = response.data;
+          this._productReferences = response.body;
 
         this._isLoaded = false;
       })
@@ -77,11 +80,11 @@ export class ProductReferencesService
 
     try
     {
-      const response = await axios.get(`${api}/product/type/${id}`);
+      const response = await this.http.get(`${api}/product/type/${id}`);
       if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response.data);
+        MessageServiceTools.httpFail(this.messageService, response.body);
       else
-        this._productTypes[id] = response.data;
+        this._productTypes[id] = response.body;
     } catch (e: any | AxiosError)
     {
       MessageServiceTools.axiosFail(this.messageService, e);

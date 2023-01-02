@@ -1,9 +1,10 @@
 import {Component} from '@angular/core';
 import {MessageService} from "primeng/api";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 
 @Component({
   selector: 'app-create-distributor',
@@ -18,7 +19,8 @@ export class CreateDistributorComponent
 {
   distributor: { name: string } = {name: ""};
 
-  constructor(private messageService: MessageService)
+  constructor(private messageService: MessageService,
+              private http: HttpClientWrapperService)
   {}
 
   checkValidity(): boolean
@@ -46,8 +48,8 @@ export class CreateDistributorComponent
   {
     try
     {
-      const response = await axios.post(`${api}/Distributor`, request,
-        {headers: {'Content-Type': 'application/json'}});
+      // TODO: try without {headers: {'Content-Type': 'application/json'}}
+      const response = await this.http.post(`${api}/Distributor`, request);
       console.log(response);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);

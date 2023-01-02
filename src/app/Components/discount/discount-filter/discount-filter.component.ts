@@ -2,13 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {FieldType} from "../../../../Enums/FieldType";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {HttpTools} from "../../../../utils/HttpTools";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 
 @Component({
   selector: 'app-discount-filter',
@@ -41,7 +42,8 @@ export class DiscountFilterComponent implements OnInit
 
   constructor(private messageService: MessageService,
               private router: Router,
-              private route: ActivatedRoute)
+              private route: ActivatedRoute,
+              private http: HttpClientWrapperService)
   {
   }
 
@@ -110,11 +112,11 @@ export class DiscountFilterComponent implements OnInit
   {
     try
     {
-      let response = await axios.get(`${api}/SelectDiscount/filter`, {responseType: 'json'});
-      if (response.status !== 200)
-        return MessageServiceTools.httpFail(this.messageService, response);
+      const response = await this.http.get(`${api}/SelectDiscount/filter`);
+      if (!HttpTools.IsValid(response.status))
+        MessageServiceTools.httpFail(this.messageService, response);
 
-      let tmp: any[] = response.data;
+      let tmp: any[] = response.body;
       tmp.forEach(filter => {
         filter.active = false;
         filter.value = null;
@@ -155,11 +157,11 @@ export class DiscountFilterComponent implements OnInit
     let filters = this.filters.filter(filter => filter.active);
     try
     {
-      let response = await axios.post(`${api}/SelectDiscount/filter/execute`, filters, {responseType: 'json'});
-      if (response.status !== 200)
+      let response = await this.http.post(`${api}/SelectDiscount/filter/execute`, filters, 'json');
+      if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
-      this.discounts.filteredIds = response.data;
+      this.discounts.filteredIds = response.body;
 
       await this.loadLazy({first: 0, rows: this.rowsNumber});
     } catch (e: any)
@@ -179,12 +181,12 @@ export class DiscountFilterComponent implements OnInit
       // get the ids of the products of the page
       const ids = this.discounts.filteredIds.slice(begin, end);
       const url = UrlBuilder.create(`${api}/SelectDiscount/filter/values`).addParam('ids', ids).build();
-      const response = await axios.get(url);
+      const response = await this.http.get(url);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       // Update the productsPageData
-      this.discounts.pageData = this.formatData(response.data);
+      this.discounts.pageData = this.formatData(response.body);
 
       // Update the selected data
       this.selectedDiscounts.data = this.discounts.pageData

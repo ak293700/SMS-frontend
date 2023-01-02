@@ -6,7 +6,7 @@ import {IListItem} from "../../../selectors/editable-list/editable-list.componen
 import {ProductReferencesService} from "../../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {CreateBundleDto} from "../../../../../Dtos/ProductDtos/BundleDto/CreateBundleDto";
-import axios, {AxiosError} from "axios";
+import {AxiosError} from "axios";
 import {api} from "../../../../GlobalUsings";
 import {HttpTools} from "../../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../../utils/MessageServiceTools";
@@ -44,7 +44,7 @@ export class CreateBundleComponent implements OnInit
 
   constructor(private messageService: MessageService,
               private productReferencesService: ProductReferencesService,
-              private httpClient: HttpClientWrapperService,
+              private http: HttpClientWrapperService,
               private commonRequest: CommonRequestService)
   {
     this.additionalFields = [
@@ -82,14 +82,14 @@ export class CreateBundleComponent implements OnInit
   {
     try
     {
-      const response = await axios.post(`${api}/bundle`, bundle);
+      const response = await this.http.post(`${api}/bundle`, bundle);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.messageService.add({severity: 'success', summary: 'Succès', detail: 'Produit créé'});
       this.product = {items: []};
 
-      this.productReferencesService.push(response.data.id, response.data.name);
+      this.productReferencesService.push(response.body.id, response.body.name);
     } catch (e: any | AxiosError)
     {
       return MessageServiceTools.axiosFail(this.messageService, e);
