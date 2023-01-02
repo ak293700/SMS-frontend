@@ -36,3 +36,9 @@ form {
 form * {
   width: 80%;
 }
+
+/*Allow the password  field an the eye to always be on the same line*/
+.password-box {
+  display: inline-block;
+  white-space: nowrap;
+}

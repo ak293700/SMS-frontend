@@ -4,8 +4,8 @@
 
     <form (ngSubmit)="logIn()" [formGroup]="loginForm">
       <input formControlName="login" pInputText placeholder="Login">
-      <div>
-        <input [type]="showPassword ? 'text' : 'password'" formControlName="password" pInputText
+      <div class="password-box">
+        <input pInputText [type]="showPassword ? 'text' : 'password'" formControlName="password"
                placeholder="Mot de passe"/>
         <p-button (click)="showHidePassword()" [icon]="showPassword ? 'pi pi-eye' : 'pi pi-eye-slash'"></p-button>
       </div>

@@ -51,6 +51,8 @@ import {SpeedDialModule} from "primeng/speeddial";
 import {DropdownModule} from "primeng/dropdown";
 import {InputNumberComponent} from './Components/input-components/input-number/input-number.component';
 import {ServerRequestInterceptor} from "./Interceptors/server-request.interceptor";
+import {PasswordModule} from "primeng/password";
+import {DividerModule} from "primeng/divider";
 
 @NgModule({
   declarations: [
@@ -103,6 +105,8 @@ import {ServerRequestInterceptor} from "./Interceptors/server-request.intercepto
     RippleModule,
     SpeedDialModule,
     DropdownModule,
+    PasswordModule,
+    DividerModule,
   ],
   providers: [
     MessageService,

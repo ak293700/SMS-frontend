@@ -70,7 +70,16 @@ export class AuthGuard implements CanActivate
     this.buildJwtContent();
 
     // Use to register the identifier in the cookie
-    this.cookieService.set(AuthGuard.identifierCookie, btoa(`${email}:${password}`), undefined, '/');
+    this.cookieService.set
+    (
+      AuthGuard.identifierCookie,
+      btoa(`${email}:${password}`),
+      undefined,
+      '/',
+      undefined,
+      true,
+      'Strict'
+    );
 
     return true;
   }
