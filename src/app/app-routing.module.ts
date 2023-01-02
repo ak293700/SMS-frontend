@@ -15,6 +15,8 @@ import {CreateDiscountComponent} from "./Components/discount/create-discount/cre
 import {SettingsComponent} from "./Components/settings/settings.component";
 import {CreateDistributorComponent} from "./Components/distributor/create-distributor/create-distributor.component";
 import {DistributorFilterComponent} from "./Components/distributor/distributor-filter/distributor-filter.component";
+import {LoginGuard} from "./Guards/login.guard";
+import {AuthGuard} from "./Guards/auth.guard";
 
 const createOrUpdateRoute: Route = {
   path: '',
@@ -37,7 +39,8 @@ const homeRoute: Route = {
       {label: 'Paramètres', link: '/settings'}
     ],
     backButton: {show: false}
-  }
+  },
+  canActivate: [AuthGuard]
 };
 
 const productRoute: Route = {
@@ -53,7 +56,8 @@ const productRoute: Route = {
         {path: 'one', component: EditOneProductComponent},
       ]
     },
-  ]
+  ],
+  canActivate: [AuthGuard]
 };
 
 const discountRoute: Route = {
@@ -67,8 +71,9 @@ const discountRoute: Route = {
         {path: 'multiple', component: DiscountFilterComponent},
         {path: 'one', component: EditOneDiscountComponent},
       ]
-    },
-  ]
+    }
+  ],
+  canActivate: [AuthGuard]
 };
 
 const distributorRoute: Route = {
@@ -83,18 +88,19 @@ const distributorRoute: Route = {
         {path: 'one', component: EditOneDiscountComponent},
       ]
     },
-  ]
+  ],
+  canActivate: [AuthGuard]
 };
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
-  {path: 'login', component: LoginPageComponent},
+  {path: 'login', component: LoginPageComponent, canActivate: [LoginGuard]},
   homeRoute,
   productRoute,
   discountRoute,
   distributorRoute,
-  {path: 'settings', component: SettingsComponent},
-  {path: 'filter', component: FilterFieldsComponent},
+  {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
+  {path: 'filter', component: FilterFieldsComponent, canActivate: [AuthGuard]},
   // {path: '**', redirectTo: 'login'}
 ];
 

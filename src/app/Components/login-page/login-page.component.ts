@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {IListItem} from "../selectors/editable-list/editable-list.component";
+import {AuthGuard} from "../../Guards/auth.guard";
+import {MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-login-page',
@@ -40,7 +42,9 @@ export class LoginPageComponent
 
 
   constructor(private formBuilder: FormBuilder,
-              private router: Router)
+              private router: Router,
+              private authGuard: AuthGuard,
+              private messageService: MessageService)
   {
     this.loginForm = this.formBuilder.group({
       'login': [null, Validators.required],
@@ -48,10 +52,12 @@ export class LoginPageComponent
     });
   }
 
-  logIn()
+  async logIn()
   {
-    console.log(this.loginForm.value);
-    this.router.navigate(['home']);
+    if (await (this.authGuard.init(this.loginForm.value.login, this.loginForm.value.password)))
+      await this.router.navigate(['/home']);
+    else
+      this.messageService.add({severity: 'error', summary: 'Erreur', detail: 'Identifiant ou mot de passe incorrect'});
   }
 
   showHidePassword()
