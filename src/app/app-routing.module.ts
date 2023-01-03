@@ -6,7 +6,6 @@ import {
   EditMultipleProductsComponent
 } from "./Components/product/edit-multiple-products/edit-multiple-products.component";
 import {EditOneProductComponent} from "./Components/product/edit-one-product/edit-one-product.component";
-import {FilterFieldsComponent} from "./Components/filter/filter-fields/filter-fields.component";
 import {DiscountFilterComponent} from "./Components/discount/discount-filter/discount-filter.component";
 import {EditOneDiscountComponent} from "./Components/discount/edit-one-discount/edit-one-discount.component";
 import {ReferralComponent} from "./Components/referral/referral.component";
@@ -100,8 +99,7 @@ const routes: Routes = [
   discountRoute,
   distributorRoute,
   {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
-  {path: 'filter', component: FilterFieldsComponent, canActivate: [AuthGuard]},
-  // {path: '**', redirectTo: 'login'}
+  {path: '**', redirectTo: 'login'}
 ];
 
 @NgModule({

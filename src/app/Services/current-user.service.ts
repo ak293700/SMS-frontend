@@ -24,7 +24,7 @@ export class CurrentUserService
 
     return {
       id: Number(jwt_content.nameidentifier),
-      email: jwt_content.emailAddress as string,
+      email: jwt_content.emailaddress as string,
       roles: this.roles as Role[],
     }
   }

@@ -6,19 +6,43 @@
   </p-button>
 
   <div *ngIf="isAdmin" class="flex-center flex-column flex-gap-20 user-manager-container">
-    <div class="grid-flow"
-         [style.grid-template-rows]="'repeat('+ dummyUsers.length.toString() +', 1fr)'">
+    <p-dialog *ngIf="userStruct.dummy.length > 0"
+              [(visible)]="userStruct.passwordStruct.visible" [style]="{'height':'50vh'}"
+              [closable]="false" [draggable]="false" [modal]="true">
 
-      <div *ngFor="let user of dummyUsers" class="field-item">
+      <div class="flex-center flex-column flex-gap-20">
+        <p-password [(ngModel)]="userStruct.dummy[userStruct.selectedUserIndex].password"
+                    [feedback]="false" [toggleMask]="true">
+        </p-password>
+
+        <div class="flex-center">
+          <button pButton label="Annuler" class="p-button-danger margin-20"
+                  (click)="cancelPassword()"></button>
+          <button pButton label="Enregistrer" class="p-button-success margin-20"
+                  (click)="validPassword()"></button>
+        </div>
+      </div>
+    </p-dialog>
+
+    <div class="grid-flow"
+         [style.grid-template-rows]="'repeat('+ userStruct.dummy.length.toString() +', 1fr)'">
+
+      <div *ngFor="let user of userStruct.dummy" class="field-item">
         <label class="text">Adresse email</label>
-        <input pInputText id="field-email" type="text" [(ngModel)]="user.email"/>
+        <input pInputText type="text" [(ngModel)]="user.email"/>
       </div>
 
-      <app-editable-list *ngFor="let user of dummyUsers" [suggestions]="possibleRoles"
-                         [(items)]="user.roles" [disabled]="user.id === currentUser.id">
+      <app-editable-list *ngFor="let user of userStruct.dummy" [suggestions]="possibleRoles"
+                         [(items)]="user.roles" [disabled]="user.id === userStruct.currentUser.id">
       </app-editable-list>
 
-      <div *ngFor="let user of dummyUsers; let index=index">
+      <div *ngFor="let user of userStruct.dummy; let index=index">
+        <button pButton pRipple (click)="editPassword(index)" type="button"
+                icon="pi pi-pencil" class="p-button-rounded p-button-info">
+        </button>
+      </div>
+
+      <div *ngFor="let user of userStruct.dummy; let index=index">
         <button pButton pRipple (click)="deleteUser(index)" type="button"
                 icon="pi pi-times" class="p-button-rounded p-button-danger">
         </button>

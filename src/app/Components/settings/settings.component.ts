@@ -11,6 +11,8 @@ import {MessageServiceTools} from "../../../utils/MessageServiceTools";
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {CurrentUserService} from "../../Services/current-user.service";
 import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
+import {IListItem} from "../selectors/editable-list/editable-list.component";
+import {CheckingTools} from "../../../utils/CheckingTools";
 
 @Component({
   selector: 'app-settings',
@@ -23,12 +25,20 @@ import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
 })
 export class SettingsComponent implements OnInit
 {
-  currentUser: UserDto;
-
-  users: UserDto[] = [];
-
   // Use to add do the diff of the user and add
-  dummyUsers: any[] = [];
+
+  userStruct: {
+    currentUser: UserDto, users: UserDto[],
+    dummy: { id: number, email: string, roles: IListItem[], password: string }[],
+    passwordStruct: { visible: boolean }, selectedUserIndex: number
+  } =
+    {
+      currentUser: {id: 0, email: '', roles: []},
+      users: [],
+      dummy: [],
+      selectedUserIndex: 0,
+      passwordStruct: {visible: false}
+    }
 
   possibleRoles: IdNameDto[];
 
@@ -44,9 +54,10 @@ export class SettingsComponent implements OnInit
     for (let i = 0; i < middle; i++)
       this.possibleRoles.push({id: Number(roles[i]), name: roles[i + middle]});
 
-    this.currentUser = this.currentUserService.user;
+    this.userStruct.currentUser = this.currentUserService.user;
 
-    console.log(this.currentUser);
+    console.log(this.userStruct.currentUser);
+    CheckingTools.f();
   }
 
   async ngOnInit(): Promise<void>
@@ -58,7 +69,7 @@ export class SettingsComponent implements OnInit
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
 
-      this.users = response.body;
+      this.userStruct.users = response.body;
       this.initDummyStruct();
     }
   }
@@ -76,42 +87,44 @@ export class SettingsComponent implements OnInit
 
   initDummyStruct()
   {
-    this.dummyUsers = this.users
+    this.userStruct.dummy = this.userStruct.users
       .map((user: UserDto) => {
         return {
           id: user.id,
           email: user.email,
           roles: user.roles
-            .map((role: Role) => {return {id: Role[role], label: role};})
+            .map((role: Role) => {return {id: Number(Role[role]), label: role.toString()};}),
+          password: '',
         };
       });
 
-    console.log(this.dummyUsers);
+    console.log('dummy');
+    console.log(this.userStruct.dummy);
   }
 
   addUser()
   {
     // -1 <=> new user
-    this.dummyUsers.push({id: -1, label: '', roles: []})
+    this.userStruct.dummy.push({id: -1, email: '', roles: [], password: ''});
   }
 
   deleteUser(index: number)
   {
     console.log(index);
-    this.dummyUsers.splice(index, 1);
+    this.userStruct.dummy.splice(index, 1);
   }
 
   buildChange(): { toCreate: RegisterUserDto[], toDelete: number[], toPatch: UserDto[] }
   {
     // Filter the original with only the user still present
-    const toDelete = this.users
+    const toDelete = this.userStruct.users
       .filter((user: UserDto) =>
-        !this.dummyUsers.find((dummyUser: any) => user.id === dummyUser.id)
+        !this.userStruct.dummy.find((dummyUser: any) => user.id === dummyUser.id)
       ).map((user: UserDto) => user.id);
 
-    const toCreate = this.dummyUsers
+    const toCreate = this.userStruct.dummy
       .filter((dummyUser: any) =>
-        !this.users.find((user: UserDto) => user.id === dummyUser.id)
+        !this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id)
       ).map((dummyUser: any) => {
         return {email: dummyUser.email, roles: dummyUser.roles.map((role: IdNameDto) => role.id)}
       });
@@ -132,5 +145,32 @@ export class SettingsComponent implements OnInit
   {
     const changes = this.buildChange();
     console.log(changes);
+  }
+
+  editPassword(index: number)
+  {
+    this.userStruct.passwordStruct.visible = true;
+    this.userStruct.selectedUserIndex = index;
+  }
+
+  validPassword()
+  {
+    const password = this.userStruct.dummy[this.userStruct.selectedUserIndex].password;
+    if (!CheckingTools.IsPasswordValid(password))
+    {
+      this.messageService.add({
+        severity: 'error', summary: 'Mot de passe invalide',
+        detail: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, ' +
+          'un chiffre, un caractère spécial ainsi qu\'aucun espace.'
+      });
+      return;
+    }
+
+    this.userStruct.passwordStruct.visible = false;
+  }
+
+  cancelPassword()
+  {
+    this.userStruct.dummy[this.userStruct.selectedUserIndex].password = '';
   }
 }
