@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {api} from "../../../GlobalUsings";
-import {AxiosError} from "axios";
+
 import {ConfirmationService, MenuItem, MessageService, PrimeIcons} from "primeng/api";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -178,8 +178,6 @@ export class EditOneProductComponent implements OnInit
 
   async fetchProduct(id: number)
   {
-    try
-    {
       // Get the products itself
       const response = await this.httpClient.get(`${api}/product/${id}`);
       if (!HttpTools.IsValid(response.status))
@@ -190,11 +188,6 @@ export class EditOneProductComponent implements OnInit
 
       await this.fetchAvailableDiscounts();
       this.initDummyStruct();
-    } catch (e: any)
-    {
-      console.log('error', e);
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   // fetch the discount available for the product
@@ -206,8 +199,6 @@ export class EditOneProductComponent implements OnInit
       return;
     }
 
-    try
-    {
       // fetch the discount available for the product
       const response = await this.http.get(`${api}/discount/available/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
@@ -216,26 +207,16 @@ export class EditOneProductComponent implements OnInit
       this.initialAdditionalInformation.availableDiscounts = response.body
         .map((d: IdNameDto) => ({id: d.id, label: d.name}));
       this.additionalInformation.availableDiscounts = Operation.deepCopy(this.initialAdditionalInformation.availableDiscounts);
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   // fetch all the discounts
   async fetchAllDiscounts()
   {
-    try
-    {
       const response = await this.http.get(`${api}/discount`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.allDiscounts = response.body;
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   // Initialize dummy struct with the product data
@@ -440,9 +421,6 @@ export class EditOneProductComponent implements OnInit
 
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
       await this.fetchProduct(this.product.id);
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
     } finally
     {
       this.loading = false;
@@ -485,9 +463,8 @@ export class EditOneProductComponent implements OnInit
 
     const id = discount.id;
     let numberOfProductInUse;
-    try
-    {
-      // Get the number of product that use this discount
+
+    // Get the number of product that use this discount
       const response = await this.http.get(`${api}/discount/productsInUse/number/${id}`, discount);
       if (!HttpTools.IsValid(response.status))
       {
@@ -496,11 +473,6 @@ export class EditOneProductComponent implements OnInit
       }
 
       numberOfProductInUse = response.body;
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-      return false
-    }
 
     // Set to false because if only use by one product, it will not be split
     let split: boolean = false;
@@ -537,8 +509,6 @@ export class EditOneProductComponent implements OnInit
     if (availableDiscounts == undefined)
       return true;
 
-    try
-    {
       const ids = availableDiscounts.map(d => d.id);
       const response = await this.http.patch(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
       if (!HttpTools.IsValid(response.status))
@@ -547,12 +517,6 @@ export class EditOneProductComponent implements OnInit
         return false;
       }
 
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-      return false;
-    }
-
     return true;
   }
 
@@ -560,19 +524,12 @@ export class EditOneProductComponent implements OnInit
   {
     for (const newShopSpecific of newShopSpecifics)
     {
-      try
-      {
         const response = await this.http.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
         if (!HttpTools.IsValid(response.status))
         {
           MessageServiceTools.httpFail(this.messageService, response);
           return false;
         }
-      } catch (e: any | AxiosError)
-      {
-        MessageServiceTools.axiosFail(this.messageService, e);
-        return false;
-      }
     }
 
     return true;
@@ -720,17 +677,11 @@ export class EditOneProductComponent implements OnInit
       return
     }
 
-    try
-    {
       const response = await this.http.get(`${api}/discount/${this.dummyStruct.selectedDiscount.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 
       this.simpleProduct.discount = response.body;
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   // delete the product
@@ -740,8 +691,6 @@ export class EditOneProductComponent implements OnInit
       "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
       return;
 
-    try
-    {
       const response = await this.http.delete(`${api}/product/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -754,11 +703,6 @@ export class EditOneProductComponent implements OnInit
         await this.fetchProduct(this.otherProducts[0].id);
       else
         await this.router.navigate(['/product/filter']);
-
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   newShopSpecificRequest(): void
@@ -836,8 +780,6 @@ export class EditOneProductComponent implements OnInit
 
   async forcePrestaPush()
   {
-    try
-    {
       const response = await this.http.post(`${api}/product/force_presta_update/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -848,10 +790,5 @@ export class EditOneProductComponent implements OnInit
           'summary': 'Opération en attente',
           'detail': 'Le produit va être mis à jour sur Prestashop sous peu'
         });
-
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 }

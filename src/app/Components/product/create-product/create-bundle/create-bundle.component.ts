@@ -6,7 +6,7 @@ import {IListItem} from "../../../selectors/editable-list/editable-list.componen
 import {ProductReferencesService} from "../../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
 import {CreateBundleDto} from "../../../../../Dtos/ProductDtos/BundleDto/CreateBundleDto";
-import {AxiosError} from "axios";
+
 import {api} from "../../../../GlobalUsings";
 import {HttpTools} from "../../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../../utils/MessageServiceTools";
@@ -80,8 +80,6 @@ export class CreateBundleComponent implements OnInit
 
   private async _create(bundle: CreateBundleDto): Promise<void>
   {
-    try
-    {
       const response = await this.http.post(`${api}/bundle`, bundle);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -90,10 +88,6 @@ export class CreateBundleComponent implements OnInit
       this.product = {items: []};
 
       this.productReferencesService.push(response.body.id, response.body.name);
-    } catch (e: any | AxiosError)
-    {
-      return MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   checkValidity(): boolean

@@ -34,9 +34,6 @@ export class GetDiscountsService
           this._discounts = response.body;
 
         this._isLoaded = false;
-      })
-      .catch(error => {
-        MessageServiceTools.axiosFail(this.messageService, error);
       });
   }
 

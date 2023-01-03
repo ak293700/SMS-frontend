@@ -10,7 +10,7 @@ import {PatchDistributorDiscountDto} from "../../Dtos/DiscountDtos/DistributorDi
 import {PatchDerogationDto} from "../../Dtos/DiscountDtos/DerogationDtos/PatchDerogationDto";
 import {PatchDiscountDto} from "../../Dtos/DiscountDtos/PatchDiscountDto";
 import {Operation} from "../../utils/Operation";
-import {AxiosError} from "axios";
+
 
 @Injectable({
   providedIn: 'root'
@@ -25,37 +25,28 @@ export class CommonRequestService
 
   async fetchManufacturers(): Promise<IdNameDto[]>
   {
-    try
+    // Get the products itself
+    const response = await this.httpClient.get(`${api}/Manufacturer/`);
+    if (!HttpTools.IsValid(response.status))
     {
-      // Get the products itself
-      const response = await this.httpClient.get(`${api}/Manufacturer/`);
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
-
-      return response.body;
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
+      MessageServiceTools.httpFail(this.messageService, response);
+      return [];
     }
 
-    return [];
+    return response.body;
   }
 
   async fetchDistributors(): Promise<IdNameDto[]>
   {
-    try
+    // Get the products itself
+    const response = await this.httpClient.get(`${api}/Distributor/`);
+    if (!HttpTools.IsValid(response.status))
     {
-      // Get the products itself
-      const response = await this.httpClient.get(`${api}/Distributor/`);
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
-
-      return response.body;
-    } catch (e: any)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
+      MessageServiceTools.httpFail(this.messageService, response);
       return [];
     }
+
+      return response.body;
   }
 
   // true - success/save
@@ -83,8 +74,6 @@ export class CommonRequestService
     const distributorIds = derogation.distributorIds;
     delete derogation.distributorIds;
 
-    try
-    {
       // Detect if patch is empty - more than 1 because of the id
       if (Operation.countProperties(patchDiscount) > 1)
       {
@@ -106,12 +95,6 @@ export class CommonRequestService
           return false;
         }
       }
-
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-      return false;
-    }
 
     return true;
   }

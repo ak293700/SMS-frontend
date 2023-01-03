@@ -3,7 +3,7 @@ import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {FieldType} from "../../../../Enums/FieldType";
 import {MessageService} from "primeng/api";
-import {AxiosError} from "axios";
+
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
@@ -21,7 +21,6 @@ import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.se
 })
 export class DistributorFilterComponent implements OnInit
 {
-
   loading = true;
 
   // there because we load everything once
@@ -83,17 +82,11 @@ export class DistributorFilterComponent implements OnInit
   // no filter for this screen but keep the same structure
   async applyFilters(): Promise<void>
   {
-    try
-    {
       const response = await this.http.get(`${api}/distributor`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response.body);
 
       this.fullData = response.body;
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
   }
 
   formatData(datas: IdNameDto[]): IEnumerableToITableData[]

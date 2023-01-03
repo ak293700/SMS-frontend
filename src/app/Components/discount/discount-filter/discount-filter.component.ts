@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DataTableVector} from "../../filter/filter-table/filter-table.component";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AxiosError} from "axios";
+
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
@@ -50,15 +50,9 @@ export class DiscountFilterComponent implements OnInit
 
   async ngOnInit(): Promise<void>
   {
-    try
-    {
-      this.fetchHeaders();
-      await this.fetchFilter();
-      await this.applyFilters();
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
+    this.fetchHeaders();
+    await this.fetchFilter();
+    await this.applyFilters();
   }
 
   fetchHeaders(): void
@@ -111,8 +105,6 @@ export class DiscountFilterComponent implements OnInit
 
   async fetchFilter()
   {
-    try
-    {
       const response = await this.http.get(`${api}/SelectDiscount/filter`);
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
@@ -127,10 +119,6 @@ export class DiscountFilterComponent implements OnInit
       this.filters = tmp;
 
       this.setDefaultFilterValue();
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
   }
 
   setDefaultFilterValue()
@@ -192,9 +180,6 @@ export class DiscountFilterComponent implements OnInit
       // Update the selected data
       this.selectedDiscounts.data = this.discounts.pageData
         .filter((curr: any) => this.selectedDiscounts.ids.includes(curr.id));
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
     } finally
     {
       this.loading = false;

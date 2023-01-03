@@ -3,7 +3,7 @@ import {DiscountType} from "../../../../Enums/DiscountType";
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {Operation} from "../../../../utils/Operation";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {AxiosError} from "axios";
+
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
@@ -98,8 +98,6 @@ export class CreateDiscountComponent implements OnInit
     if (this.discountType === DiscountType.Derogation)
       endpoint = "derogation";
 
-    try
-    {
       const response = await this.http.post(`${api}/${endpoint}`, discount);
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
@@ -110,10 +108,6 @@ export class CreateDiscountComponent implements OnInit
         discountType: {id: 0, name: ""},
         distributors: []
       }
-    } catch (e: any | AxiosError)
-    {
-      return MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   checkValidity(): boolean

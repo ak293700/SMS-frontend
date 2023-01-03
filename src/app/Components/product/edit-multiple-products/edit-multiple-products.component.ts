@@ -9,7 +9,7 @@ import {GetDiscountsService} from "../../../Services/get-discounts.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
 import {ChangeType} from "../../../../Enums/ChangeType";
 import {ProductChangesResponseDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesResponseDto";
-import {AxiosError} from "axios";
+
 import {api} from "../../../GlobalUsings";
 import {ProductChangesRequestDto} from "../../../../Dtos/ProductDtos/ChangesDtos/ProductChangesRequestDto";
 import {HttpTools} from "../../../../utils/HttpTools";
@@ -229,28 +229,22 @@ export class EditMultipleProductsComponent implements OnInit
     if (changeTypes.length == 0)
       return;
 
-    try
+    const data: ProductChangesRequestDto = {ids: this.otherProducts.map(e => e.id), changeTypes};
+    const response = await this.http.post(`${api}/product/changes`, data);
+    if (!HttpTools.IsValid(response.status))
+      return MessageServiceTools.httpFail(this.messageService, response);
+
+    const res: ProductChangesResponseDto = response.body;
+
+    // if we modify the product shop specific, but not the product properties themselves
+    // we should filter the shopCounts whether the shop we want
+    if (changeTypes.length == 1 && changeTypes[0] == ChangeType.ShopSpecific)
     {
-      const data: ProductChangesRequestDto = {ids: this.otherProducts.map(e => e.id), changeTypes};
-      const response = await this.http.post(`${api}/product/changes`, data);
-      if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
-
-      const res: ProductChangesResponseDto = response.body;
-
-      // if we modify the product shop specific, but not the product properties themselves
-      // we should filter the shopCounts whether the shop we want
-      if (changeTypes.length == 1 && changeTypes[0] == ChangeType.ShopSpecific)
-      {
-        const chosenWebsite = this.getChosenWebsite();
-        res.shopCounts = res.shopCounts!.filter(e => chosenWebsite.includes(e.shop));
-      }
-
-      return res;
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.httpFail(this.messageService, e);
+      const chosenWebsite = this.getChosenWebsite();
+      res.shopCounts = res.shopCounts!.filter(e => chosenWebsite.includes(e.shop));
     }
+
+    return res;
   }
 
   async save()
@@ -302,10 +296,7 @@ export class EditMultipleProductsComponent implements OnInit
   private async _save(fields: object): Promise<void>
   {
     const request: ProductMultipleChangesDto = this.buildRequest(fields);
-    console.log('request', request);
 
-    try
-    {
       const response = await this.http.patch(`${api}/product/multiple`, request);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -314,10 +305,6 @@ export class EditMultipleProductsComponent implements OnInit
         severity: 'success', summary: 'Sauvegarde effectuée',
         detail: `Les changements ont bien été effectués`
       });
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   private buildRequest(fields: object): ProductMultipleChangesDto

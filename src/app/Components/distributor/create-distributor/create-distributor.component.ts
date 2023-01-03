@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {MessageService} from "primeng/api";
-import {AxiosError} from "axios";
+
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
@@ -46,8 +46,6 @@ export class CreateDistributorComponent
 
   private async _create(request: string): Promise<void>
   {
-    try
-    {
       // TODO: try without {headers: {'Content-Type': 'application/json'}}
       const response = await this.http.post(`${api}/Distributor`, request);
       console.log(response);
@@ -58,11 +56,6 @@ export class CreateDistributorComponent
       this.distributor = {
         name: ""
       }
-    } catch (e: any | AxiosError)
-    {
-      console.log(e);
-      return MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
 }

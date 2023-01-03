@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
-import {AxiosError} from "axios";
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {api} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
@@ -65,15 +64,9 @@ export class ProductFilterComponent implements OnInit
 
   async ngOnInit(): Promise<void>
   {
-    try
-    {
-      this.fetchHeaders();
-      await this.fetchFilter();
-      await this.applyFilters();
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
+    this.fetchHeaders();
+    await this.fetchFilter();
+    await this.applyFilters();
   }
 
   fetchHeaders(): void
@@ -145,8 +138,6 @@ export class ProductFilterComponent implements OnInit
 
   async fetchFilter()
   {
-    try
-    {
       const response = await this.http.get(`${api}/SelectProduct/filter`);
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
@@ -161,10 +152,6 @@ export class ProductFilterComponent implements OnInit
       this.filters = tmp;
 
       this.setDefaultFilterValue();
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
   }
 
   setDefaultFilterValue()
@@ -190,8 +177,6 @@ export class ProductFilterComponent implements OnInit
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-    try
-    {
       const response = await this.http.post(`${api}/SelectProduct/filter/execute`, filters, 'json');
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
@@ -199,18 +184,12 @@ export class ProductFilterComponent implements OnInit
       this.products.filteredIds = response.body;
 
       await this.loadLazy({first: 0, rows: this.rowsNumber});
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   async loadLazy(event: LazyLoadEvent)
   {
     this.loading = true;
 
-    try
-    {
       const begin: number = event.first ?? 0;
       const end: number = begin + (event.rows ?? 0);
 
@@ -227,10 +206,6 @@ export class ProductFilterComponent implements OnInit
       // Update the selected data
       this.selectedProducts.data = this.products.pageData
         .filter((product: IEnumerableToITableData) => this.selectedProducts.ids.includes(product.id));
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
 
     this.loading = false;
   }

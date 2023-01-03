@@ -7,7 +7,7 @@ import {
   LiteDistributorDiscountDto
 } from "../../../../Dtos/DiscountDtos/DistributorDiscountDtos/LiteDistributorDiscountDto";
 import {LiteDerogationDto} from "../../../../Dtos/DiscountDtos/DerogationDtos/LiteDerogationDto";
-import {AxiosError} from "axios";
+
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {api} from "../../../GlobalUsings";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
@@ -98,8 +98,6 @@ export class EditOneDiscountComponent implements OnInit
 
   async fetchDiscount(id: number)
   {
-    try
-    {
       const getTypeResponse = await this.http.get(`${api}/discount/type/${id}`);
       if (!HttpTools.IsValid(getTypeResponse.status))
         MessageServiceTools.httpFail(this.messageService, getTypeResponse);
@@ -117,10 +115,6 @@ export class EditOneDiscountComponent implements OnInit
       this.discount = Operation.deepCopy(this.initialDiscount);
 
       this.initDummyStruct();
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
   }
 
   reset()
@@ -174,8 +168,6 @@ export class EditOneDiscountComponent implements OnInit
 
   async fetchOtherDiscounts(ids: number[])
   {
-    try
-    {
       const response = await this.http.post(`${api}/discount/providers`, ids);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -184,10 +176,6 @@ export class EditOneDiscountComponent implements OnInit
       this.otherDiscounts.forEach(d => d.name = `${d.name} (${d.id})`);
 
       // reorder otherProducts by as 'ids'
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.networkError(this.messageService, e.message);
-    }
   }
 
   reformatDiscount()
@@ -258,8 +246,6 @@ export class EditOneDiscountComponent implements OnInit
       "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
       return;
 
-    try
-    {
       const response: HttpResponse<any> = await this.http.delete(`${api}/discount/${this.discount.id}`);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
@@ -273,10 +259,6 @@ export class EditOneDiscountComponent implements OnInit
       else
         await this.router.navigate(['/discount/filter']);
 
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
   }
 
   get InputNumberMode(): typeof InputNumberMode

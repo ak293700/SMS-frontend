@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IdNameDto} from "../../Dtos/IdNameDto";
-import {AxiosError} from "axios";
+
 import {api} from "../GlobalUsings";
 import {HttpTools} from "../../utils/HttpTools";
 import {MessageServiceTools} from "../../utils/MessageServiceTools";
@@ -39,9 +39,6 @@ export class ProductReferencesService
           this._productReferences = response.body;
 
         this._isLoaded = false;
-      })
-      .catch(error => {
-        MessageServiceTools.axiosFail(this.messageService, error);
       });
   }
 
@@ -78,17 +75,11 @@ export class ProductReferencesService
     if (this._productTypes[id] !== undefined)
       return this._productTypes[id];
 
-    try
-    {
       const response = await this.http.get(`${api}/product/type/${id}`);
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response.body);
       else
         this._productTypes[id] = response.body;
-    } catch (e: any | AxiosError)
-    {
-      MessageServiceTools.axiosFail(this.messageService, e);
-    }
 
     return this._productTypes[id];
   }
