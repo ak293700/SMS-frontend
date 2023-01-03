@@ -5,6 +5,7 @@ import jwtDecode from "jwt-decode";
 import {Operation} from "../../utils/Operation";
 import {api} from "../GlobalUsings";
 import {HttpClientWrapperService} from "../Services/http-client-wrapper.service";
+import {HttpTools} from "../../utils/HttpTools";
 
 @Injectable({
   providedIn: 'root'
@@ -41,10 +42,8 @@ export class AuthGuard implements CanActivate
       if (!this.cookieService.check(AuthGuard.identifierCookie))
         return false; // Can't be logged in
 
-      // Else, we refresh the token
-      await this.initFromCookie();
-
-      // so => logged in => return true
+      // Else, we try to refresh the token
+      return await this.initFromCookie();
     }
 
     // Logged in => return true
@@ -59,10 +58,14 @@ export class AuthGuard implements CanActivate
       // A Jwt token
       let response =
         await this.http.post(`${api}/Auth/login`, {email: email, password: password});
+      if (!HttpTools.IsValid(response.status))
+        return false;
 
       this.session_token = response.body as string;
     } catch (e)
     {
+      console.log('error');
+      console.log(e);
       return false;
     }
 

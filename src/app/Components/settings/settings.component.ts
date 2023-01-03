@@ -13,6 +13,8 @@ import {CurrentUserService} from "../../Services/current-user.service";
 import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
 import {IListItem} from "../selectors/editable-list/editable-list.component";
 import {CheckingTools} from "../../../utils/CheckingTools";
+import {Operation} from "../../../utils/Operation";
+import {PatchUserDto} from "../../../Dtos/UserDtos/PatchUserDto";
 
 @Component({
   selector: 'app-settings',
@@ -114,7 +116,7 @@ export class SettingsComponent implements OnInit
     this.userStruct.dummy.splice(index, 1);
   }
 
-  buildChange(): { toCreate: RegisterUserDto[], toDelete: number[], toPatch: UserDto[] }
+  buildChange(): { toCreate: RegisterUserDto[], toDelete: number[], toPatch: PatchUserDto[] }
   {
     // Filter the original with only the user still present
     const toDelete = this.userStruct.users
@@ -126,13 +128,39 @@ export class SettingsComponent implements OnInit
       .filter((dummyUser: any) =>
         !this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id)
       ).map((dummyUser: any) => {
-        return {email: dummyUser.email, roles: dummyUser.roles.map((role: IdNameDto) => role.id)}
+        return {
+          email: dummyUser.email, password: dummyUser.password,
+          roles: dummyUser.roles.map((role: IdNameDto) => role.id)
+        };
       });
+
+    // remove the to create and to delete
+    const toPatch = this.userStruct.dummy.filter((dummyUser: any) => {
+      if (toDelete.findIndex((id: number) => id === dummyUser.id) !== -1)
+        return false;
+
+      const user = this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id);
+      if (!user)
+        return false;
+      // we check there is a change
+      if (user.email === dummyUser.email && Operation.detectChanges(user.roles, dummyUser.roles).count === 0
+        && dummyUser.password === '')
+        return false;
+
+      return true;
+    }).map((dummyUser: any) => { // We convert to patch
+      return {
+        id: dummyUser.id,
+        email: dummyUser.email,
+        roles: dummyUser.roles.map((role: IdNameDto) => role.id),
+        password: dummyUser.password
+      }
+    });
 
     return {
       toCreate,
       toDelete,
-      toPatch: []
+      toPatch
     }
   }
 
