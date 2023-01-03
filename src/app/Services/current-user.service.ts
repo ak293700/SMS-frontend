@@ -13,9 +13,13 @@ export class CurrentUserService
 
   get roles(): Role[]
   {
-    return this.authGuard.getJwtContent()
-      .role
-      .map((role: number) => Role[role]);
+    let roles: string[] | string | undefined = this.authGuard.getJwtContent().role;
+    if (roles === undefined)
+      return [];
+    if (typeof roles === 'string')
+      roles = [roles];
+
+    return roles.map((role: string) => Role.fromString(role));
   }
 
   get user(): UserDto

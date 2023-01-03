@@ -50,12 +50,7 @@ export class SettingsComponent implements OnInit
               private http: HttpClientWrapperService,
               private messageService: MessageService)
   {
-    this.possibleRoles = [];
-    const roles = Object.keys(Role);
-    const middle = Math.ceil(roles.length / 2);
-    for (let i = 0; i < middle; i++)
-      this.possibleRoles.push({id: Number(roles[i]), name: roles[i + middle]});
-
+    this.possibleRoles = Role.getValues();
     this.userStruct.currentUser = this.currentUserService.user;
 
     console.log(this.userStruct.currentUser);
