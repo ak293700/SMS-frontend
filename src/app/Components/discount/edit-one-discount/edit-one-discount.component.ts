@@ -20,6 +20,7 @@ import {InputNumberMode} from "../../input-components/input-number/InputNumberMo
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
 import {HttpResponse} from "@angular/common/http";
+import {CheckingTools} from "../../../../utils/CheckingTools";
 
 @Component({
   selector: 'app-edit-one-discount',
@@ -206,7 +207,7 @@ export class EditOneDiscountComponent implements OnInit
   detectChanges(): { diffObj: any, count: number }
   {
     this.reformatDiscount();
-    return Operation.detectChanges(this.discount, this.initialDiscount, ['id']);
+    return CheckingTools.detectChanges(this.discount, this.initialDiscount, ['id']);
   }
 
   async fetchManufacturers()

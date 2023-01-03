@@ -29,6 +29,7 @@ import {ShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificDto
 import {CreateShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/CreateShopSpecificDto";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
+import {CheckingTools} from "../../../../utils/CheckingTools";
 
 @Component({
   selector: 'app-edit-one-product',
@@ -618,11 +619,11 @@ export class EditOneProductComponent implements OnInit
       changes.push({diffObj: {shopSpecifics: newShopSpecific}, count: newShopSpecific.length});
 
     // push every change into the changes array
-    changes.push(Operation.detectChanges(product, initialProduct, ['id']));
+    changes.push(CheckingTools.detectChanges(product, initialProduct, ['id']));
 
     if (this.product.productType == ProductType.Simple)
     {
-      const tmp = Operation.detectChanges(this.additionalInformation.availableDiscounts,
+      const tmp = CheckingTools.detectChanges(this.additionalInformation.availableDiscounts,
         this.initialAdditionalInformation.availableDiscounts, ['id']);
 
       tmp.diffObj = {availableDiscounts: tmp.diffObj};

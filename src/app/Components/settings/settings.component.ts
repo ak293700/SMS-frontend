@@ -13,7 +13,6 @@ import {CurrentUserService} from "../../Services/current-user.service";
 import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
 import {IListItem} from "../selectors/editable-list/editable-list.component";
 import {CheckingTools} from "../../../utils/CheckingTools";
-import {Operation} from "../../../utils/Operation";
 import {PatchUserDto} from "../../../Dtos/UserDtos/PatchUserDto";
 
 @Component({
@@ -52,9 +51,6 @@ export class SettingsComponent implements OnInit
   {
     this.possibleRoles = Role.getValues();
     this.userStruct.currentUser = this.currentUserService.user;
-
-    console.log(this.userStruct.currentUser);
-    CheckingTools.f();
   }
 
   async ngOnInit(): Promise<void>
@@ -94,9 +90,6 @@ export class SettingsComponent implements OnInit
           password: '',
         };
       });
-
-    console.log('dummy');
-    console.log(this.userStruct.dummy);
   }
 
   addUser()
@@ -137,8 +130,10 @@ export class SettingsComponent implements OnInit
       const user = this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id);
       if (!user)
         return false;
+
       // we check there is a change
-      if (user.email === dummyUser.email && Operation.detectChanges(user.roles, dummyUser.roles).count === 0
+      if (user.email === dummyUser.email && CheckingTools.detectChanges(user.roles,
+          dummyUser.roles.map((role: IListItem) => role.label)).count === 0
         && dummyUser.password === '')
         return false;
 
