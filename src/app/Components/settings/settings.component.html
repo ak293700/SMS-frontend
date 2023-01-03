@@ -5,17 +5,36 @@
             label="Se déconnecter" styleClass="btn-hover-main">
   </p-button>
 
-  <div *ngIf="isAdmin" class="flex-center flex-column flex-gap-20">
+  <div *ngIf="isAdmin" class="flex-center flex-column flex-gap-20 user-manager-container">
+    <div class="grid-flow"
+         [style.grid-template-rows]="'repeat('+ dummyUsers.length.toString() +', 1fr)'">
 
-    <div *ngFor="let user of dummyUsers" class="flex-center flex-gap-20">
-      <input pInputText type="text" [(ngModel)]="user.email"/>
-      <app-editable-list [suggestions]="possibleRoles" [(items)]="user.roles"
-                         [disabled]="user.id === currentUser.id"></app-editable-list>
+      <div *ngFor="let user of dummyUsers" class="field-item">
+        <label class="text">Adresse email</label>
+        <input pInputText id="field-email" type="text" [(ngModel)]="user.email"/>
+      </div>
+
+      <app-editable-list *ngFor="let user of dummyUsers" [suggestions]="possibleRoles"
+                         [(items)]="user.roles" [disabled]="user.id === currentUser.id">
+      </app-editable-list>
+
+      <div *ngFor="let user of dummyUsers; let index=index">
+        <button pButton pRipple (click)="deleteUser(index)" type="button"
+                icon="pi pi-times" class="p-button-rounded p-button-danger">
+        </button>
+      </div>
     </div>
 
-    <p-button icon="pi pi-plus" iconPos="right"
+    <p-button icon="pi pi-plus" iconPos="right" (click)="addUser()"
               label="Ajouter un utilisateur" styleClass="btn-hover-main">
     </p-button>
+
+    <div class="flex-center">
+      <button pButton label="Annuler" class="p-button-danger margin-20"
+              (click)="resetUsers()"></button>
+      <button pButton label="Enregistrer" class="p-button-success margin-20"
+              (click)="saveUsers()"></button>
+    </div>
   </div>
 </main>
 

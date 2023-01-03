@@ -10,6 +10,7 @@ import {MessageService} from "primeng/api";
 import {MessageServiceTools} from "../../../utils/MessageServiceTools";
 import {IdNameDto} from "../../../Dtos/IdNameDto";
 import {CurrentUserService} from "../../Services/current-user.service";
+import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
 
 @Component({
   selector: 'app-settings',
@@ -86,5 +87,50 @@ export class SettingsComponent implements OnInit
       });
 
     console.log(this.dummyUsers);
+  }
+
+  addUser()
+  {
+    // -1 <=> new user
+    this.dummyUsers.push({id: -1, label: '', roles: []})
+  }
+
+  deleteUser(index: number)
+  {
+    console.log(index);
+    this.dummyUsers.splice(index, 1);
+  }
+
+  buildChange(): { toCreate: RegisterUserDto[], toDelete: number[], toPatch: UserDto[] }
+  {
+    // Filter the original with only the user still present
+    const toDelete = this.users
+      .filter((user: UserDto) =>
+        !this.dummyUsers.find((dummyUser: any) => user.id === dummyUser.id)
+      ).map((user: UserDto) => user.id);
+
+    const toCreate = this.dummyUsers
+      .filter((dummyUser: any) =>
+        !this.users.find((user: UserDto) => user.id === dummyUser.id)
+      ).map((dummyUser: any) => {
+        return {email: dummyUser.email, roles: dummyUser.roles.map((role: IdNameDto) => role.id)}
+      });
+
+    return {
+      toCreate,
+      toDelete,
+      toPatch: []
+    }
+  }
+
+  resetUsers()
+  {
+    this.initDummyStruct();
+  }
+
+  saveUsers()
+  {
+    const changes = this.buildChange();
+    console.log(changes);
   }
 }
