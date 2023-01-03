@@ -14,6 +14,7 @@ import {RegisterUserDto} from "../../../Dtos/UserDtos/RegisterUserDto";
 import {IListItem} from "../selectors/editable-list/editable-list.component";
 import {CheckingTools} from "../../../utils/CheckingTools";
 import {PatchUserDto} from "../../../Dtos/UserDtos/PatchUserDto";
+import {Operation} from "../../../utils/Operation";
 
 @Component({
   selector: 'app-settings',
@@ -56,21 +57,28 @@ export class SettingsComponent implements OnInit
   async ngOnInit(): Promise<void>
   {
     // We fetch the users
-    if (this.isAdmin())
-    {
-      const response = await this.http.get(`${api}/user`);
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
-
-      this.userStruct.users = response.body;
-      this.initDummyStruct();
-    }
+    await this.init();
   }
 
   async logOut()
   {
     this.authGuard.reset();
     await this.router.navigate(['/login']);
+  }
+
+  async init()
+  {
+    if (this.isAdmin())
+    {
+      const response = await this.http.get(`${api}/user`);
+      if (!HttpTools.IsValid(response.status))
+        MessageServiceTools.httpFail(this.messageService, response);
+      else
+      {
+        this.userStruct.users = response.body;
+        this.initDummyStruct();
+      }
+    }
   }
 
   isAdmin()
@@ -86,7 +94,7 @@ export class SettingsComponent implements OnInit
           id: user.id,
           email: user.email,
           roles: user.roles
-            .map((role: Role) => {return {id: Number(Role[role]), label: role.toString()};}),
+            .map((role: Role) => { return {id: role, label: Role.toString(role)}; }),
           password: '',
         };
       });
@@ -100,7 +108,7 @@ export class SettingsComponent implements OnInit
 
   deleteUser(index: number)
   {
-    console.log(index);
+    // console.log(index);
     this.userStruct.dummy.splice(index, 1);
   }
 
@@ -122,30 +130,46 @@ export class SettingsComponent implements OnInit
         };
       });
 
-    // remove the to create and to delete
-    const toPatch = this.userStruct.dummy.filter((dummyUser: any) => {
-      if (toDelete.findIndex((id: number) => id === dummyUser.id) !== -1)
-        return false;
+    toCreate.forEach((user: RegisterUserDto) => {
+      if (user.password !== '' && user.email !== '')
+        return;
 
-      const user = this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id);
-      if (!user)
-        return false;
+      this.messageService.add({
+        severity: 'error',
+        summary: "Impossible d'enregistrer un nouvelle utilisateur",
+        detail: "Le mot de passe ou l'email est vide"
+      });
 
-      // we check there is a change
-      if (user.email === dummyUser.email && CheckingTools.detectChanges(user.roles,
-          dummyUser.roles.map((role: IListItem) => role.label)).count === 0
-        && dummyUser.password === '')
-        return false;
-
-      return true;
-    }).map((dummyUser: any) => { // We convert to patch
-      return {
-        id: dummyUser.id,
-        email: dummyUser.email,
-        roles: dummyUser.roles.map((role: IdNameDto) => role.id),
-        password: dummyUser.password
-      }
+      throw new Error("Impossible d'enregistrer un nouvelle utilisateur");
     });
+
+    // remove the to create and to delete
+    const toPatch = this.userStruct.dummy
+      .map((dummyUser: any) => {
+        if (toDelete.findIndex((id: number) => id === dummyUser.id) !== -1)
+          return false;
+
+        const user = this.userStruct.users.find((user: UserDto) => user.id === dummyUser.id);
+        if (!user)
+          return false;
+
+        // we check there is a change
+        const newDummy = Operation.deepCopy(dummyUser);
+        newDummy.roles = newDummy.roles.map((role: IListItem) => role.id);
+
+        const changes = CheckingTools.detectChanges(newDummy, user);
+        if ('password' in changes.diffObj && (changes.diffObj.password == undefined || changes.diffObj.password === ''))
+        {
+          delete changes.diffObj.password;
+          changes.count--;
+        }
+
+        if (changes.count === 0)
+          return false;
+
+        changes.diffObj.id = dummyUser.id;
+        return changes.diffObj;
+      }).filter((x: any) => x !== false);
 
     return {
       toCreate,
@@ -159,10 +183,15 @@ export class SettingsComponent implements OnInit
     this.initDummyStruct();
   }
 
-  saveUsers()
+  async saveUsers()
   {
     const changes = this.buildChange();
-    console.log(changes);
+    // console.log(changes);
+    await this.registerNewUser(changes.toCreate);
+    await this.deleteUsersDb(changes.toDelete);
+    await this.patchUsers(changes.toPatch);
+
+    await this.init();
   }
 
   editPassword(index: number)
@@ -190,5 +219,42 @@ export class SettingsComponent implements OnInit
   cancelPassword()
   {
     this.userStruct.dummy[this.userStruct.selectedUserIndex].password = '';
+    this.userStruct.passwordStruct.visible = false;
+  }
+
+  async registerNewUser(newUsers: RegisterUserDto[])
+  {
+    for (const newUser of newUsers)
+    {
+      const response = await this.http.post(`${api}/Auth/register`, newUser);
+      if (!HttpTools.IsValid(response.status))
+        MessageServiceTools.httpFail(this.messageService, response);
+      else
+        this.messageService.add({severity: 'success', summary: 'Utilisateur crée', detail: newUser.email});
+    }
+  }
+
+  // Delete the users in the db
+  async deleteUsersDb(usersId: number[])
+  {
+    if (usersId.length > 0)
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Oups',
+        detail: "Il n'est pas encore possible de supprimer des utilisateurs."
+      });
+  }
+
+  async patchUsers(users: PatchUserDto[])
+  {
+    for (const user of users)
+    {
+      console.log(user);
+      const response = await this.http.patch(`${api}/user`, user);
+      if (!HttpTools.IsValid(response.status))
+        MessageServiceTools.httpFail(this.messageService, response);
+      else
+        this.messageService.add({severity: 'success', summary: 'Utilisateur mis à jour', detail: user.email});
+    }
   }
 }
