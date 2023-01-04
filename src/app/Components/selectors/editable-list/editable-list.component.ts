@@ -22,7 +22,10 @@ interface ICompleteListItem extends IListItem
 @Component({
   selector: 'app-editable-list',
   templateUrl: './editable-list.component.html',
-  styleUrls: ['./editable-list.component.css', '../../../../styles/button.css']
+  styleUrls: [
+    './editable-list.component.css',
+    '../../../../styles/button.css'
+  ]
 })
 export class EditableListComponent implements OnInit, OnChanges
 {
@@ -46,7 +49,7 @@ export class EditableListComponent implements OnInit, OnChanges
   @Output() selectedItemChange: EventEmitter<IListItem> = new EventEmitter<IListItem>();
   _selectedItem: ICompleteListItem | undefined = undefined;
 
-  // the property to right in the right corner of the item
+  // the name of the property to display in the bubble in the upper right corner
   @Input() padProperty: string | undefined = undefined;
 
   @Input() disabled = false;
@@ -67,7 +70,8 @@ export class EditableListComponent implements OnInit, OnChanges
   {
     if (this.additionalFields.length > 0)
       this.menuItems.push({label: 'Éditer', icon: 'pi pi-pencil', command: () => this.editItem()});
-    this.menuItems.push({label: 'Supprimer', icon: 'pi pi-trash', command: () => this.deleteItem()});
+
+    this.menuItems.push({label: 'Supprimer', icon: 'pi pi-trash', command: this.deleteItem.bind(this)});
 
     // if the additional fields are not initialized, we initialize them
 
@@ -138,10 +142,10 @@ export class EditableListComponent implements OnInit, OnChanges
 
   deleteItem()
   {
-    const index = this._items.findIndex((item: ICompleteListItem) => item.uniqueId == this.currentItem.uniqueId);
+    const index = this._items.findIndex((item: ICompleteListItem) => item.uniqueId === this.currentItem.uniqueId);
     this._items.splice(index, 1);
 
-    if (this._selectedItem != undefined && this._selectedItem.uniqueId == this.currentItem.uniqueId)
+    if (this._selectedItem != undefined && this._selectedItem.uniqueId === this.currentItem.uniqueId)
     {
       this._selectedItem = undefined;
       this.emitSelectedItemsChange();

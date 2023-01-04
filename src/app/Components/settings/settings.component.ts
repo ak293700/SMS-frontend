@@ -249,12 +249,14 @@ export class SettingsComponent implements OnInit
   {
     for (const user of users)
     {
-      console.log(user);
       const response = await this.http.patch(`${api}/user`, user);
       if (!HttpTools.IsValid(response.status))
         MessageServiceTools.httpFail(this.messageService, response);
       else
-        this.messageService.add({severity: 'success', summary: 'Utilisateur mis à jour', detail: user.email});
+      {
+        const email = user.email ?? this.userStruct.dummy.find((dummy: any) => dummy.id === user.id)!.email;
+        this.messageService.add({severity: 'success', summary: 'Utilisateur mis à jour', detail: email});
+      }
     }
   }
 }

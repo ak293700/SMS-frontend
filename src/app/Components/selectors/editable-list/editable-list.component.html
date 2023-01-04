@@ -12,7 +12,7 @@
   </ul>
 </p-dialog>
 
-<p-contextMenu [model]="menuItems" [global]="true" [target]="editableList"></p-contextMenu>
+<p-contextMenu [model]="menuItems" [target]="editableList"></p-contextMenu>
 <div class="editable-list-container" #editableList>
   <ul class="item-container">
     <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item" (click)="onSelect(item)"
