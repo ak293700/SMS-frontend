@@ -13,11 +13,11 @@
 </p-dialog>
 
 <p-contextMenu [model]="menuItems" [target]="editableList"></p-contextMenu>
-<div class="editable-list-container" #editableList>
-  <ul class="item-container">
+<div class="editable-list-container">
+  <ul #editableList class="item-container">
     <li *ngFor="let item of _items" [pTooltip]="item.tooltip" class="item-item" (click)="onSelect(item)"
-        (contextmenu)="onContextMenu($event, item)" [ngClass]="{'selected': item.id === _selectedItem?.id,
-        'selectable': selectable}">
+        [ngClass]="{'selected': item.id === _selectedItem?.id, 'selectable': selectable, disabled: disabled}"
+        (contextmenu)="onContextMenu($event, item)">
       {{item.label}}
       <span *ngIf="padProperty != undefined" class="pad">{{item.additionalFields[padProperty]}}</span>
     </li>
