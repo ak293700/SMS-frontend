@@ -99,7 +99,7 @@ const routes: Routes = [
   discountRoute,
   distributorRoute,
   {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
-  {path: '**', redirectTo: 'login'}
+  {path: '**', redirectTo: 'home'}
 ];
 
 @NgModule({
