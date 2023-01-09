@@ -46,9 +46,7 @@ export class CreateDistributorComponent
 
   private async _create(request: string): Promise<void>
   {
-      // TODO: try without {headers: {'Content-Type': 'application/json'}}
       const response = await this.http.post(`${api}/Distributor`, request);
-      console.log(response);
       if (!HttpTools.IsValid(response.status))
         return MessageServiceTools.httpFail(this.messageService, response);
 

@@ -207,7 +207,6 @@ export class EditMultipleProductsComponent implements OnInit
     return response;
   }
 
-
   // find the number of product that will be affected
   private async _computeChangesNumber(fields: any): Promise<ProductChangesResponseDto | void>
   {
@@ -275,6 +274,7 @@ export class EditMultipleProductsComponent implements OnInit
     await this._save(fields);
     this.loading = false;
   }
+
   private buildWarningMessage(changesCount: ProductChangesResponseDto): string
   {
     // if we do not change an attribute that as an impact on the shop specific without being a shop specific
@@ -303,7 +303,7 @@ export class EditMultipleProductsComponent implements OnInit
 
       this.messageService.add({
         severity: 'success', summary: 'Sauvegarde effectuée',
-        detail: `Les changements ont bien été effectués`
+        detail: "Les changements ont bien été effectués"
       });
   }
 
@@ -352,7 +352,6 @@ export class EditMultipleProductsComponent implements OnInit
 
     return ProductMultipleChangesDto.build(request);
   }
-
 
   preview(index: number)
   {

@@ -16,6 +16,9 @@ export class AuthGuard implements CanActivate
   private session_token?: string; // The jwt token used to identify the user
   private jwt_content?: any; // The content of the jwt token
 
+  private static readonly cookie_path: string = '/';
+  private static readonly domain: string | undefined = undefined;
+
 
   constructor(private cookieService: CookieService,
               private router: Router,
@@ -24,7 +27,7 @@ export class AuthGuard implements CanActivate
 
 
   async canActivate(
-    route: ActivatedRouteSnapshot,
+      route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise<boolean | UrlTree>
   {
     if (!await this.checkAuth())
@@ -57,15 +60,14 @@ export class AuthGuard implements CanActivate
     {
       // A Jwt token
       let response =
-        await this.http.post(`${api}/Auth/login`, {email: email, password: password});
+          await this.http.post(`${api}/Auth/login`, {email: email, password: password});
+
       if (!HttpTools.IsValid(response.status))
         return false;
 
       this.session_token = response.body as string;
     } catch (e)
     {
-      console.log('error');
-      console.log(e);
       return false;
     }
 
@@ -74,13 +76,13 @@ export class AuthGuard implements CanActivate
     // Use to register the identifier in the cookie
     this.cookieService.set
     (
-      AuthGuard.identifierCookie,
-      btoa(`${email}:${password}`),
-      undefined,
-      '/',
-      undefined,
-      true,
-      'Strict'
+        AuthGuard.identifierCookie,
+        btoa(`${email}:${password}`),
+        undefined,
+        AuthGuard.cookie_path,
+        AuthGuard.domain,
+        true,
+        'Strict'
     );
 
     return true;
@@ -100,7 +102,7 @@ export class AuthGuard implements CanActivate
   {
     this.session_token = undefined;
     this.jwt_content = undefined;
-    this.cookieService.delete(AuthGuard.identifierCookie, '/');
+    this.cookieService.delete(AuthGuard.identifierCookie, AuthGuard.cookie_path, AuthGuard.domain);
   }
 
   get sessionToken(): string | undefined
@@ -149,5 +151,4 @@ export class AuthGuard implements CanActivate
   {
     return Operation.deepCopy(this.jwt_content);
   }
-
 }

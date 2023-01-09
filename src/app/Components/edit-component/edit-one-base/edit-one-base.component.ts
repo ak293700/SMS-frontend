@@ -42,7 +42,6 @@ export class EditOneBaseComponent extends EditBaseComponent
   override reset()
   {
     const changes = this.detectChanges();
-    console.log('changes', changes);
 
     if (changes.count == 0)
       return this.messageService.add({

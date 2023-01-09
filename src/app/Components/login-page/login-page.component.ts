@@ -48,5 +48,4 @@ export class LoginPageComponent
   {
     this.showPassword = !this.showPassword;
   }
-
 }

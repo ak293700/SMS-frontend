@@ -16,7 +16,6 @@ import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {Router} from "@angular/router";
 import {GetDiscountsService} from "../../../Services/get-discounts.service";
-import {InputNumberMode} from "../../input-components/input-number/InputNumberMode";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {CommonRequestService} from "../../../Services/common-request.service";
 import {HttpResponse} from "@angular/common/http";
@@ -72,7 +71,6 @@ export class EditOneDiscountComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
 
-    console.log('routedData', routedData);
     if (routedData.selectedIds == undefined)
       routedData.selectedIds = [3890, 1, 2];
 
@@ -119,8 +117,6 @@ export class EditOneDiscountComponent implements OnInit
 
   reset()
   {
-    console.log('discount.value', this.discount.value);
-
     this.discount = Operation.deepCopy(this.initialDiscount);
     this.initDummyStruct();
 
@@ -133,15 +129,13 @@ export class EditOneDiscountComponent implements OnInit
     // If everything works
     if (await this.commonRequest.patchDiscount(changes.diffObj, this.discount.discountType))
     {
-      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
-      await this.fetchDiscount(this.discount.id);
+      this.messageService.add({severity: 'success', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+        await this.fetchDiscount(this.discount.id);
     }
   }
 
   save()
   {
-    console.log('discount.value', this.discount.value);
-    return;
     const changes = this.detectChanges();
     if (changes.count == 0)
     {
@@ -259,10 +253,5 @@ export class EditOneDiscountComponent implements OnInit
       else
         await this.router.navigate(['/discount/filter']);
 
-  }
-
-  get InputNumberMode(): typeof InputNumberMode
-  {
-    return InputNumberMode;
   }
 }

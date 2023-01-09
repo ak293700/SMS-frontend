@@ -53,6 +53,7 @@ import {InputNumberComponent} from './Components/input-components/input-number/i
 import {ServerRequestInterceptor} from "./Interceptors/server-request.interceptor";
 import {PasswordModule} from "primeng/password";
 import {DividerModule} from "primeng/divider";
+import {APP_BASE_HREF} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -111,6 +112,7 @@ import {DividerModule} from "primeng/divider";
   providers: [
     MessageService,
     ConfirmationService,
+    {provide: APP_BASE_HREF, useValue: '/'}, // require else the cookies does not works with RouterModule.({useHash:true})
     {
       provide: RouteReuseStrategy,
       useClass: CustomRouteReuseStrategy

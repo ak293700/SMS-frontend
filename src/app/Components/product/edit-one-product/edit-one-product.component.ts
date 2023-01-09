@@ -153,7 +153,7 @@ export class EditOneProductComponent implements OnInit
   {
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
-      routedData.selectedIds = [7909, 7910, 7911, 7912];
+      routedData.selectedIds = [7212, 7909, 7910, 7911, 7912];
     // routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
@@ -181,7 +181,7 @@ export class EditOneProductComponent implements OnInit
       // Get the products itself
       const response = await this.httpClient.get(`${api}/product/${id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       this.initialProduct = response.body;
       this.product = Operation.deepCopy(this.initialProduct);
@@ -193,19 +193,19 @@ export class EditOneProductComponent implements OnInit
   // fetch the discount available for the product
   async fetchAvailableDiscounts()
   {
-    if (this.product.productType !== ProductType.Simple)
-    {
-      this.additionalInformation.availableDiscounts = [];
-      return;
-    }
+      if (this.product.productType !== ProductType.Simple)
+      {
+          this.additionalInformation.availableDiscounts = [];
+          return;
+      }
 
       // fetch the discount available for the product
       const response = await this.http.get(`${api}/discount/available/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       this.initialAdditionalInformation.availableDiscounts = response.body
-        .map((d: IdNameDto) => ({id: d.id, label: d.name}));
+          .map((d: IdNameDto) => ({id: d.id, label: d.name}));
       this.additionalInformation.availableDiscounts = Operation.deepCopy(this.initialAdditionalInformation.availableDiscounts);
   }
 
@@ -214,7 +214,7 @@ export class EditOneProductComponent implements OnInit
   {
       const response = await this.http.get(`${api}/discount`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       this.allDiscounts = response.body;
   }
@@ -334,39 +334,36 @@ export class EditOneProductComponent implements OnInit
   // This function does the actual work of saving the changes to the database
   private async _save(changes: IChanges)
   {
-    this.loading = true;
-    try
-    {
       if (changes.diffObj.discount !== undefined)
       {
-        const newDiscount = changes.diffObj.discount;
-        if (newDiscount !== this.initialSimpleProduct.discount)
-        {
-          if (newDiscount == null) // if set to null
-            changes.diffObj.selectedDiscountId = null;
-          else if (changes.diffObj.discount.id !== this.initialSimpleProduct.discount?.id) // if set to another discount
-            changes.diffObj.selectedDiscountId = changes.diffObj.discount.id;
-        }
+          const newDiscount = changes.diffObj.discount;
+          if (newDiscount !== this.initialSimpleProduct.discount)
+          {
+              if (newDiscount == null) // if set to null
+                  changes.diffObj.selectedDiscountId = null;
+              else if (changes.diffObj.discount.id !== this.initialSimpleProduct.discount?.id) // if set to another discount
+                  changes.diffObj.selectedDiscountId = changes.diffObj.discount.id;
+          }
       }
 
       if (!await this.saveDiscount(changes.diffObj.discount))
-        return this.messageService.add({
-          severity: 'error', summary: 'Erreur',
-          detail: 'Erreur lors de la de la sauvegarde de la remise'
-        });
+          return this.messageService.add({
+              severity: 'error', summary: 'Erreur',
+              detail: 'Erreur lors de la de la sauvegarde de la remise'
+          });
 
       if (!await this.saveDiscountCanUse(changes.diffObj.availableDiscounts))
-        return this.messageService.add({
-          severity: 'error', summary: 'Erreur',
-          detail: 'Erreur lors de la de la sauvegarde des remises disponible'
-        });
+          return this.messageService.add({
+              severity: 'error', summary: 'Erreur',
+              detail: 'Erreur lors de la de la sauvegarde des remises disponible'
+          });
 
       let namespace: any = PatchSimpleProductDto;
       let endpoint = 'simpleproduct';
       if (this.product.productType === ProductType.Bundle)
       {
-        namespace = PatchBundleDto;
-        endpoint = 'bundle';
+          namespace = PatchBundleDto;
+          endpoint = 'bundle';
       }
 
       // start creating the patch object
@@ -382,56 +379,50 @@ export class EditOneProductComponent implements OnInit
 
       for (const shopSpecificChange of shopSpecificChanges)
       {
-        if (Operation.countProperties(shopSpecificChange) > 1) // more than the id
-          shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
+          if (Operation.countProperties(shopSpecificChange) > 1) // more than the id
+              shopSpecificPatches.push(PatchShopSpecificDto.build(shopSpecificChange));
       }
 
       const bundleItems: CreateBundleItemDto[] = changes.diffObj.items;
       if (bundleItems !== undefined) // @ts-ignore
-        bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
+          bundleItems.forEach(item => delete item.id); // so bundleItems is really a CreateBundleItemDto[]
 
       // Detect if patch is empty - more than 1 because of the id
       if (Operation.countProperties(patchProduct) > 1)
       {
-        const response = await this.http.patch(`${api}/${endpoint}/`, patchProduct);
-        if (!HttpTools.IsValid(response.status))
-          return MessageServiceTools.httpFail(this.messageService, response);
+          const response = await this.http.patch(`${api}/${endpoint}/`, patchProduct);
+          if (!HttpTools.IsValid(response.status))
+              return MessageServiceTools.httpFail(this.messageService, response);
       }
 
       for (const shopSpecificPatch of shopSpecificPatches)
       {
-        // Todo: without {headers: {'Content-Type': 'application/json'}}
-        const response = await this.http.patch(`${api}/api/ShopSpecific`, shopSpecificPatch,);
-        if (!HttpTools.IsValid(response.status))
-          return MessageServiceTools.httpFail(this.messageService, response);
+          // Todo: without {headers: {'Content-Type': 'application/json'}}
+          const response = await this.http.patch(`${api}/api/ShopSpecific`, shopSpecificPatch,);
+          if (!HttpTools.IsValid(response.status))
+              return MessageServiceTools.httpFail(this.messageService, response);
       }
 
       if (!await this.createShopSpecific(newShopSpecifics))
-        return this.messageService.add({
-          severity: 'error', summary: 'Erreur',
-          detail: 'Erreur lors de la de la sauvegarde du nouveau shopSpecific'
-        });
+          return this.messageService.add({
+              severity: 'error', summary: 'Erreur',
+              detail: 'Erreur lors de la de la sauvegarde du nouveau shopSpecific'
+          });
 
       if (this.product.productType === ProductType.Bundle && bundleItems !== undefined)
       {
-        const response = await this.http.post(`${api}/bundle/items/${patchProduct.id}`, bundleItems);
-        if (!HttpTools.IsValid(response.status))
-          return MessageServiceTools.httpFail(this.messageService, response);
+          const response = await this.http.post(`${api}/bundle/items/${patchProduct.id}`, bundleItems);
+          if (!HttpTools.IsValid(response.status))
+              return MessageServiceTools.httpFail(this.messageService, response);
       }
 
-      this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Modification enregistrée'});
+      this.messageService.add({severity: 'success', summary: 'Enregistrer', detail: 'Modification enregistrée'});
       await this.fetchProduct(this.product.id);
-    } finally
-    {
-      this.loading = false;
-    }
   }
 
   save()
   {
     const changes = this.detectChanges();
-    console.log('changes', changes);
-
     if (changes.count == 0)
     {
       this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
@@ -455,32 +446,32 @@ export class EditOneProductComponent implements OnInit
     if (this.simpleProduct.discount?.discountType == discount.Derogation)
     {
       this.messageService.add({
-        severity: 'warn', summary: 'Dérogation',
-        detail: "Impossible de modifier la valeur d'une dérogation"
+          severity: 'warn', summary: 'Dérogation',
+          detail: "Impossible de modifier la valeur d'une dérogation"
       });
-      return false;
+        return false;
     }
 
-    const id = discount.id;
-    let numberOfProductInUse;
+      const id = discount.id;
+      let numberOfProductInUse;
 
-    // Get the number of product that use this discount
-      const response = await this.http.get(`${api}/discount/productsInUse/number/${id}`, discount);
+      // Get the number of product that use this discount
+      const response = await this.http.get(`${api}/discount/productsInUse/number/${id}`);
       if (!HttpTools.IsValid(response.status))
       {
-        MessageServiceTools.httpFail(this.messageService, response);
-        return false;
+          MessageServiceTools.httpFail(this.messageService, response);
+          return false;
       }
 
       numberOfProductInUse = response.body;
 
-    // Set to false because if only use by one product, it will not be split
-    let split: boolean = false;
+      // Set to false because if only use by one product, it will not be split
+      let split: boolean = false;
 
-    // If the discount is used by more than one product, ask for confirmation
-    if (numberOfProductInUse > 1)
-    {
-      if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+      // If the discount is used by more than one product, ask for confirmation
+      if (numberOfProductInUse > 1)
+      {
+          if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
         `${numberOfProductInUse} produits utilisent cette remise. Voulez-vous continuer ?`))
       {
         this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Enregistrement annulée'});
@@ -494,11 +485,12 @@ export class EditOneProductComponent implements OnInit
     if (split)
     {
       // Split the discount
+        this.messageService.add({severity: 'warn', summary: 'Oups', detail: 'Pas encore implémenté'});
     }
     else // Save the discount
     {
-      if (!await this.commonRequest.patchDiscount(discount, this.simpleProduct.discount?.discountType!))
-        return false;
+        if (!await this.commonRequest.patchDiscount(this.simpleProduct.discount, this.simpleProduct.discount?.discountType!))
+            return false;
     }
 
     return true;
@@ -506,18 +498,18 @@ export class EditOneProductComponent implements OnInit
 
   async saveDiscountCanUse(availableDiscounts: IListItem[]): Promise<boolean>
   {
-    if (availableDiscounts == undefined)
-      return true;
+      if (availableDiscounts == undefined)
+          return true;
 
       const ids = availableDiscounts.map(d => d.id);
       const response = await this.http.patch(`${api}/simpleProduct/availableDiscounts/${this.product.id}`, ids);
       if (!HttpTools.IsValid(response.status))
       {
-        MessageServiceTools.httpFail(this.messageService, response);
-        return false;
+          MessageServiceTools.httpFail(this.messageService, response);
+          return false;
       }
 
-    return true;
+      return true;
   }
 
   async createShopSpecific(newShopSpecifics: CreateShopSpecificDto[]): Promise<boolean>
@@ -527,8 +519,8 @@ export class EditOneProductComponent implements OnInit
         const response = await this.http.post(`${api}/shopSpecific/${this.product.id}`, newShopSpecific);
         if (!HttpTools.IsValid(response.status))
         {
-          MessageServiceTools.httpFail(this.messageService, response);
-          return false;
+            MessageServiceTools.httpFail(this.messageService, response);
+            return false;
         }
     }
 
@@ -667,19 +659,19 @@ export class EditOneProductComponent implements OnInit
   // so when select a new discount he sees the changes
   async onSelectDiscountClose()
   {
-    if (this.product.productType != ProductType.Simple)
-      return;
+      if (this.product.productType != ProductType.Simple)
+          return;
 
-    // discount were or has been set to null
-    if (this.dummyStruct.selectedDiscount == undefined)
-    {
-      this.simpleProduct.discount = undefined;
-      return
-    }
+      // discount were or has been set to null
+      if (this.dummyStruct.selectedDiscount == undefined)
+      {
+          this.simpleProduct.discount = undefined;
+          return
+      }
 
       const response = await this.http.get(`${api}/discount/${this.dummyStruct.selectedDiscount.id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       this.simpleProduct.discount = response.body;
   }
@@ -687,22 +679,22 @@ export class EditOneProductComponent implements OnInit
   // delete the product
   async delete(): Promise<void>
   {
-    if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
-      "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
-      return;
+      if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+          "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
+          return;
 
       const response = await this.http.delete(`${api}/product/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       // remove this product from the list
       this.otherProducts = this.otherProducts.filter(p => p.id != this.product.id);
       this.productReferencesService.refresh(); // reload the product references
 
       if (this.otherProducts.length > 0)
-        await this.fetchProduct(this.otherProducts[0].id);
+          await this.fetchProduct(this.otherProducts[0].id);
       else
-        await this.router.navigate(['/product/filter']);
+          await this.router.navigate(['/product/filter']);
   }
 
   newShopSpecificRequest(): void
@@ -782,13 +774,13 @@ export class EditOneProductComponent implements OnInit
   {
       const response = await this.http.post(`${api}/product/force_presta_update/${this.product.id}`);
       if (!HttpTools.IsValid(response.status))
-        return MessageServiceTools.httpFail(this.messageService, response);
+          return MessageServiceTools.httpFail(this.messageService, response);
 
       this.messageService.add(
-        {
-          'severity': 'info',
-          'summary': 'Opération en attente',
-          'detail': 'Le produit va être mis à jour sur Prestashop sous peu'
-        });
+          {
+              'severity': 'info',
+              'summary': 'Opération en attente',
+              'detail': 'Le produit va être mis à jour sur Prestashop sous peu'
+          });
   }
 }

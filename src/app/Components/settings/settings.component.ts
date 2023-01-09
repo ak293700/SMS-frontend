@@ -108,7 +108,6 @@ export class SettingsComponent implements OnInit
 
   deleteUser(index: number)
   {
-    // console.log(index);
     this.userStruct.dummy.splice(index, 1);
   }
 
@@ -186,8 +185,8 @@ export class SettingsComponent implements OnInit
   async saveUsers()
   {
     const changes = this.buildChange();
-    // console.log(changes);
-    await this.registerNewUser(changes.toCreate);
+
+      await this.registerNewUser(changes.toCreate);
     await this.deleteUsersDb(changes.toDelete);
     await this.patchUsers(changes.toPatch);
 
