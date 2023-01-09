@@ -106,7 +106,6 @@ export class EditOneProductComponent implements OnInit
     },
   ];
 
-
   newShopStruct: {
     visible: boolean,
     availableShop: IdNameDto[],
@@ -122,9 +121,8 @@ export class EditOneProductComponent implements OnInit
               private confirmationService: ConfirmationService,
               private productReferencesService: ProductReferencesService,
               private router: Router,
-              private httpClient: HttpClientWrapperService,
-              private commonRequest: CommonRequestService,
-              private http: HttpClientWrapperService)
+              private http: HttpClientWrapperService,
+              private commonRequest: CommonRequestService)
   {
     this.discountContextMenuItems = [
       {
@@ -154,7 +152,6 @@ export class EditOneProductComponent implements OnInit
     let routedData: { selectedIds: number[], selectedId: number } = history.state;
     if (routedData.selectedIds == undefined)
       routedData.selectedIds = [7212, 7909, 7910, 7911, 7912];
-    // routedData.selectedIds = [7021, 7911, 6190, 6233, 6237, 7257, 2863];
 
     if (routedData.selectedId == undefined)
       routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -179,7 +176,7 @@ export class EditOneProductComponent implements OnInit
   async fetchProduct(id: number)
   {
       // Get the products itself
-      const response = await this.httpClient.get(`${api}/product/${id}`);
+      const response = await this.http.get(`${api}/product/${id}`);
       if (!HttpTools.IsValid(response.status))
           return MessageServiceTools.httpFail(this.messageService, response);
 
