@@ -3,17 +3,31 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {Observable} from 'rxjs';
 import {AuthGuard} from "../Guards/auth.guard";
 import {api} from "../GlobalUsings";
+import {MessageService} from "primeng/api";
 
 @Injectable()
 export class ServerRequestInterceptor implements HttpInterceptor
 {
-  constructor(private authGuard: AuthGuard)
+  constructor(private authGuard: AuthGuard,
+              private messageService: MessageService)
   {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>>
   {
     if (!request.url.startsWith(api))
       return next.handle(request);
+
+    // Can't
+    if (this.authGuard.expirationDate < new Date())
+    {
+      this.messageService.add(
+          {
+            severity: 'error',
+            summary: 'La session a expirée',
+            detail: "Actualisez la page s'il vous plaît"
+          });
+      throw new Error("Token expired");
+    }
 
     request = request.clone({
       setHeaders: {
