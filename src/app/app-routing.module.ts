@@ -22,6 +22,9 @@ import {
 import {
   EditOneFeatureModelComponent
 } from "./Components/feature-model/edit-one-feature-model/edit-one-feature-model.component";
+import {
+  EditOneFeatureValueComponent
+} from "./Components/feature-value/edit-one-feature-value/edit-one-feature-value.component";
 
 const createOrUpdateRoute: Route = {
   path: '',
@@ -67,7 +70,8 @@ const productRoute: Route = {
 };
 
 const discountRoute: Route = {
-  path: 'discount', children: [
+  path: 'discount',
+  children: [
     createOrUpdateRoute,
     {path: 'create', component: CreateDiscountComponent},
     {path: 'filter', component: DiscountFilterComponent},
@@ -83,7 +87,8 @@ const discountRoute: Route = {
 };
 
 const distributorRoute: Route = {
-  path: 'distributor', children: [
+  path: 'distributor',
+  children: [
     createOrUpdateRoute,
     {path: 'create', component: CreateDistributorComponent},
     {path: 'filter', component: DistributorFilterComponent},
@@ -91,8 +96,9 @@ const distributorRoute: Route = {
   canActivate: [AuthGuard]
 };
 
-const featureRoute: Route = {
-  path: 'featureModel', children: [
+const featureModelRoute: Route = {
+  path: 'featureModel',
+  children: [
     createOrUpdateRoute,
     {path: 'create', component: CreateDistributorComponent},
     {path: 'filter', component: FeatureModelFilterComponent},
@@ -106,6 +112,20 @@ const featureRoute: Route = {
   canActivate: [AuthGuard]
 };
 
+const featureValueRoute: Route = {
+  path: 'featureValue',
+  children: [
+    createOrUpdateRoute,
+    {
+      path: 'edit', children: [
+        {path: '', redirectTo: '/home', pathMatch: 'full'},
+        {path: 'one', component: EditOneFeatureValueComponent},
+      ]
+    },
+  ],
+  canActivate: [AuthGuard]
+};
+
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path: 'login', component: LoginPageComponent, canActivate: [LoginGuard]},
@@ -113,7 +133,8 @@ const routes: Routes = [
   productRoute,
   discountRoute,
   distributorRoute,
-  featureRoute,
+  featureModelRoute,
+  featureValueRoute,
   {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'home'}
 ];

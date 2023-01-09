@@ -1,6 +1,13 @@
 <app-edit-one-base *ngIf="featureModel != undefined" [data]="featureModel"
                    [otherDatas]="otherFeatureModels" [detectChanges]="detectChanges.bind(this)"
-                   (newSelection)="fetchFeatureModel($event)" (reset)="reset()" (save)="save()" [loading]="loading">
+                   (newSelection)="fetchFeatureModel($event)" (reset)="reset()" (save)="save()" [loading]="loading"
+                   [dialItems]="dialItems">
+
+    <div class="flex-center">
+        <p-button (click)="editValues()" label="Éditer les valeurs"
+                  styleClass="btn-hover-main" [style.margin.px]="40"></p-button>
+    </div>
+
 
     <div id="common-field">
         <ul class="field-container">
@@ -16,7 +23,7 @@
     <div id="shop-specific-field"
          [style.grid-template-columns]="'20% repeat('+ featureModel.shopSpecifics.length.toString() +', 1fr)'">
 
-        <h2></h2> <!-- There to fulfilled the first case of the grid -->
+        <h2></h2> <!-- There to fill the first case of the grid -->
         <h2 *ngFor="let shopSpecific of featureModel.shopSpecifics"
             class="text">
             {{Shop.toString(shopSpecific.shop)}}

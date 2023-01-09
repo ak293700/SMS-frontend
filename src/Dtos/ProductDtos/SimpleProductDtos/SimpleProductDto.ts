@@ -1,6 +1,6 @@
 import {ProductDto} from "../ProductDto";
 import {Availability} from "../../../Enums/Availability";
-import {LiteDiscountDto} from "../../DiscountDtos/LIteDiscountDto";
+import {LiteDiscountDto} from "../../DiscountDtos/LiteDiscountDto";
 
 export interface SimpleProductDto extends ProductDto
 {

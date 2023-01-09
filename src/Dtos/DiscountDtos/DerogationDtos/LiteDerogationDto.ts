@@ -1,4 +1,4 @@
-import {LiteDiscountDto} from "../LIteDiscountDto";
+import {LiteDiscountDto} from "../LiteDiscountDto";
 
 export interface LiteDerogationDto extends LiteDiscountDto
 {

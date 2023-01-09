@@ -6,10 +6,13 @@ import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService, PrimeIcons} from "primeng/api";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {FeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/FeatureModelDto";
 import {Shop} from "../../../../Enums/Shop";
+import {CheckingTools} from "../../../../utils/CheckingTools";
+import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -32,16 +35,39 @@ export class EditOneFeatureModelComponent implements OnInit
 
     loading: boolean = false;
 
+    dialItems: MenuItem[];
+
     constructor(private featureModelService: FeatureModelsService,
                 private http: HttpClientWrapperService,
-                private messageService: MessageService)
-    {}
+                private messageService: MessageService,
+                private confirmationService: ConfirmationService,
+                private router: Router)
+    {
+        this.dialItems = [
+            {
+                icon: PrimeIcons.TRASH,
+                command: () => this.delete()
+            },
+            {
+                icon: PrimeIcons.UPLOAD,
+                command: () => this.forcePrestaPush()
+            },
+            {
+                icon: PrimeIcons.REFRESH,
+                command: () => this.refresh()
+            },
+            {
+                icon: PrimeIcons.PLUS,
+                command: () => this.newShopSpecificRequest()
+            },
+        ];
+    }
 
     async ngOnInit()
     {
         let routedData: { selectedIds: number[], selectedId: number } = history.state;
         if (routedData.selectedIds == undefined)
-            routedData.selectedIds = [1, 2, 34];
+            routedData.selectedIds = [1, 2, 34, 14];
 
         if (routedData.selectedId == undefined)
             routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
@@ -79,21 +105,83 @@ export class EditOneFeatureModelComponent implements OnInit
 
     detectChanges(): IChanges
     {
-        return {diffObj: {}, count: 0}
+        return CheckingTools.detectChanges(this.featureModel, this.initialFeatureModel);
     }
 
     save()
     {
-
+        const changes = this.detectChanges();
+        if (changes.count == 0)
+        {
+            this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
+            return
+        }
     }
 
     reset()
     {
+        this.featureModel = Operation.deepCopy(this.initialFeatureModel);
 
+        this.messageService.add({severity: 'info', summary: 'Annuler', detail: 'Modification annulée'});
     }
 
     get Shop(): typeof Shop
     {
         return Shop;
+    }
+
+    private async delete()
+    {
+        if (!await ConfirmationServiceTools.newBlocking(this.confirmationService,
+            "Êtes-vous sur de supprimer ce produit ? Cette action est irréversible !"))
+            return;
+
+        const response = await this.http.delete(`${api}/featureModel/${this.featureModel.id}`);
+        if (!HttpTools.IsValid(response.status))
+            return MessageServiceTools.httpFail(this.messageService, response);
+
+        // remove this product from the list
+        this.otherFeatureModels = this.otherFeatureModels.filter(p => p.id != this.featureModel.id);
+
+        if (this.otherFeatureModels.length > 0)
+            await this.fetchFeatureModel(this.otherFeatureModels[0].id);
+        else
+            await this.router.navigate(['/product/filter']);
+    }
+
+    private forcePrestaPush()
+    {
+        this.messageService
+            .add({severity: 'warn', summary: 'Oups', detail: "Cette fonctionnalité n'est pas encore implémentée"});
+    }
+
+    private async refresh()
+    {
+        this.loading = true;
+        await this.fetchAll(this.otherFeatureModels.map((e: IdNameDto) => e.id));
+        await this.fetchFeatureModel(this.featureModel.id)
+        this.loading = false;
+    }
+
+    private newShopSpecificRequest()
+    {
+        this.messageService
+            .add({severity: 'warn', summary: 'Oups', detail: "Cette fonctionnalité n'est pas encore implémentée"});
+    }
+
+    async editValues()
+    {
+        const changes = this.detectChanges();
+        if (changes.count != 0)
+        {
+            await ConfirmationServiceTools.newBlocking(this.confirmationService,
+                `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment les abandonner ?`);
+        }
+
+        await this.router.navigate(['/featureValue/edit/one']);
+
+
+        this.messageService
+            .add({severity: 'warn', summary: 'Oups', detail: "Cette fonctionnalité n'est pas encore implémentée"});
     }
 }

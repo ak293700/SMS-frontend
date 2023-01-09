@@ -4,7 +4,7 @@ import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {api} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
-import {DataTableVector, SelectedData} from "../../filter/filter-table/filter-table.component";
+import {DataTableVector, FilterTableComponent, SelectedData} from "../../filter/filter-table/filter-table.component";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {FieldType} from "../../../../Enums/FieldType";
 import {FilterTableProductDto} from "../../../../Dtos/ProductDtos/FilterTableProductDto";
@@ -174,7 +174,8 @@ export class ProductFilterComponent implements OnInit
       MessageServiceTools.httpFail(this.messageService, response);
 
     // Update the productsPageData
-    this.products.pageData = this.formatData(response.body);
+    this.products.pageData = this.formatData(response.body)
+        .sort((a, b) => this.selectedProducts.ids.indexOf(a.id) - this.selectedProducts.ids.indexOf(b.id));
 
     // Update the selected data
     this.selectedProducts.data = this.products.pageData
@@ -275,13 +276,11 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
-      state:
-          {
-            selectedIds: this.selectedProducts.ids
-                .sort((a: number, b: number) =>
-                    this.products.filteredIds.indexOf(a) - this.products.filteredIds.indexOf(b)),
-            selectedId: product.id
-          }
+      state: FilterTableComponent.buildEditOneSelection(
+          product.id,
+          this.selectedProducts.ids,
+          this.products.filteredIds
+      )
     });
   }
 
@@ -289,12 +288,10 @@ export class ProductFilterComponent implements OnInit
   {
     await this.router.navigate(['../edit/multiple'], {
       relativeTo: this.route,
-      state:
-        {
-          selectedIds: this.selectedProducts.ids
-              .sort((a: number, b: number) =>
-                  this.products.filteredIds.indexOf(a) - this.products.filteredIds.indexOf(b))
-        }
+      state: FilterTableComponent.buildEditMultipleSelection(
+          this.selectedProducts.ids,
+          this.products.filteredIds
+      )
     });
   }
 }

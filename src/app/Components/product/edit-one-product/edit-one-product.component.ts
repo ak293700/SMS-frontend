@@ -23,7 +23,7 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 import {IListItem} from "../../selectors/editable-list/editable-list.component";
 import {ProductReferencesService} from "../../../Services/product-references.service";
 import {CreateBundleItemDto} from "../../../../Dtos/ProductDtos/BundleDto/BundleItemDto/CreateBundleItemDto";
-import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LIteDiscountDto";
+import {LiteDiscountDto} from "../../../../Dtos/DiscountDtos/LiteDiscountDto";
 import {Router} from "@angular/router";
 import {ShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/ShopSpecificDto";
 import {CreateShopSpecificDto} from "../../../../Dtos/ShopSpecificDtos/CreateShopSpecificDto";
@@ -775,9 +775,9 @@ export class EditOneProductComponent implements OnInit
 
       this.messageService.add(
           {
-              'severity': 'info',
-              'summary': 'Opération en attente',
-              'detail': 'Le produit va être mis à jour sur Prestashop sous peu'
+              severity: 'info',
+              summary: 'Opération en attente',
+              detail: 'Le produit va être mis à jour sur Prestashop sous peu'
           });
   }
 }
