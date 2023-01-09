@@ -11,6 +11,12 @@ export interface DataTableVector
   filteredIds: number[];
 }
 
+export interface SelectedData
+{
+  data: any[];
+  ids: number[];
+}
+
 @Component({
   selector: 'app-filter-table',
   templateUrl: './filter-table.component.html',
@@ -36,10 +42,10 @@ export class FilterTableComponent implements OnInit, OnChanges
 
   rowsNumber: number = 50;
 
-  @Input() selectedDatas: any = {
+  @Input() selectedDatas: SelectedData = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
-  } = {data: [], ids: []};
+  };
 
   areAllSelected: boolean = false;
 

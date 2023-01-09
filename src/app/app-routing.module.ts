@@ -16,6 +16,9 @@ import {CreateDistributorComponent} from "./Components/distributor/create-distri
 import {DistributorFilterComponent} from "./Components/distributor/distributor-filter/distributor-filter.component";
 import {LoginGuard} from "./Guards/login.guard";
 import {AuthGuard} from "./Guards/auth.guard";
+import {
+  FeatureModelFilterComponent
+} from "./Components/feature-model/feature-model-filter/feature-model-filter.component";
 
 const createOrUpdateRoute: Route = {
   path: '',
@@ -34,6 +37,7 @@ const homeRoute: Route = {
     rails: [
       {label: 'Produits', link: '/product/'},
       {label: 'Remises', link: '/discount/'},
+      {label: 'Caractéristiques', link: '/featureModel/'},
       {label: 'Distributeurs', link: '/distributor'},
       {label: 'Paramètres', link: '/settings'}
     ],
@@ -80,10 +84,18 @@ const distributorRoute: Route = {
     createOrUpdateRoute,
     {path: 'create', component: CreateDistributorComponent},
     {path: 'filter', component: DistributorFilterComponent},
+  ],
+  canActivate: [AuthGuard]
+};
+
+const featureRoute: Route = {
+  path: 'featureModel', children: [
+    createOrUpdateRoute,
+    {path: 'create', component: CreateDistributorComponent},
+    {path: 'filter', component: FeatureModelFilterComponent},
     {
       path: 'edit', children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
-        {path: 'multiple', component: DiscountFilterComponent},
         {path: 'one', component: EditOneDiscountComponent},
       ]
     },
@@ -98,6 +110,7 @@ const routes: Routes = [
   productRoute,
   discountRoute,
   distributorRoute,
+  featureRoute,
   {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'home'}
 ];

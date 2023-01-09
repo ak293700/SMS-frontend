@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DataTableVector} from "../../filter/filter-table/filter-table.component";
+import {DataTableVector, SelectedData} from "../../filter/filter-table/filter-table.component";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
 
@@ -10,12 +10,15 @@ import {FieldType} from "../../../../Enums/FieldType";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
-import {IdNameDto} from "../../../../Dtos/IdNameDto";
 
 @Component({
-  selector: 'app-discount-filter',
-  templateUrl: './discount-filter.component.html',
-  styleUrls: ['./discount-filter.component.css', '../../../../styles/button.css']
+    selector: 'app-discount-filter',
+    templateUrl: './discount-filter.component.html',
+    styleUrls: [
+        '../../../../styles/button.css',
+        '../../../../styles/main-color-background.css',
+        './discount-filter.component.css',
+    ]
 })
 export class DiscountFilterComponent implements OnInit
 {
@@ -32,10 +35,10 @@ export class DiscountFilterComponent implements OnInit
   rowsNumber: number = 50;
 
   // The products we did select. After it should be a list of ids.
-  selectedDiscounts: any = {
-    data: [], // the selected discount (only the ones in the current page)
-    ids: [] // all the selected discounts (including the ones not in the current filter)
-  };
+    selectedDiscounts: SelectedData = {
+        data: [], // the selected discount (only the ones in the current page)
+        ids: [] // all the selected discounts (including the ones not in the current filter)
+    };
 
   // boolean
   loading: boolean = true;
@@ -242,12 +245,13 @@ export class DiscountFilterComponent implements OnInit
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
       state:
-        {
-          selectedIds: this.selectedDiscounts.ids
-            .sort((a: IdNameDto, b: IdNameDto) =>
-              this.discounts.filteredIds.indexOf(a.id) - this.discounts.filteredIds.indexOf(b.id)),
-          selectedId: discount.id
-        }
+          {
+              selectedIds: this.selectedDiscounts.ids
+                  .sort((a: number, b: number) => {
+                      return this.discounts.filteredIds.indexOf(a) - this.discounts.filteredIds.indexOf(b);
+                  }),
+              selectedId: discount.id
+          }
     });
   }
 }

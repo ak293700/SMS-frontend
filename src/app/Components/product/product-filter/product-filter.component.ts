@@ -4,7 +4,7 @@ import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {api} from "../../../GlobalUsings";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
-import {DataTableVector} from "../../filter/filter-table/filter-table.component";
+import {DataTableVector, SelectedData} from "../../filter/filter-table/filter-table.component";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {FieldType} from "../../../../Enums/FieldType";
 import {FilterTableProductDto} from "../../../../Dtos/ProductDtos/FilterTableProductDto";
@@ -15,7 +15,6 @@ import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
-import {IdNameDto} from "../../../../Dtos/IdNameDto";
 
 /*
   * This component is used to display the filter form.
@@ -48,7 +47,7 @@ export class ProductFilterComponent implements OnInit
   rowsNumber: number = 50;
 
   // The products we did select. After it should be a list of ids.
-  selectedProducts: any = {
+  selectedProducts: SelectedData = {
     data: [], // the selected product (only the ones in the current page)
     ids: [] // al the selected product (including the ones not in the curent filter)
   };
@@ -177,13 +176,13 @@ export class ProductFilterComponent implements OnInit
   {
     // keep only the active filters
     let filters = this.filters.filter(filter => filter.active);
-      const response = await this.http.post(`${api}/SelectProduct/filter/execute`, filters, 'json');
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
+    const response = await this.http.post(`${api}/SelectProduct/filter/execute`, filters);
+    if (!HttpTools.IsValid(response.status))
+      MessageServiceTools.httpFail(this.messageService, response);
 
-      this.products.filteredIds = response.body;
+    this.products.filteredIds = response.body;
 
-      await this.loadLazy({first: 0, rows: this.rowsNumber});
+    await this.loadLazy({first: 0, rows: this.rowsNumber});
   }
 
   async loadLazy(event: LazyLoadEvent)
@@ -303,12 +302,12 @@ export class ProductFilterComponent implements OnInit
     await this.router.navigate(['../edit/one'], {
       relativeTo: this.route,
       state:
-        {
-          selectedIds: this.selectedProducts.ids
-            .sort((a: IdNameDto, b: IdNameDto) =>
-              this.products.filteredIds.indexOf(a.id) - this.products.filteredIds.indexOf(b.id)),
-          selectedId: product.id
-        }
+          {
+            selectedIds: this.selectedProducts.ids
+                .sort((a: number, b: number) =>
+                    this.products.filteredIds.indexOf(a) - this.products.filteredIds.indexOf(b)),
+            selectedId: product.id
+          }
     });
   }
 
@@ -319,8 +318,8 @@ export class ProductFilterComponent implements OnInit
       state:
         {
           selectedIds: this.selectedProducts.ids
-            .sort((a: IdNameDto, b: IdNameDto) =>
-              this.products.filteredIds.indexOf(a.id) - this.products.filteredIds.indexOf(b.id))
+              .sort((a: number, b: number) =>
+                  this.products.filteredIds.indexOf(a) - this.products.filteredIds.indexOf(b))
         }
     });
   }

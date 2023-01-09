@@ -54,6 +54,9 @@ import {ServerRequestInterceptor} from "./Interceptors/server-request.intercepto
 import {PasswordModule} from "primeng/password";
 import {DividerModule} from "primeng/divider";
 import {APP_BASE_HREF} from "@angular/common";
+import {
+  FeatureModelFilterComponent
+} from './Components/feature-model/feature-model-filter/feature-model-filter.component';
 
 @NgModule({
   declarations: [
@@ -69,16 +72,17 @@ import {APP_BASE_HREF} from "@angular/common";
     EditOneDiscountComponent,
     EditOneBaseComponent,
     EditableListComponent,
-    ReferralComponent,
-    CreateBundleComponent,
-    BackButtonComponent,
-    CreateDiscountComponent,
-    EditMultipleComponent,
-    SelectorBtnComponent,
-    SettingsComponent,
-    CreateDistributorComponent,
-    DistributorFilterComponent,
-    InputNumberComponent,
+      ReferralComponent,
+      CreateBundleComponent,
+      BackButtonComponent,
+      CreateDiscountComponent,
+      EditMultipleComponent,
+      SelectorBtnComponent,
+      SettingsComponent,
+      CreateDistributorComponent,
+      DistributorFilterComponent,
+      InputNumberComponent,
+      FeatureModelFilterComponent,
   ],
   imports: [
     BrowserModule,
