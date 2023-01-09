@@ -15,6 +15,7 @@ import {Operation} from "../../../../utils/Operation";
 import {Shop} from "../../../../Enums/Shop";
 import {HttpTools} from "../../../../utils/HttpTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {FilterFieldsComponent} from "../../filter/filter-fields/filter-fields.component";
 
 /*
   * This component is used to display the filter form.
@@ -137,39 +138,12 @@ export class ProductFilterComponent implements OnInit
 
   async fetchFilter()
   {
-      const response = await this.http.get(`${api}/SelectProduct/filter`);
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
+    const response = await this.http.get(`${api}/SelectProduct/filter`);
+    if (!HttpTools.IsValid(response.status))
+      MessageServiceTools.httpFail(this.messageService, response);
 
-      let tmp: any[] = response.body;
-      tmp.forEach(filter => {
-        filter.active = false;
-        filter.value = null;
-        if (filter.type === "range")
-          filter.value = [0, 0];
-      })
-      this.filters = tmp;
-
-      this.setDefaultFilterValue();
-  }
-
-  setDefaultFilterValue()
-  {
-    for (const filter of this.filters)
-    {
-      switch (filter.type)
-      {
-        case "range":
-          filter.value = [0, 0];
-          break;
-        case "checkbox":
-          filter.value = false;
-          break;
-        case "text":
-          filter.value = "";
-          break;
-      }
-    }
+    this.filters = response.body;
+    FilterFieldsComponent.setDefaultFilterValue(this.filters);
   }
 
   async applyFilters()
@@ -189,21 +163,21 @@ export class ProductFilterComponent implements OnInit
   {
     this.loading = true;
 
-      const begin: number = event.first ?? 0;
-      const end: number = begin + (event.rows ?? 0);
+    const begin: number = event.first ?? 0;
+    const end: number = begin + (event.rows ?? 0);
 
-      // get the ids of the products of the page
-      const ids = this.products.filteredIds.slice(begin, end);
-      const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
-      const response = await this.http.get(url);
-      if (!HttpTools.IsValid(response.status))
-        MessageServiceTools.httpFail(this.messageService, response);
+    // get the ids of the products of the page
+    const ids = this.products.filteredIds.slice(begin, end);
+    const url = UrlBuilder.create(`${api}/SelectProduct/filter/values`).addParam('ids', ids).build();
+    const response = await this.http.get(url);
+    if (!HttpTools.IsValid(response.status))
+      MessageServiceTools.httpFail(this.messageService, response);
 
-      // Update the productsPageData
-      this.products.pageData = this.formatData(response.body);
+    // Update the productsPageData
+    this.products.pageData = this.formatData(response.body);
 
-      // Update the selected data
-      this.selectedProducts.data = this.products.pageData
+    // Update the selected data
+    this.selectedProducts.data = this.products.pageData
         .filter((product: IEnumerableToITableData) => this.selectedProducts.ids.includes(product.id));
 
     this.loading = false;

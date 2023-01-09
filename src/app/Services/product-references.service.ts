@@ -20,7 +20,6 @@ export class ProductReferencesService
 
   private _productReferences: IdNameDto[] | undefined = undefined;
   private _productTypes: { [prop: number]: ProductType; } = {};
-  private _shopSpecificPerProduct: { [prop: number]: number; } = {};
 
   // if set to true it means that the product references are being loaded
   private _isLoaded: boolean = true;
@@ -29,7 +28,6 @@ export class ProductReferencesService
   {
     this._isLoaded = true;
     this._productTypes = {};
-    this._shopSpecificPerProduct = {};
 
     this.http.get(`${api}/product/references`)
       .then(response => {

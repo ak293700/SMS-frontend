@@ -56,4 +56,25 @@ export class FilterFieldsComponent implements OnInit, OnChanges
 
     this.applyFiltersEvent.emit();
   }
+
+  public static setDefaultFilterValue(filters: any[])
+  {
+    for (const filter of filters)
+    {
+      filter.active = false;
+      filter.value = null;
+      switch (filter.type)
+      {
+        case "range":
+          filter.value = [0, 0];
+          break;
+        case "checkbox":
+          filter.value = false;
+          break;
+        case "text":
+          filter.value = "";
+          break;
+      }
+    }
+  }
 }
