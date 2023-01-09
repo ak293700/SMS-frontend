@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DataTableVector, SelectedData} from "../../filter/filter-table/filter-table.component";
+import {DataTableVector, FilterTableComponent, SelectedData} from "../../filter/filter-table/filter-table.component";
 import {LazyLoadEvent, MessageService} from "primeng/api";
 import {FieldType} from "../../../../Enums/FieldType";
 import {api} from "../../../GlobalUsings";
@@ -10,6 +10,7 @@ import {FilterFieldsComponent} from "../../filter/filter-fields/filter-fields.co
 import {UrlBuilder} from "../../../../utils/UrlBuilder";
 import {IEnumerableToITableData, ITableData} from "../../../../Interfaces/ITableData";
 import {FilterTableProductDto} from "../../../../Dtos/ProductDtos/FilterTableProductDto";
+import {ActivatedRoute, Router} from "@angular/router";
 
 
 @Component({
@@ -40,7 +41,9 @@ export class FeatureModelFilterComponent implements OnInit
     loading: boolean = true;
 
     constructor(private http: HttpClientWrapperService,
-                private messageService: MessageService)
+                private messageService: MessageService,
+                private router: Router,
+                private route: ActivatedRoute)
     {
     }
 
@@ -103,8 +106,6 @@ export class FeatureModelFilterComponent implements OnInit
         if (!HttpTools.IsValid(response.status))
             MessageServiceTools.httpFail(this.messageService, response);
 
-        console.log(response.body);
-
         // Update the productsPageData
         this.featureModels.pageData = this.formatData(response.body);
 
@@ -132,9 +133,15 @@ export class FeatureModelFilterComponent implements OnInit
         return res;
     }
 
-    editFeatureModel(featureModel: any)
+    async editFeatureModel(featureModel: any)
     {
-        console.log('editFeatureModel')
-        console.log(featureModel);
+        await this.router.navigate(['../edit/one'],
+            {
+                relativeTo: this.route,
+                state: FilterTableComponent.buildEditOneSelection(featureModel.id,
+                    this.selectedFeatureModels.ids,
+                    this.featureModels.filteredIds
+                )
+            });
     }
 }

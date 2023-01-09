@@ -57,6 +57,9 @@ import {APP_BASE_HREF} from "@angular/common";
 import {
   FeatureModelFilterComponent
 } from './Components/feature-model/feature-model-filter/feature-model-filter.component';
+import {
+  EditOneFeatureModelComponent
+} from './Components/feature-model/edit-one-feature-model/edit-one-feature-model.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +86,7 @@ import {
       DistributorFilterComponent,
       InputNumberComponent,
       FeatureModelFilterComponent,
+      EditOneFeatureModelComponent,
   ],
   imports: [
     BrowserModule,

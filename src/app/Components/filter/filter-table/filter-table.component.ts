@@ -3,6 +3,7 @@ import {MenuItem} from "primeng/api";
 import {IHeader} from "../../../../Dtos/IHeader";
 import {IEnumerableToITableData} from "../../../../Interfaces/ITableData";
 import {defaultImage} from "../../../GlobalUsings";
+import {Operation} from "../../../../utils/Operation";
 
 export interface DataTableVector
 {
@@ -183,5 +184,28 @@ export class FilterTableComponent implements OnInit, OnChanges
   fixImageUrl(event: any)
   {
     event.target.src = defaultImage;
+  }
+
+  public static buildEditOneSelection(selectedId: number, selectedIds: number[], order: number[])
+      : { selectedIds: number[], selectedId: number }
+  {
+
+    let selectedIdsCopy: number[];
+    if (selectedIds.includes(selectedId))
+      selectedIdsCopy = Operation.deepCopy(selectedIds);
+    else
+      selectedIdsCopy = selectedIds.concat(selectedId);
+
+    return {
+      selectedId: selectedId,
+      selectedIds: this.buildEditMultipleSelection(selectedIdsCopy, order)
+    };
+  }
+
+  public static buildEditMultipleSelection(selectedIds: number[], order: number[])
+      : number[]
+  {
+    return selectedIds
+        .sort((a: number, b: number) => order.indexOf(a) - order.indexOf(b))
   }
 }

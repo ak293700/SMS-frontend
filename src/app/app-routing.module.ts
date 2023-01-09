@@ -19,6 +19,9 @@ import {AuthGuard} from "./Guards/auth.guard";
 import {
   FeatureModelFilterComponent
 } from "./Components/feature-model/feature-model-filter/feature-model-filter.component";
+import {
+  EditOneFeatureModelComponent
+} from "./Components/feature-model/edit-one-feature-model/edit-one-feature-model.component";
 
 const createOrUpdateRoute: Route = {
   path: '',
@@ -96,7 +99,7 @@ const featureRoute: Route = {
     {
       path: 'edit', children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
-        {path: 'one', component: EditOneDiscountComponent},
+        {path: 'one', component: EditOneFeatureModelComponent},
       ]
     },
   ],
@@ -119,4 +122,7 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {useHash: true})],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule
+{
+
+}

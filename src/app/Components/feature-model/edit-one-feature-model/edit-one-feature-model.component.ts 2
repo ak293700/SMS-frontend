@@ -1,0 +1,10 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-edit-one-feature-model',
+  templateUrl: './edit-one-feature-model.component.html',
+  styleUrls: ['./edit-one-feature-model.component.css']
+})
+export class EditOneFeatureModelComponent {
+
+}
