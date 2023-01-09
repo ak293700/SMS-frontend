@@ -1,6 +1,6 @@
 <app-edit-one-base *ngIf="featureModel != undefined" [data]="featureModel"
                    [otherDatas]="otherFeatureModels" [detectChanges]="detectChanges.bind(this)"
-                   (reset)="reset()" (save)="save()" [loading]="loading">
+                   (newSelection)="fetchFeatureModel($event)" (reset)="reset()" (save)="save()" [loading]="loading">
 
     <div id="common-field">
         <ul class="field-container">
@@ -10,14 +10,24 @@
                        [placeholder]="initialFeatureModel.name"
                        [(ngModel)]="initialFeatureModel.name">
             </li>
-
-            <li class="field-item">
-                <label for="field-idPrestashop" class="text">IdPrestashop</label>
-                <input id="field-idPrestashop" pInputText type="text"
-                       [placeholder]="initialFeatureModel.idPrestashop"
-                       [(ngModel)]="initialFeatureModel.idPrestashop">
-            </li>
         </ul>
+    </div>
+
+    <div id="shop-specific-field"
+         [style.grid-template-columns]="'20% repeat('+ featureModel.shopSpecifics.length.toString() +', 1fr)'">
+
+        <h2></h2> <!-- There to fulfilled the first case of the grid -->
+        <h2 *ngFor="let shopSpecific of featureModel.shopSpecifics"
+            class="text">
+            {{Shop.toString(shopSpecific.shop)}}
+        </h2>
+
+        <label class="text">Id Prestashop</label>
+        <p-inputNumber *ngFor="let shopSpecific of featureModel.shopSpecifics; let i=index"
+                       [useGrouping]="false"
+                       [placeholder]="initialFeatureModel.shopSpecifics[i].idPrestashop.toString()"
+                       [(ngModel)]="shopSpecific.idPrestashop">
+        </p-inputNumber>
     </div>
 
 </app-edit-one-base>

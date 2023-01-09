@@ -11,7 +11,6 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 })
 export class EditOneBaseComponent extends EditBaseComponent
 {
-
   @Input() detectChanges: () => IChanges = () => { return {diffObj: [], count: 0}; };
 
   constructor(messageService: MessageService,

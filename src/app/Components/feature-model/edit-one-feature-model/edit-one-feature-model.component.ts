@@ -8,6 +8,9 @@ import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {MessageService} from "primeng/api";
 import {IChanges} from "../../../../Interfaces/IChanges";
+import {FeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/FeatureModelDto";
+import {Shop} from "../../../../Enums/Shop";
+
 
 @Component({
     selector: 'app-edit-one-feature-model',
@@ -20,8 +23,10 @@ import {IChanges} from "../../../../Interfaces/IChanges";
 })
 export class EditOneFeatureModelComponent implements OnInit
 {
-    initialFeatureModel: any;
-    featureModel: any;
+    // @ts-ignore
+    initialFeatureModel: FeatureModelDto;
+    // @ts-ignore
+    featureModel: FeatureModelDto;
 
     otherFeatureModels: IdNameDto[] = [];
 
@@ -67,6 +72,8 @@ export class EditOneFeatureModelComponent implements OnInit
         this.initialFeatureModel = response.body;
         this.featureModel = Operation.deepCopy(this.initialFeatureModel);
 
+        console.log(this.featureModel);
+
         // this.initDummyStruct();
     }
 
@@ -83,5 +90,10 @@ export class EditOneFeatureModelComponent implements OnInit
     reset()
     {
 
+    }
+
+    get Shop(): typeof Shop
+    {
+        return Shop;
     }
 }

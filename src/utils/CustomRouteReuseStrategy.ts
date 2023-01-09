@@ -1,6 +1,9 @@
 import {ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy} from "@angular/router";
 import {ProductFilterComponent} from "../app/Components/product/product-filter/product-filter.component";
 import {DiscountFilterComponent} from "../app/Components/discount/discount-filter/discount-filter.component";
+import {
+  FeatureModelFilterComponent
+} from "../app/Components/feature-model/feature-model-filter/feature-model-filter.component";
 
 export class CustomRouteReuseStrategy implements RouteReuseStrategy
 {
@@ -13,7 +16,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
     if (route.routeConfig == undefined || route.routeConfig.component == undefined)
       return false;
 
-    const store = [ProductFilterComponent, DiscountFilterComponent];
+    const store = [ProductFilterComponent, DiscountFilterComponent, FeatureModelFilterComponent];
     return store.includes(route.routeConfig.component);
   }
 
