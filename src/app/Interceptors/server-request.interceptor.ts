@@ -34,7 +34,7 @@ export class ServerRequestInterceptor implements HttpInterceptor
 
     // If the token is about to expire, we re fetch it
     if (this.authGuard.willExpireSoon())
-      await this.authGuard.initFromCookie();
+      await this.aut
 
     request = request.clone({
       setHeaders: {

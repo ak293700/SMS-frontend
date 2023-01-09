@@ -12,7 +12,8 @@ import {HttpTools} from "../../utils/HttpTools";
 })
 export class AuthGuard implements CanActivate
 {
-  public static readonly identifierCookie: string = 'identifier';
+  public static readonly emailCookie: string = 'qoBc89767c';
+  public static readonly passwordCookie: string = 'A98lDpd6';
   private session_token?: string; // The jwt token used to identify the user
   private jwt_content?: any; // The content of the jwt token
 
@@ -42,7 +43,7 @@ export class AuthGuard implements CanActivate
     if (this.session_token === undefined || this.willExpireSoon())
     {
       // And there is no cookie registered
-      if (!this.cookieService.check(AuthGuard.identifierCookie))
+      if (!this.cookieService.check(AuthGuard.emailCookie) || !this.cookieService.check(AuthGuard.passwordCookie))
         return false; // Can't be logged in
 
       // Else, we try to refresh the token
@@ -76,8 +77,19 @@ export class AuthGuard implements CanActivate
     // Use to register the identifier in the cookie
     this.cookieService.set
     (
-        AuthGuard.identifierCookie,
-        btoa(`${email}:${password}`),
+        AuthGuard.emailCookie,
+        btoa(email),
+        undefined,
+        AuthGuard.cookie_path,
+        AuthGuard.domain,
+        true,
+        'Strict'
+    );
+
+    this.cookieService.set
+    (
+        AuthGuard.passwordCookie,
+        btoa(password),
         undefined,
         AuthGuard.cookie_path,
         AuthGuard.domain,
@@ -91,9 +103,8 @@ export class AuthGuard implements CanActivate
   // Init
   async initFromCookie(): Promise<boolean>
   {
-    const cookie: string = atob(this.cookieService.get(AuthGuard.identifierCookie));
-
-    const [email, password] = cookie.split(':');
+    const email: string = atob(this.cookieService.get(AuthGuard.emailCookie));
+    const password: string = atob(this.cookieService.get(AuthGuard.passwordCookie));
 
     return await this.init(email, password);
   }
@@ -102,7 +113,8 @@ export class AuthGuard implements CanActivate
   {
     this.session_token = undefined;
     this.jwt_content = undefined;
-    this.cookieService.delete(AuthGuard.identifierCookie, AuthGuard.cookie_path, AuthGuard.domain);
+    this.cookieService.delete(AuthGuard.emailCookie, AuthGuard.cookie_path, AuthGuard.domain);
+    this.cookieService.delete(AuthGuard.passwordCookie, AuthGuard.cookie_path, AuthGuard.domain);
   }
 
   get sessionToken(): string | undefined
