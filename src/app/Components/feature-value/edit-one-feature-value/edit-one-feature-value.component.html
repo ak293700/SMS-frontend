@@ -5,7 +5,6 @@
     <h2 class="text" style="margin-top: 5rem">{{featureModel.name}}</h2>
 
     <div class="flex-center" style="width: 100%">
-
         <p-table dataKey="id"
                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
                  [value]="featureModel.values" [totalRecords]="featureModel.values.length"
@@ -18,14 +17,19 @@
                     <th *ngFor="let shop of getModelShops()">
                         Id {{Shop.toString(shop)}}
                     </th>
+
+                    <th>
+                        <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-info"
+                                (click)="createEmptyValue()">
+                        </button>
+                    </th>
                 </tr>
             </ng-template>
 
-            <ng-template pTemplate="body" let-featureValue>
+            <ng-template pTemplate="body" let-featureValue let-index>
                 <tr>
                     <td class="cell">
                         <input class="display-as-text" [(ngModel)]="featureValue.value"/>
-                        {{featureValue.shopSpecifics.length}}
                     </td>
 
                     <!-- Logically every feature value should have the instance of the shopSpecific as it's model -->
@@ -33,8 +37,13 @@
 
                     <td *ngFor="let shopSpecific of featureValue.shopSpecifics" class="cell">
                         <app-input-number [(value)]="shopSpecific.idPrestashop" [transparent]="true">
-
                         </app-input-number>
+                    </td>
+
+                    <td>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                (click)="deleteValue(featureValue)">
+                        </button>
                     </td>
                 </tr>
             </ng-template>

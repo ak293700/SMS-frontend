@@ -10,6 +10,7 @@
 
 .cell {
     padding: 0 !important;
+    transition: all .1s ease-in-out;
 }
 
 .cell:hover {

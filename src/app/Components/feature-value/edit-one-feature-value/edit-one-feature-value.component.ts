@@ -8,6 +8,8 @@ import {Operation} from "../../../../utils/Operation";
 import {FeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/FeatureValueDto";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {CheckingTools} from "../../../../utils/CheckingTools";
+import {NullablePropertyWrapperDto} from "../../../../Dtos/NullablePropertyWrapperDto";
+
 
 @Component({
     selector: 'app-edit-one-feature-value',
@@ -77,22 +79,39 @@ export class EditOneFeatureValueComponent implements OnInit
             const initialFeatureValue: FeatureValueDto = this.initialFeatureModel.values[i];
             const currentFeatureValue: FeatureValueDto = currentFeatureValues[i];
 
-            console.log(initialFeatureValue);
-            console.log(currentFeatureValue);
-
             const diff = CheckingTools.detectChanges(currentFeatureValue, initialFeatureValue);
             if (diff.count > 0)
             {
                 changes.diffObj.push(diff);
                 changes.count++;
             }
-
-            console.log("=============================");
         }
 
         return changes;
     }
 
+    // split the changes in three parts
+    // toAdd, toPatch, toDelete
+    // the toPatch should not be
+    splitChanges(): { toAdd: FeatureValueDto[], toPatch: FeatureValueDto[], toDelete: FeatureValueDto[] }
+    {
+        const initialValues: FeatureValueDto[] = this.initialFeatureModel.values;
+        const currentValues: FeatureValueDto[] = this.featureModel.values;
+
+        const res = {
+            toAdd: currentValues // every value not initially present but now present
+                .filter(cr => !initialValues.some(iv => iv.id == cr.id)),
+            toPatch: [],
+            toDelete: initialValues // every value initially present in but not anymore
+                .filter(iv => !currentValues.some(cr => cr.id == iv.id)),
+        }
+
+        // @ts-ignore
+        res.toPatch = currentValues // the rest
+            .filter(cr => !res.toAdd.some(va => va.id != cr.id) && !res.toDelete.some(va => va.id != cr.id));
+
+        return res;
+    }
 
     reset()
     {
@@ -116,11 +135,21 @@ export class EditOneFeatureValueComponent implements OnInit
         return this.featureModel.shopSpecifics.map(shop => shop.shop);
     }
 
-    getIdPrestashopByShop(featureValue: FeatureValueDto, shop: Shop): number | undefined | null
+    deleteValue(featureValue: FeatureValueDto)
     {
-        return Operation.firstOrDefault(featureValue.shopSpecifics,
-                ss => ss.shop === shop)?.idPrestashop
-            ?? undefined;
+        // remove featureValue (by id) in this.featureModel.values
+        this.featureModel.values = this.featureModel.values.filter(value => value !== featureValue);
     }
 
+    createEmptyValue()
+    {
+        this.featureModel.values.push(
+            {
+                id: -1,
+                name: '',  // @ts-ignore
+                shopSpecifics: this.featureModel.shopSpecifics
+                    .map(ss => { return {idPrestashop: undefined, shop: ss.shop} })
+            }
+        )
+    }
 }
