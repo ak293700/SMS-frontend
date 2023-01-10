@@ -9,7 +9,6 @@ import {ConfirmationService, MessageService} from "primeng/api";
 })
 export class RoutingAppComponent
 {
-  constructor(private messageService: MessageService,
-              private confirmationService: ConfirmationService)
+  constructor()
   {}
 }

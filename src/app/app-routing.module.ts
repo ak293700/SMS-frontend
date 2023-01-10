@@ -26,12 +26,12 @@ import {
   EditOneFeatureValueComponent
 } from "./Components/feature-value/edit-one-feature-value/edit-one-feature-value.component";
 
-const createOrUpdateRoute: Route = {
+const createOrViewRoute: Route = {
   path: '',
   component: ReferralComponent, data: {
     rails: [
       {label: 'Création', link: 'create'},
-      {label: 'Modification', link: 'filter'}
+      {label: 'Voir', link: 'filter'}
     ],
     backButton: {link: '/home'}
   }
@@ -55,7 +55,7 @@ const homeRoute: Route = {
 const productRoute: Route = {
   path: 'product',
   children: [
-    createOrUpdateRoute,
+    createOrViewRoute,
     {path: 'create', component: CreateBundleComponent},
     {path: 'filter', component: ProductFilterComponent},
     {
@@ -72,7 +72,7 @@ const productRoute: Route = {
 const discountRoute: Route = {
   path: 'discount',
   children: [
-    createOrUpdateRoute,
+    createOrViewRoute,
     {path: 'create', component: CreateDiscountComponent},
     {path: 'filter', component: DiscountFilterComponent},
     {
@@ -89,7 +89,7 @@ const discountRoute: Route = {
 const distributorRoute: Route = {
   path: 'distributor',
   children: [
-    createOrUpdateRoute,
+    createOrViewRoute,
     {path: 'create', component: CreateDistributorComponent},
     {path: 'filter', component: DistributorFilterComponent},
   ],
@@ -99,7 +99,7 @@ const distributorRoute: Route = {
 const featureModelRoute: Route = {
   path: 'featureModel',
   children: [
-    createOrUpdateRoute,
+    createOrViewRoute,
     {path: 'create', component: CreateDistributorComponent},
     {path: 'filter', component: FeatureModelFilterComponent},
     {
@@ -115,7 +115,7 @@ const featureModelRoute: Route = {
 const featureValueRoute: Route = {
   path: 'featureValue',
   children: [
-    createOrUpdateRoute,
+    createOrViewRoute,
     {
       path: 'edit', children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},

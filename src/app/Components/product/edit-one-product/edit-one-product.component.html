@@ -165,7 +165,7 @@
     </ul>
   </div>
 
-  <div id="shop-specific-field"
+  <div class="shop-specific-field" *ngIf="product.shopSpecifics.length > 0"
        [style.grid-template-columns]="'20% repeat('+ product.shopSpecifics.length.toString() +', 1fr)'">
 
     <h2></h2> <!-- There to fulfilled the first case of the grid -->
