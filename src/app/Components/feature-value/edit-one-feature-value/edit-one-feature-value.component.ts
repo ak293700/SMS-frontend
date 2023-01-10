@@ -25,8 +25,7 @@ export class EditOneFeatureValueComponent implements OnInit
     {
         const routedData: { featureModelId: number } = history.state;
         if (routedData.featureModelId == undefined)
-            routedData.featureModelId = 34;
-
+            routedData.featureModelId = 47;
 
         await this.fetchFeatureModel(routedData.featureModelId);
     }
@@ -38,7 +37,17 @@ export class EditOneFeatureValueComponent implements OnInit
             return;
 
         this.featureModel = response.body;
+        console.log(this.featureModel);
     }
 
 
+    reset()
+    {
+
+    }
+
+    save()
+    {
+
+    }
 }
