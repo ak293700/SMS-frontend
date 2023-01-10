@@ -41,8 +41,7 @@ export class CreateFeatureModelComponent
     return !(this.featureModel.name == null || this.featureModel.name.trim() === "");
   }
 
-
-  async create()
+  async create(): Promise<void>
   {
     if (!this.checkValidity())
       return this.messageService.add({

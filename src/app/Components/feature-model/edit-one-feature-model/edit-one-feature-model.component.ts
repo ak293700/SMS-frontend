@@ -67,7 +67,7 @@ export class EditOneFeatureModelComponent implements OnInit
     {
         const routedData: { selectedIds: number[], selectedId: number } = history.state;
         if (routedData.selectedIds == undefined)
-            routedData.selectedIds = [1, 2, 34, 14];
+            routedData.selectedIds = [47, 1, 2, 34, 14];
 
         if (routedData.selectedId == undefined)
             routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
