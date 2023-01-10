@@ -6,6 +6,8 @@ import {HttpTools} from "../../../../utils/HttpTools";
 import {Shop} from "../../../../Enums/Shop";
 import {Operation} from "../../../../utils/Operation";
 import {FeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/FeatureValueDto";
+import {IChanges} from "../../../../Interfaces/IChanges";
+import {CheckingTools} from "../../../../utils/CheckingTools";
 
 @Component({
     selector: 'app-edit-one-feature-value',
@@ -18,6 +20,9 @@ import {FeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/Fea
 })
 export class EditOneFeatureValueComponent implements OnInit
 {
+    // @ts-ignore
+    initialFeatureModel: FeatureModelDto;
+
     // @ts-ignore
     featureModel: FeatureModelDto;
 
@@ -39,8 +44,53 @@ export class EditOneFeatureValueComponent implements OnInit
         if (!HttpTools.IsValid(response.status))
             return;
 
-        this.featureModel = response.body;
-        console.log(this.featureModel);
+        this.initialFeatureModel = response.body;
+        this.featureModel = Operation.deepCopy(this.initialFeatureModel);
+
+        // for each value create the shop present in featureModel but not in the value
+        const featureModelShops: Shop[] = this.featureModel.shopSpecifics.map(ss => ss.shop);
+        for (const value of this.featureModel.values)
+        {
+            const missingShop: Shop[] = featureModelShops
+                .filter(shop => !value.shopSpecifics.some(ss => ss.shop == shop));
+
+            // we set to undefined the new one
+            value.shopSpecifics = value.shopSpecifics // @ts-ignore
+                .concat(missingShop.map(shop => ({idPrestashop: undefined, shop: shop})))
+                .sort((a, b) => a.shop - b.shop);
+        }
+    }
+
+    detectChanges(): IChanges
+    {
+        // we copy the modified values
+        const currentFeatureValues: FeatureValueDto[] = Operation.deepCopy(this.featureModel.values);
+
+        // we remove the undefined because we don't save them in the database
+        currentFeatureValues
+            .forEach(value => value.shopSpecifics = value.shopSpecifics.filter(ss => ss.idPrestashop != undefined));
+
+        const changes: IChanges = {diffObj: [], count: 0};
+
+        for (let i = 0; i < this.initialFeatureModel.values.length; i++)
+        {
+            const initialFeatureValue: FeatureValueDto = this.initialFeatureModel.values[i];
+            const currentFeatureValue: FeatureValueDto = currentFeatureValues[i];
+
+            console.log(initialFeatureValue);
+            console.log(currentFeatureValue);
+
+            const diff = CheckingTools.detectChanges(currentFeatureValue, initialFeatureValue);
+            if (diff.count > 0)
+            {
+                changes.diffObj.push(diff);
+                changes.count++;
+            }
+
+            console.log("=============================");
+        }
+
+        return changes;
     }
 
 
@@ -51,6 +101,8 @@ export class EditOneFeatureValueComponent implements OnInit
 
     save()
     {
+        const changes = this.detectChanges();
+        console.log(changes);
     }
 
     get Shop(): typeof Shop

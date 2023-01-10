@@ -25,13 +25,16 @@
                 <tr>
                     <td class="cell">
                         <input class="display-as-text" [(ngModel)]="featureValue.value"/>
+                        {{featureValue.shopSpecifics.length}}
                     </td>
 
-                    <!-- Logically every feature value should have the instance the same shopSpecific as it's model -->
+                    <!-- Logically every feature value should have the instance of the shopSpecific as it's model -->
                     <!-- Else it would be a shame -->
 
-                    <td *ngFor="let shop of getModelShops()">
-                        {{ getIdPrestashopByShop(featureValue, shop) }}
+                    <td *ngFor="let shopSpecific of featureValue.shopSpecifics" class="cell">
+                        <app-input-number [(value)]="shopSpecific.idPrestashop" [transparent]="true">
+
+                        </app-input-number>
                     </td>
                 </tr>
             </ng-template>

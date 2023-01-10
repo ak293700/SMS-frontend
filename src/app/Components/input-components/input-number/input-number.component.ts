@@ -26,6 +26,9 @@ export class InputNumberComponent implements OnChanges
 
   @Input() disabled: boolean = false;
 
+  // if yes the input has no style
+  @Input() transparent: boolean = false;
+
   ngOnChanges(changes: SimpleChanges): void
   {
     this._mode = InputNumberMode.Decimal;

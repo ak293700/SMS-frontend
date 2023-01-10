@@ -1,8 +1,8 @@
-import {NullableIdPrestashopShopDto} from "../../NullableIdPrestashopShopDto";
+import {IdPrestashopShopDto} from "../../IdPrestashopShopDto";
 
 export interface FeatureValueDto
 {
     id: number;
     name: string;
-    shopSpecifics: NullableIdPrestashopShopDto[];
+    shopSpecifics: IdPrestashopShopDto[];
 }

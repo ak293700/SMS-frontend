@@ -127,3 +127,22 @@ body, html {
   box-shadow: 0 1px 5px 0 var(--third-color) inset;
   background-color: var(--main-color);
 }
+
+/*use with input to make it appear as regular texte*/
+.display-as-text {
+  border: none;
+  background-color: transparent;
+  color: var(--third-color);
+  font-size: 1rem;
+  text-align: center;
+
+  margin: 0;
+
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.display-as-text:focus {
+  outline: none;
+}
