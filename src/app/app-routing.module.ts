@@ -30,7 +30,7 @@ const createOrViewRoute: Route = {
   path: '',
   component: ReferralComponent, data: {
     rails: [
-      {label: 'Création', link: 'create'},
+      {label: 'Créer', link: 'create'},
       {label: 'Voir', link: 'filter'}
     ],
     backButton: {link: '/home'}
