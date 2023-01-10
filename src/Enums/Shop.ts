@@ -6,14 +6,19 @@ export enum Shop
 
 export namespace Shop
 {
-  export function toString(shop: Shop): string
-  {
-    switch (shop)
+    export function toString(shop: Shop): string
     {
-      case Shop.Eps:
-        return "ElecProShop";
-      case Shop.Es:
-        return "ElecPlusSimple";
+        switch (shop)
+        {
+            case Shop.Eps:
+                return "ElecProShop";
+            case Shop.Es:
+                return "ElecPlusSimple";
+        }
     }
-  }
+
+    export function All(): Shop[]
+    {
+        return [Shop.Eps, Shop.Es];
+    }
 }

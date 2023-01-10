@@ -3,7 +3,7 @@ import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {Operation} from "../../../../utils/Operation";
 
-@Component({template: '',}) // being abstract it has no selector, no style and no template
+@Component({template: ''}) // being abstract it has no selector, no style and no template
 export abstract class EditBaseComponent
 {
   @Input() otherDatas: IdNameDto[] = [];

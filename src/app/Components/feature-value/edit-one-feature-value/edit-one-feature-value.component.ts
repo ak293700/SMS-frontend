@@ -3,6 +3,9 @@ import {FeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/Fea
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {api} from "../../../GlobalUsings";
 import {HttpTools} from "../../../../utils/HttpTools";
+import {Shop} from "../../../../Enums/Shop";
+import {Operation} from "../../../../utils/Operation";
+import {FeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/FeatureValueDto";
 
 @Component({
     selector: 'app-edit-one-feature-value',
@@ -48,6 +51,24 @@ export class EditOneFeatureValueComponent implements OnInit
 
     save()
     {
-
     }
+
+    get Shop(): typeof Shop
+    {
+        return Shop;
+    }
+
+    // return all the shop that the model is on
+    getModelShops(): Shop[]
+    {
+        return this.featureModel.shopSpecifics.map(shop => shop.shop);
+    }
+
+    getIdPrestashopByShop(featureValue: FeatureValueDto, shop: Shop): number | undefined | null
+    {
+        return Operation.firstOrDefault(featureValue.shopSpecifics,
+                ss => ss.shop === shop)?.idPrestashop
+            ?? undefined;
+    }
+
 }

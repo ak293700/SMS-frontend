@@ -23,7 +23,7 @@ import {ContextMenuModule} from "primeng/contextmenu";
 import {ToastModule} from "primeng/toast";
 import {PrettierPipe} from './Pipes/prettier.pipe';
 import {
-  EditMultipleProductsComponent
+    EditMultipleProductsComponent
 } from './Components/product/edit-multiple-products/edit-multiple-products.component';
 import {EditOneProductComponent} from './Components/product/edit-one-product/edit-one-product.component';
 import {RouteReuseStrategy} from "@angular/router";
@@ -55,20 +55,21 @@ import {PasswordModule} from "primeng/password";
 import {DividerModule} from "primeng/divider";
 import {APP_BASE_HREF} from "@angular/common";
 import {
-  FeatureModelFilterComponent
+    FeatureModelFilterComponent
 } from './Components/feature-model/feature-model-filter/feature-model-filter.component';
 import {
-  EditOneFeatureModelComponent
+    EditOneFeatureModelComponent
 } from './Components/feature-model/edit-one-feature-model/edit-one-feature-model.component';
 import {
-  FeatureValueFilterComponent
+    FeatureValueFilterComponent
 } from './Components/feature-value/feature-value-filter/feature-value-filter.component';
 import {
-  EditOneFeatureValueComponent
+    EditOneFeatureValueComponent
 } from './Components/feature-value/edit-one-feature-value/edit-one-feature-value.component';
 import {
-  CreateFeatureModelComponent
+    CreateFeatureModelComponent
 } from './Components/feature-model/create-feature-model/create-feature-model.component';
+import {StyleClassModule} from "primeng/styleclass";
 
 @NgModule({
   declarations: [
@@ -100,45 +101,46 @@ import {
       EditOneFeatureValueComponent,
       CreateFeatureModelComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ButtonModule,
-    InputTextModule,
-    ReactiveFormsModule,
-    SharedModule,
-    TableModule,
-    FormsModule,
-    MultiSelectModule,
-    BrowserAnimationsModule,
-    InputNumberModule,
-    CheckboxModule,
-    SliderModule,
-    CalendarModule,
-    TriStateCheckboxModule,
-    HttpClientModule,
-    AutoCompleteModule,
-    ContextMenuModule,
-    ToastModule,
-    ConfirmDialogModule,
-    DialogModule,
-    StepsModule,
-    RippleModule,
-    SpeedDialModule,
-    DropdownModule,
-    PasswordModule,
-    DividerModule,
-  ],
-  providers: [
-    MessageService,
-    ConfirmationService,
-    {provide: APP_BASE_HREF, useValue: '/'}, // require else the cookies does not works with RouterModule.({useHash:true})
-    {
-      provide: RouteReuseStrategy,
-      useClass: CustomRouteReuseStrategy
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        ButtonModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        SharedModule,
+        TableModule,
+        FormsModule,
+        MultiSelectModule,
+        BrowserAnimationsModule,
+        InputNumberModule,
+        CheckboxModule,
+        SliderModule,
+        CalendarModule,
+        TriStateCheckboxModule,
+        HttpClientModule,
+        AutoCompleteModule,
+        ContextMenuModule,
+        ToastModule,
+        ConfirmDialogModule,
+        DialogModule,
+        StepsModule,
+        RippleModule,
+        SpeedDialModule,
+        DropdownModule,
+        PasswordModule,
+        DividerModule,
+        StyleClassModule,
+    ],
+    providers: [
+        MessageService,
+        ConfirmationService,
+        {provide: APP_BASE_HREF, useValue: '/'}, // require else the cookies does not works with RouterModule.({useHash:true})
+        {
+            provide: RouteReuseStrategy,
+            useClass: CustomRouteReuseStrategy
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
       useClass: ServerRequestInterceptor,
       multi: true
     }

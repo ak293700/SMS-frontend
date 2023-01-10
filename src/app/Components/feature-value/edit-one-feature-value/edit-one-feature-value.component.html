@@ -5,24 +5,34 @@
     <h2 class="text" style="margin-top: 5rem">{{featureModel.name}}</h2>
 
     <div class="flex-center" style="width: 100%">
-        <p-table [value]="featureModel.values" [totalRecords]="featureModel.values.length"
+
+        <p-table dataKey="id"
                  styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
-                 [tableStyle]="{'width': '50vh'}">
+                 [value]="featureModel.values" [totalRecords]="featureModel.values.length"
+                 [tableStyle]="{'width': '60vh'}" [scrollable]="true" scrollHeight="65vh">
+
             <ng-template pTemplate="header">
                 <tr>
                     <th>Valeur</th>
-                    <th>Id EPS</th>
-                    <th>Id E+S</th>
+
+                    <th *ngFor="let shop of getModelShops()">
+                        Id {{Shop.toString(shop)}}
+                    </th>
                 </tr>
             </ng-template>
+
             <ng-template pTemplate="body" let-featureValue>
                 <tr>
-                    <td>{{featureValue.value}}</td>
+                    <td class="cell">
+                        <input class="display-as-text" [(ngModel)]="featureValue.value"/>
+                    </td>
 
-                    <td>{{0}}</td>
-                    <td>{{1}}</td>
-                    <!--                    <td>{{featureModel.shopSpecific}}</td>-->
-                    <!--                    <td>{{featureModel.value}}</td>-->
+                    <!-- Logically every feature value should have the instance the same shopSpecific as it's model -->
+                    <!-- Else it would be a shame -->
+
+                    <td *ngFor="let shop of getModelShops()">
+                        {{ getIdPrestashopByShop(featureValue, shop) }}
+                    </td>
                 </tr>
             </ng-template>
         </p-table>
