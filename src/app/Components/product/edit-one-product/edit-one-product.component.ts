@@ -431,7 +431,6 @@ export class EditOneProductComponent implements OnInit
             `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
             changes);
     }
-
     // return can everything went well
     async saveDiscount(discount: any): Promise<boolean>
     {

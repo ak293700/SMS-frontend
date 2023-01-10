@@ -11,6 +11,8 @@ import {CheckingTools} from "../../../../utils/CheckingTools";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {Sandbox} from "../../../../utils/Sandbox";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {PatchFeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/PatchFeatureValueDto";
+import {IdPrestashopShopDto} from "../../../../Dtos/IdPrestashopShopDto";
 
 
 @Component({
@@ -77,6 +79,7 @@ export class EditOneFeatureValueComponent implements OnInit
         }
     }
 
+    // todo does not works the way I want.
     detectChanges(): IChanges
     {
         const [toAdd, toPatch, toDelete] = this.splitChanges();
@@ -174,44 +177,113 @@ export class EditOneFeatureValueComponent implements OnInit
 
     private async _save(changes: IChanges)
     {
+        this.loading = true;
         const [toAdd, toPatch, toDelete] = this.splitChanges();
-        await this._saveAdd(toAdd);
-        await this._saveDelete(toDelete);
+
+        await Promise.all([this._saveAdd(toAdd), this._savePatch(changes, toPatch), this._saveDelete(toDelete)]);
+
+        await this.fetchFeatureModel(this.featureModel.id);
+        this.loading = false;
+    }
+
+    private async _savePatch(changes: IChanges, toPatch: FeatureValueDto[]): Promise<void>
+    {
+        const promises: Promise<void>[] = [];
+        console.log(changes);
+        for (const change of changes.diffObj)
+        {
+            // console.log(change)
+        }
+        // promises.push(this._savePatchOne(featureValue));
+        await Promise.all(promises);
+    }
+
+    private async _savePatchOne(featureValue: FeatureValueDto): Promise<void>
+    {
+        const patch: PatchFeatureValueDto = {
+            id: featureValue.id,
+            value: featureValue.value
+        };
+        let response = await this.http.patch(`${api}/featureValue`, patch);
+        if (!HttpTools.IsValid(response.status))
+        {
+            return this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
+            });
+        }
+
+        response = await this.http.patch(`${api}/featureValue/shopSpecifics`, patch);
+        if (!HttpTools.IsValid(response.status))
+        {
+            return this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
+            });
+        }
     }
 
 
     private async _saveAdd(toAdd: FeatureValueDto[]): Promise<void>
     {
+        const promises: Promise<void>[] = [];
         for (const featureValue of toAdd)
+            promises.push(this._saveAddOne(featureValue));
+        await Promise.all(promises);
+    }
+
+    private async _saveAddOne(featureValue: FeatureValueDto): Promise<void>
+    {
+        let response = await this.http.post(`${api}/featureValue`, {
+            featureModelId: this.featureModel.id,
+            value: featureValue.value
+        });
+        if (!HttpTools.IsValid(response.status))
         {
-            const response = await this.http.post(`${api}/featureValue`, {
-                featureModelId: this.featureModel.id,
-                value: featureValue.value
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: `Erreur lors de l'ajout de la valeur ${featureValue.value}`
             });
-            if (!HttpTools.IsValid(response.status))
-            {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erreur',
-                    detail: `Erreur lors de l'ajout de la valeur ${featureValue.value}`
-                });
-            }
+        }
+
+        const shopSpecifics: IdPrestashopShopDto[] = featureValue.shopSpecifics
+            .filter(ss => ss.idPrestashop != undefined);
+        if (shopSpecifics.length == 0)
+            return
+
+        const featureValueId = response.body;
+        response = await this.http.post(`${api}/featureValue/shopSpecific/${featureValueId}`, shopSpecifics);
+        if (!HttpTools.IsValid(response.status))
+        {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: `Erreur lors de l'ajout des identifiants à la valeur ${featureValue.value}`
+            });
         }
     }
 
     private async _saveDelete(toDelete: FeatureValueDto[]): Promise<void>
     {
+        const promises: Promise<void>[] = [];
         for (const featureValue of toDelete)
+            promises.push(this._saveDeleteOne(featureValue));
+        await Promise.all(promises);
+    }
+
+    private async _saveDeleteOne(featureValue: FeatureValueDto): Promise<void>
+    {
+        const response = await this.http.delete(`${api}/featureValue/${featureValue.id}`);
+        if (!HttpTools.IsValid(response.status))
         {
-            const response = await this.http.delete(`${api}/featureValue/${featureValue.id}`);
-            if (!HttpTools.IsValid(response.status))
-            {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erreur',
-                    detail: `Erreur lors de la suppression de la valeur ${featureValue.value}`
-                });
-            }
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: `Erreur lors de la suppression de la valeur ${featureValue.value}`
+            });
         }
     }
 
@@ -221,11 +293,11 @@ export class EditOneFeatureValueComponent implements OnInit
     }
 
     // return all the shop that the model is on
+
     getModelShops(): Shop[]
     {
         return this.featureModel.shopSpecifics.map(shop => shop.shop);
     }
-
     deleteValue(featureValue: FeatureValueDto)
     {
         // remove featureValue (by id) in this.featureModel.values
@@ -243,4 +315,5 @@ export class EditOneFeatureValueComponent implements OnInit
             }
         )
     }
+
 }
