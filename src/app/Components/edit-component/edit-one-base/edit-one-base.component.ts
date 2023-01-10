@@ -3,6 +3,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {EditBaseComponent} from "../edit-base/edit-base.component";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
+import {Sandbox} from "../../../../utils/Sandbox";
 
 @Component({
   selector: 'app-edit-one-base',
@@ -24,15 +25,13 @@ export class EditOneBaseComponent extends EditBaseComponent
     const changes = this.detectChanges();
     if (changes.count > 0)
     {
-      const message = changes.count == 1
-        ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
-        : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
-
       const f = (id: number) => {
         this.reset();
         this.newSelectionEvent.emit(id);
       };
-      ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this), id);
+      ConfirmationServiceTools.newComplexFunction(this.confirmationService,
+          Sandbox.buildCancelChangeMessage(changes.count),
+          f.bind(this), id);
     }
     else
       this.newSelectionEvent.emit(id);
@@ -43,17 +42,18 @@ export class EditOneBaseComponent extends EditBaseComponent
     const changes = this.detectChanges();
 
     if (changes.count == 0)
+    {
+
       return this.messageService.add({
         severity: 'info',
         summary: 'Aucun changement',
         detail: 'Aucun changement à abandonner'
       });
-
-    const message = changes.count == 1
-      ? `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment l'abandonner ?`
-      : `Vous avez ${changes.count} changements non sauvegardés. Voulez-vous vraiment les abandonner ?`
+    }
 
     const f = () => this.resetEvent.emit();
-    ConfirmationServiceTools.newComplexFunction(this.confirmationService, message, f.bind(this));
+    ConfirmationServiceTools.newComplexFunction(this.confirmationService,
+        Sandbox.buildCancelChangeMessage(changes.count),
+        f.bind(this));
   }
 }

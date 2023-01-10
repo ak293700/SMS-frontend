@@ -8,7 +8,9 @@ import {Operation} from "../../../../utils/Operation";
 import {FeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/FeatureValueDto";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {CheckingTools} from "../../../../utils/CheckingTools";
-import {NullablePropertyWrapperDto} from "../../../../Dtos/NullablePropertyWrapperDto";
+import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
+import {Sandbox} from "../../../../utils/Sandbox";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 
 @Component({
@@ -28,7 +30,12 @@ export class EditOneFeatureValueComponent implements OnInit
     // @ts-ignore
     featureModel: FeatureModelDto;
 
-    constructor(private http: HttpClientWrapperService)
+    loading: boolean = false;
+
+    constructor(private http: HttpClientWrapperService,
+                private confirmationService: ConfirmationService,
+                private messageService: MessageService)
+
     {}
 
     async ngOnInit()
@@ -47,7 +54,14 @@ export class EditOneFeatureValueComponent implements OnInit
             return;
 
         this.initialFeatureModel = response.body;
+        this.initFeatureModel();
+    }
+
+
+    initFeatureModel(): void
+    {
         this.featureModel = Operation.deepCopy(this.initialFeatureModel);
+
 
         // for each value create the shop present in featureModel but not in the value
         const featureModelShops: Shop[] = this.featureModel.shopSpecifics.map(ss => ss.shop);
@@ -65,19 +79,20 @@ export class EditOneFeatureValueComponent implements OnInit
 
     detectChanges(): IChanges
     {
-        // we copy the modified values
-        const currentFeatureValues: FeatureValueDto[] = Operation.deepCopy(this.featureModel.values);
+        const [toAdd, toPatch, toDelete] = this.splitChanges();
 
-        // we remove the undefined because we don't save them in the database
-        currentFeatureValues
+        // we copy the modified values
+        // const currentFeatureValues: FeatureValueDto[] = Operation.deepCopy(toPatch);
+        toPatch
             .forEach(value => value.shopSpecifics = value.shopSpecifics.filter(ss => ss.idPrestashop != undefined));
 
         const changes: IChanges = {diffObj: [], count: 0};
 
-        for (let i = 0; i < this.initialFeatureModel.values.length; i++)
+        // for (let i = 0; i < toPatch.length; i++)
+        for (const currentFeatureValue of toPatch)
         {
-            const initialFeatureValue: FeatureValueDto = this.initialFeatureModel.values[i];
-            const currentFeatureValue: FeatureValueDto = currentFeatureValues[i];
+            const initialFeatureValue: FeatureValueDto = Operation.first(this.initialFeatureModel.values,
+                v => v.id == currentFeatureValue.id);
 
             const diff = CheckingTools.detectChanges(currentFeatureValue, initialFeatureValue);
             if (diff.count > 0)
@@ -87,41 +102,117 @@ export class EditOneFeatureValueComponent implements OnInit
             }
         }
 
+        changes.count += toAdd.length;
+        changes.count += toDelete.length;
+
         return changes;
     }
 
     // split the changes in three parts
     // toAdd, toPatch, toDelete
     // the toPatch should not be
-    splitChanges(): { toAdd: FeatureValueDto[], toPatch: FeatureValueDto[], toDelete: FeatureValueDto[] }
+    splitChanges(): [toAdd: FeatureValueDto[], toPatch: FeatureValueDto[], toDelete: FeatureValueDto[]]
     {
         const initialValues: FeatureValueDto[] = this.initialFeatureModel.values;
         const currentValues: FeatureValueDto[] = this.featureModel.values;
 
-        const res = {
+        const res: { toAdd: FeatureValueDto[], toPatch: FeatureValueDto[], toDelete: FeatureValueDto[] } = {
             toAdd: currentValues // every value not initially present but now present
-                .filter(cr => !initialValues.some(iv => iv.id == cr.id)),
+                .filter(cr => !initialValues.some(iv => iv.id === cr.id)),
             toPatch: [],
             toDelete: initialValues // every value initially present in but not anymore
-                .filter(iv => !currentValues.some(cr => cr.id == iv.id)),
+                .filter(iv => !currentValues.some(cr => cr.id === iv.id)),
         }
 
-        // @ts-ignore
         res.toPatch = currentValues // the rest
-            .filter(cr => !res.toAdd.some(va => va.id != cr.id) && !res.toDelete.some(va => va.id != cr.id));
+            .filter(cr => !res.toAdd.some(va => va.id === cr.id) && !res.toDelete.some(va => va.id === cr.id));
 
-        return res;
+        return [Operation.deepCopy(res.toAdd), Operation.deepCopy(res.toPatch), Operation.deepCopy(res.toDelete)];
     }
 
-    reset()
+    async reset()
     {
+        const changes: IChanges = this.detectChanges();
+        if (changes.count == 0)
+        {
+            return this.messageService.add({
+                severity: 'info',
+                summary: 'Aucun changement',
+                detail: 'Aucun changement à abandonner'
+            });
+        }
 
+        const cancel = await ConfirmationServiceTools.newBlocking(this.confirmationService,
+            Sandbox.buildCancelChangeMessage(changes.count));
+
+        if (!cancel)
+            return;
+
+        this.initFeatureModel();
     }
 
-    save()
+    async save()
     {
         const changes = this.detectChanges();
-        console.log(changes);
+        if (changes.count == 0)
+        {
+            return this.messageService.add({
+                severity: 'info',
+                summary: 'Aucun changement',
+                detail: 'Aucun changement à enregistrer'
+            });
+        }
+
+        const register = await ConfirmationServiceTools.newBlocking(this.confirmationService,
+            Sandbox.buildRegisterChangeMessage(changes.count));
+
+        if (!register)
+            return;
+
+        await this._save(changes);
+    }
+
+    private async _save(changes: IChanges)
+    {
+        const [toAdd, toPatch, toDelete] = this.splitChanges();
+        await this._saveAdd(toAdd);
+        await this._saveDelete(toDelete);
+    }
+
+
+    private async _saveAdd(toAdd: FeatureValueDto[]): Promise<void>
+    {
+        for (const featureValue of toAdd)
+        {
+            const response = await this.http.post(`${api}/featureValue`, {
+                featureModelId: this.featureModel.id,
+                value: featureValue.value
+            });
+            if (!HttpTools.IsValid(response.status))
+            {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: `Erreur lors de l'ajout de la valeur ${featureValue.value}`
+                });
+            }
+        }
+    }
+
+    private async _saveDelete(toDelete: FeatureValueDto[]): Promise<void>
+    {
+        for (const featureValue of toDelete)
+        {
+            const response = await this.http.delete(`${api}/featureValue/${featureValue.id}`);
+            if (!HttpTools.IsValid(response.status))
+            {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: `Erreur lors de la suppression de la valeur ${featureValue.value}`
+                });
+            }
+        }
     }
 
     get Shop(): typeof Shop

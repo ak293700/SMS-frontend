@@ -1,7 +1,7 @@
 <app-back-button routerLink="/featureModel/edit/one"></app-back-button>
 
 
-<div *ngIf="featureModel != undefined" class="full-page-container">
+<div *ngIf="featureModel != undefined && !loading" class="full-page-container">
     <h2 class="text" style="margin-top: 5rem">{{featureModel.name}}</h2>
 
     <div class="flex-center" style="width: 100%">
@@ -26,7 +26,7 @@
                 </tr>
             </ng-template>
 
-            <ng-template pTemplate="body" let-featureValue let-index>
+            <ng-template pTemplate="body" let-featureValue>
                 <tr>
                     <td class="cell">
                         <input class="display-as-text" [(ngModel)]="featureValue.value"/>
@@ -58,4 +58,11 @@
                 (click)="save()"></button>
     </div>
 </div>
+
+
+<i *ngIf="featureModel == undefined || loading"
+   class="pi pi-spin pi-spinner"
+   style="font-size: 2rem; position: absolute; left: 50%; top: 50%; translate: -50% -50%">
+</i>
+
 
