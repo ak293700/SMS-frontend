@@ -1,0 +1,12 @@
+<app-back-button></app-back-button>
+
+<div id="common-field">
+    <ul class="field-container">
+        <li class="field-item">
+            <label for="field-name" class="text">Nom</label>
+            <input pInputText id="field-name" [(ngModel)]="featureModel.name"/>
+        </li>
+    </ul>
+</div>
+
+<p-button (click)="create()" label="Créer" styleClass="btn-hover-main" [style.margin.px]="40"></p-button>

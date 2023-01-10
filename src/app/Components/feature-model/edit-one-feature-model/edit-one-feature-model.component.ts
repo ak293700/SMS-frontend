@@ -8,11 +8,11 @@ import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
 import {ConfirmationService, MenuItem, MessageService, PrimeIcons} from "primeng/api";
 import {IChanges} from "../../../../Interfaces/IChanges";
-import {FeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/FeatureModelDto";
 import {Shop} from "../../../../Enums/Shop";
 import {CheckingTools} from "../../../../utils/CheckingTools";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {Router} from "@angular/router";
+import {LiteFeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/LiteFeatureModelDto";
 
 
 @Component({
@@ -27,9 +27,9 @@ import {Router} from "@angular/router";
 export class EditOneFeatureModelComponent implements OnInit
 {
     // @ts-ignore
-    initialFeatureModel: FeatureModelDto;
+    initialFeatureModel: LiteFeatureModelDto;
     // @ts-ignore
-    featureModel: FeatureModelDto;
+    featureModel: LiteFeatureModelDto;
 
     otherFeatureModels: IdNameDto[] = [];
 
@@ -65,7 +65,7 @@ export class EditOneFeatureModelComponent implements OnInit
 
     async ngOnInit()
     {
-        let routedData: { selectedIds: number[], selectedId: number } = history.state;
+        const routedData: { selectedIds: number[], selectedId: number } = history.state;
         if (routedData.selectedIds == undefined)
             routedData.selectedIds = [1, 2, 34, 14];
 
@@ -91,7 +91,7 @@ export class EditOneFeatureModelComponent implements OnInit
 
     async fetchFeatureModel(id: number)
     {
-        const response = await this.http.get(`${api}/featureModel/${id}`);
+        const response = await this.http.get(`${api}/featureModel/${id}/lite`);
         if (!HttpTools.IsValid(response.status))
             return MessageServiceTools.httpFail(this.messageService, response);
 
@@ -178,10 +178,10 @@ export class EditOneFeatureModelComponent implements OnInit
                 `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment les abandonner ?`);
         }
 
-        await this.router.navigate(['/featureValue/edit/one']);
-
-
-        this.messageService
-            .add({severity: 'warn', summary: 'Oups', detail: "Cette fonctionnalité n'est pas encore implémentée"});
+        await this.router.navigate(['/featureValue/edit/one'], {
+            state: {
+                featureModelId: this.featureModel.id
+            }
+        });
     }
 }

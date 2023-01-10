@@ -25,6 +25,9 @@ import {
 import {
   EditOneFeatureValueComponent
 } from "./Components/feature-value/edit-one-feature-value/edit-one-feature-value.component";
+import {
+  CreateFeatureModelComponent
+} from "./Components/feature-model/create-feature-model/create-feature-model.component";
 
 const createOrViewRoute: Route = {
   path: '',
@@ -100,7 +103,7 @@ const featureModelRoute: Route = {
   path: 'featureModel',
   children: [
     createOrViewRoute,
-    {path: 'create', component: CreateDistributorComponent},
+    {path: 'create', component: CreateFeatureModelComponent},
     {path: 'filter', component: FeatureModelFilterComponent},
     {
       path: 'edit', children: [

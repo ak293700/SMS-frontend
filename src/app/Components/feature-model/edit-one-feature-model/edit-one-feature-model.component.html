@@ -32,7 +32,7 @@
         <label class="text">Id Prestashop</label>
         <p-inputNumber *ngFor="let shopSpecific of featureModel.shopSpecifics; let i=index"
                        [useGrouping]="false"
-                       [placeholder]="initialFeatureModel.shopSpecifics[i].idPrestashop.toString()"
+                       [placeholder]="initialFeatureModel.shopSpecifics[i].idPrestashop?.toString() ?? ''"
                        [(ngModel)]="shopSpecific.idPrestashop">
         </p-inputNumber>
     </div>

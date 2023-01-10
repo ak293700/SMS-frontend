@@ -66,6 +66,9 @@ import {
 import {
   EditOneFeatureValueComponent
 } from './Components/feature-value/edit-one-feature-value/edit-one-feature-value.component';
+import {
+  CreateFeatureModelComponent
+} from './Components/feature-model/create-feature-model/create-feature-model.component';
 
 @NgModule({
   declarations: [
@@ -85,16 +88,17 @@ import {
       CreateBundleComponent,
     BackButtonComponent,
     CreateDiscountComponent,
-    EditMultipleComponent,
-    SelectorBtnComponent,
-    SettingsComponent,
-    CreateDistributorComponent,
-    DistributorFilterComponent,
-    InputNumberComponent,
-    FeatureModelFilterComponent,
-    EditOneFeatureModelComponent,
-    FeatureValueFilterComponent,
-    EditOneFeatureValueComponent,
+      EditMultipleComponent,
+      SelectorBtnComponent,
+      SettingsComponent,
+      CreateDistributorComponent,
+      DistributorFilterComponent,
+      InputNumberComponent,
+      FeatureModelFilterComponent,
+      EditOneFeatureModelComponent,
+      FeatureValueFilterComponent,
+      EditOneFeatureValueComponent,
+      CreateFeatureModelComponent,
   ],
   imports: [
     BrowserModule,
