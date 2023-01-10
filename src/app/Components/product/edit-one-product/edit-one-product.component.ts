@@ -701,17 +701,8 @@ export class EditOneProductComponent implements OnInit
     }
 
     // create a new shop specific
-    createNewShopSpecific(selectedShop: IdNameDto | undefined): void
+    createNewShopSpecific(selectedShop: IdNameDto): void
     {
-        if (selectedShop == undefined)
-        {
-            return this.messageService.add({
-                'severity': 'erreur',
-                'summary': 'Opération impossible',
-                'detail': 'Aucun shop sélectionné'
-            });
-        }
-
         let name = '';
         let km = 1.34;
         if (this.product.shopSpecifics.length > 0)

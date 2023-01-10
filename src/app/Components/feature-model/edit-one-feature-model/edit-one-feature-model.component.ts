@@ -39,12 +39,10 @@ export class EditOneFeatureModelComponent implements OnInit
 
     newShopStruct: {
         visible: boolean,
-        availableShop: IdNameDto[],
-        selectedShop: IdNameDto | undefined,
+        forbiddenShops: Shop[],
     } = {
         visible: false,
-        availableShop: [],
-        selectedShop: undefined
+        forbiddenShops: []
     }
 
     constructor(private featureModelService: FeatureModelsService,
@@ -107,25 +105,53 @@ export class EditOneFeatureModelComponent implements OnInit
 
         this.initialFeatureModel = response.body;
         this.featureModel = Operation.deepCopy(this.initialFeatureModel);
-
-        console.log(this.featureModel);
-
-        // this.initDummyStruct();
     }
 
     detectChanges(): IChanges
     {
-        return CheckingTools.detectChanges(this.featureModel, this.initialFeatureModel);
+        return CheckingTools.detectChanges(this.featureModel, this.initialFeatureModel, ['id']);
+    }
+
+    private async _save(changes: IChanges)
+    {
+        // if edit shop specifics
+        if (changes.diffObj.shopSpecifics != undefined)
+        {
+            // then send the whole object to set to exactly that
+            const response = await this.http.post(`${api}/featureModel/shopSpecific/${this.featureModel.id}`,
+                this.featureModel.shopSpecifics);
+
+            if (!HttpTools.IsValid(response.status))
+                return MessageServiceTools.httpFail(this.messageService, response);
+
+            // remove shop specific so it not in the next part
+            delete changes.diffObj.shopSpecifics;
+            changes.count--;
+        }
+
+        if (changes.count == 0)
+            return;
+
+        // the id is already contain
+        const response = await this.http.patch(`${api}/featureModel/`, changes.diffObj);
+        if (!HttpTools.IsValid(response.status))
+            return MessageServiceTools.httpFail(this.messageService, response);
+
+        // re fetch to be sure that everything works and is synchronized
+        await this.fetchFeatureModel(this.featureModel.id);
     }
 
     save()
     {
         const changes = this.detectChanges();
         if (changes.count == 0)
-        {
-            this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
-            return
-        }
+            return this.messageService.add({severity: 'info', summary: 'Enregistrer', detail: 'Aucune modification'});
+
+        ConfirmationServiceTools.new(this.confirmationService,
+            this,
+            this._save,
+            `Toute donnée modifiée ne pourra être retrouvé. ${changes.count} modifications.`,
+            changes);
     }
 
     reset()
@@ -176,18 +202,7 @@ export class EditOneFeatureModelComponent implements OnInit
     private newShopSpecificRequest()
     {
         // filter, so it keep only the shop that are not already created
-        this.newShopStruct.availableShop = Shop.All()
-            .map(s => { return {id: s, name: Shop.toString(s)} })
-            .filter(e => Operation.firstOrDefault(this.featureModel.shopSpecifics,
-                ss => ss.shop === e.id) == undefined);
-
-        if (this.newShopStruct.availableShop.length == 0)
-            return this.messageService.add({
-                severity: 'warn',
-                summary: 'Opération impossible',
-                detail: 'Tout les shops sont déjà créés'
-            });
-
+        this.newShopStruct.forbiddenShops = this.featureModel.shopSpecifics.map(ss => ss.shop);
         this.newShopStruct.visible = true;
     }
 
@@ -207,8 +222,8 @@ export class EditOneFeatureModelComponent implements OnInit
         });
     }
 
-    createNewShopSpecific()
+    createNewShopSpecific(selectedShop: IdNameDto)
     {
-
+        this.featureModel.shopSpecifics.push({idPrestashop: null, shop: selectedShop.id});
     }
 }

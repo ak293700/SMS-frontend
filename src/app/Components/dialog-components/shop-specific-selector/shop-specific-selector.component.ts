@@ -17,7 +17,7 @@ export class ShopSpecificSelectorComponent implements OnChanges
   selectedShop: IdNameDto | undefined;
 
   @Input() forbiddenShops: Shop[] = [];
-  @Output('onSelect') selectedShopChange = new EventEmitter<IdNameDto | undefined>();
+    @Output('onSelect') selectedShopChange = new EventEmitter<IdNameDto>();
 
   constructor(private messageService: MessageService) {}
 
@@ -58,7 +58,14 @@ export class ShopSpecificSelectorComponent implements OnChanges
 
   onValidate()
   {
-    this.setVisibility(false);
-    this.selectedShopChange.emit(this.selectedShop);
+      this.setVisibility(false);
+      if (this.selectedShop == undefined)
+          return this.messageService.add({
+              severity: 'erreur',
+              summary: 'Opération impossible',
+              detail: 'Aucun shop sélectionné'
+          });
+
+      this.selectedShopChange.emit(this.selectedShop);
   }
 }
