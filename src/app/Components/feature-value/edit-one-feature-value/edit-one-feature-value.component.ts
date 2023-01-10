@@ -97,10 +97,10 @@ export class EditOneFeatureValueComponent implements OnInit
             const initialFeatureValue: FeatureValueDto = Operation.first(this.initialFeatureModel.values,
                 v => v.id == currentFeatureValue.id);
 
-            const diff = CheckingTools.detectChanges(currentFeatureValue, initialFeatureValue);
+            const diff = CheckingTools.detectChanges(currentFeatureValue, initialFeatureValue, ['id']);
             if (diff.count > 0)
             {
-                changes.diffObj.push(diff);
+                changes.diffObj.push(diff.diffObj);
                 changes.count++;
             }
         }
@@ -188,40 +188,56 @@ export class EditOneFeatureValueComponent implements OnInit
 
     private async _savePatch(changes: IChanges, toPatch: FeatureValueDto[]): Promise<void>
     {
+        toPatch = toPatch.filter(value => changes.diffObj.some((diff: { id: number; }) => diff.id == value.id));
         const promises: Promise<void>[] = [];
-        console.log(changes);
         for (const change of changes.diffObj)
         {
-            // console.log(change)
+            const featureValue: FeatureValueDto = Operation.first(toPatch, v => v.id == change.id);
+            promises.push(this._savePatchOne(featureValue,
+                change.value !== undefined,
+                change.shopSpecifics !== undefined));
         }
-        // promises.push(this._savePatchOne(featureValue));
         await Promise.all(promises);
     }
 
-    private async _savePatchOne(featureValue: FeatureValueDto): Promise<void>
+    private async _savePatchOne(featureValue: FeatureValueDto, patchBody: boolean, patchShopSpecifics: boolean): Promise<void>
     {
-        const patch: PatchFeatureValueDto = {
-            id: featureValue.id,
-            value: featureValue.value
-        };
-        let response = await this.http.patch(`${api}/featureValue`, patch);
-        if (!HttpTools.IsValid(response.status))
+
+        if (patchBody)
         {
-            return this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
-            });
+            const patch: PatchFeatureValueDto = {
+                id: featureValue.id,
+                value: featureValue.value
+            };
+            let response = await this.http.patch(`${api}/featureValue`, patch);
+            if (!HttpTools.IsValid(response.status))
+            {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
+                });
+            }
         }
 
-        response = await this.http.patch(`${api}/featureValue/shopSpecifics`, patch);
-        if (!HttpTools.IsValid(response.status))
+        if (patchShopSpecifics)
         {
-            return this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
-            });
+            console.log('patchShopSpecifics');
+            console.log(featureValue.shopSpecifics);
+            const shopSpecifics: IdPrestashopShopDto[] = featureValue.shopSpecifics
+                .filter((ss: any) => ss.idPrestashop != undefined);
+            console.log(shopSpecifics);
+
+            const response = await this.http.post(`${api}/featureValue/shopSpecific/${featureValue.id}`,
+                shopSpecifics);
+            if (!HttpTools.IsValid(response.status))
+            {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erreur',
+                    detail: `Erreur lors de la mise à jour des identifiant de la valeur ${featureValue.value}`
+                });
+            }
         }
     }
 
@@ -293,11 +309,11 @@ export class EditOneFeatureValueComponent implements OnInit
     }
 
     // return all the shop that the model is on
-
     getModelShops(): Shop[]
     {
         return this.featureModel.shopSpecifics.map(shop => shop.shop);
     }
+
     deleteValue(featureValue: FeatureValueDto)
     {
         // remove featureValue (by id) in this.featureModel.values
@@ -315,5 +331,4 @@ export class EditOneFeatureValueComponent implements OnInit
             }
         )
     }
-
 }

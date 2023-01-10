@@ -13,6 +13,7 @@ import {CheckingTools} from "../../../../utils/CheckingTools";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {Router} from "@angular/router";
 import {LiteFeatureModelDto} from "../../../../Dtos/FeatureDtos/FeatureModelDtos/LiteFeatureModelDto";
+import {Sandbox} from "../../../../utils/Sandbox";
 
 
 @Component({
@@ -114,31 +115,46 @@ export class EditOneFeatureModelComponent implements OnInit
 
     private async _save(changes: IChanges)
     {
-        // if edit shop specifics
-        if (changes.diffObj.shopSpecifics != undefined)
+        this.loading = true;
+
+        try
         {
-            // then send the whole object to set to exactly that
-            const response = await this.http.post(`${api}/featureModel/shopSpecific/${this.featureModel.id}`,
-                this.featureModel.shopSpecifics);
 
-            if (!HttpTools.IsValid(response.status))
-                return MessageServiceTools.httpFail(this.messageService, response);
+            // if edit shop specifics
+            if (changes.diffObj.shopSpecifics != undefined)
+            {
+                // then send the whole object to set to exactly that
+                const response = await this.http.post(`${api}/featureModel/shopSpecific/${this.featureModel.id}`,
+                    this.featureModel.shopSpecifics);
 
-            // remove shop specific so it not in the next part
-            delete changes.diffObj.shopSpecifics;
-            changes.count--;
+                if (!HttpTools.IsValid(response.status))
+                    return MessageServiceTools.httpFail(this.messageService, response);
+
+                // remove shop specific so it not in the next part
+                delete changes.diffObj.shopSpecifics;
+                changes.count--;
+            }
+
+            if (changes.count !== 0)
+            {
+                // the id is already contain
+                const response = await this.http.patch(`${api}/featureModel/`, changes.diffObj);
+                if (!HttpTools.IsValid(response.status))
+                    return MessageServiceTools.httpFail(this.messageService, response);
+            }
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Enregistrer',
+                detail: 'La caractéristique a bien été enregistré'
+            });
+
+            // re fetch to be sure that everything works and is synchronized
+            await this.fetchFeatureModel(this.featureModel.id);
+        } finally
+        {
+            this.loading = false;
         }
-
-        if (changes.count == 0)
-            return;
-
-        // the id is already contain
-        const response = await this.http.patch(`${api}/featureModel/`, changes.diffObj);
-        if (!HttpTools.IsValid(response.status))
-            return MessageServiceTools.httpFail(this.messageService, response);
-
-        // re fetch to be sure that everything works and is synchronized
-        await this.fetchFeatureModel(this.featureModel.id);
     }
 
     save()
@@ -212,7 +228,7 @@ export class EditOneFeatureModelComponent implements OnInit
         if (changes.count != 0)
         {
             await ConfirmationServiceTools.newBlocking(this.confirmationService,
-                `Vous avez ${changes.count} changement non sauvegardé. Voulez-vous vraiment les abandonner ?`);
+                Sandbox.buildCancelChangeMessage(changes.count));
         }
 
         await this.router.navigate(['/featureValue/edit/one'], {
