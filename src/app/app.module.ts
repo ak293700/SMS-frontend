@@ -70,6 +70,9 @@ import {
     CreateFeatureModelComponent
 } from './Components/feature-model/create-feature-model/create-feature-model.component';
 import {StyleClassModule} from "primeng/styleclass";
+import {
+    ShopSpecificSelectorComponent
+} from './Components/dialog-components/shop-specific-selector/shop-specific-selector.component';
 
 @NgModule({
   declarations: [
@@ -100,6 +103,7 @@ import {StyleClassModule} from "primeng/styleclass";
       FeatureValueFilterComponent,
       EditOneFeatureValueComponent,
       CreateFeatureModelComponent,
+      ShopSpecificSelectorComponent,
   ],
     imports: [
         BrowserModule,

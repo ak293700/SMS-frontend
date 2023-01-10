@@ -1,0 +1,15 @@
+<p-dialog [(visible)]="visible"
+          [style]="{'min-height':'50vh'}"
+          [draggable]="false" [modal]="true" class="field-container">
+
+    <div class="field-item">
+        <label for="field-new-shop-specific" class="text">Stock</label>
+        <p-dropdown id="field-new-shop-specific" dataKey="id"
+                    optionLabel="name" [options]="availableShops"
+                    [(ngModel)]="selectedShop">
+        </p-dropdown>
+    </div>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-check" (click)="onValidate()" label="Valider"></button>
+    </ng-template>
+</p-dialog>

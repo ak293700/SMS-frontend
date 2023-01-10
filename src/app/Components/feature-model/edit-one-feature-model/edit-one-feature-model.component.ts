@@ -37,6 +37,16 @@ export class EditOneFeatureModelComponent implements OnInit
 
     dialItems: MenuItem[];
 
+    newShopStruct: {
+        visible: boolean,
+        availableShop: IdNameDto[],
+        selectedShop: IdNameDto | undefined,
+    } = {
+        visible: false,
+        availableShop: [],
+        selectedShop: undefined
+    }
+
     constructor(private featureModelService: FeatureModelsService,
                 private http: HttpClientWrapperService,
                 private messageService: MessageService,
@@ -165,8 +175,20 @@ export class EditOneFeatureModelComponent implements OnInit
 
     private newShopSpecificRequest()
     {
-        this.messageService
-            .add({severity: 'warn', summary: 'Oups', detail: "Cette fonctionnalité n'est pas encore implémentée"});
+        // filter, so it keep only the shop that are not already created
+        this.newShopStruct.availableShop = Shop.All()
+            .map(s => { return {id: s, name: Shop.toString(s)} })
+            .filter(e => Operation.firstOrDefault(this.featureModel.shopSpecifics,
+                ss => ss.shop === e.id) == undefined);
+
+        if (this.newShopStruct.availableShop.length == 0)
+            return this.messageService.add({
+                severity: 'warn',
+                summary: 'Opération impossible',
+                detail: 'Tout les shops sont déjà créés'
+            });
+
+        this.newShopStruct.visible = true;
     }
 
     async editValues()
@@ -183,5 +205,10 @@ export class EditOneFeatureModelComponent implements OnInit
                 featureModelId: this.featureModel.id
             }
         });
+    }
+
+    createNewShopSpecific()
+    {
+
     }
 }

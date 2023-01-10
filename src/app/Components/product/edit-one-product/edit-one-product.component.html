@@ -1,19 +1,6 @@
-<!--there to create a new shop specific-->
-<p-dialog [(visible)]="newShopStruct.visible"
-          [style]="{'min-height':'50vh'}"
-          [draggable]="false" [modal]="true" class="field-container">
-
-  <div class="field-item">
-    <label for="field-new-shop-specific" class="text">Stock</label>
-    <p-dropdown id="field-new-shop-specific" dataKey="id"
-                optionLabel="name" [options]="newShopStruct.availableShop"
-                [(ngModel)]="newShopStruct.selectedShop">
-    </p-dropdown>
-  </div>
-  <ng-template pTemplate="footer">
-    <button type="button" pButton icon="pi pi-check" (click)="createNewShopSpecific()" label="Valider"></button>
-  </ng-template>
-</p-dialog>
+<app-shop-specific-selector [forbiddenShops]="newShopStruct.forbiddenShops" (onSelect)="createNewShopSpecific($event)"
+                            [(visible)]="newShopStruct.visible">
+</app-shop-specific-selector>
 
 <app-edit-one-base *ngIf="product !== undefined"
                    [otherDatas]="otherProducts" [data]="product" [detectChanges]="detectChanges.bind(this)"
