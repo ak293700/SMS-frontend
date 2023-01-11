@@ -73,6 +73,9 @@ import {
 import {
     PredefinedKeyValueTableComponent
 } from './Components/selectors/predefined-key-value-table/predefined-key-value-table.component';
+import {
+    EditProductFeaturesComponent
+} from './Components/dialog-components/edit-product-features/edit-product-features.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +107,7 @@ import {
       CreateFeatureModelComponent,
       ShopSpecificSelectorComponent,
       PredefinedKeyValueTableComponent,
+      EditProductFeaturesComponent,
   ],
     imports: [
         BrowserModule,

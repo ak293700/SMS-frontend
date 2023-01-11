@@ -1,7 +1,7 @@
 <p-table dataKey="id"
          styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
-         [value]="currentFeatures" [totalRecords]="currentFeatures.length"
-         [tableStyle]="{'width': '50vw'}" [scrollable]="true" scrollHeight="65vh">
+         [value]="currentTuples" [totalRecords]="currentTuples.length"
+         [scrollable]="true" scrollHeight="65vh">
 
     <ng-template pTemplate="header">
         <tr>
@@ -15,28 +15,30 @@
         </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-currentFeature>
+    <ng-template pTemplate="body" let-currentTuple>
         <tr>
             <td class="cell" style="overflow: visible">
                 <!-- appendTo="body" <=> the dropdown can be shown -->
                 <p-autoComplete dataKey="id" field="name" appendTo="body"
                                 [suggestions]="keySuggestions"
                                 (completeMethod)="completeMethodForModel($event)"
-                                [(ngModel)]="currentFeature.model"
-                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+                                [(ngModel)]="currentTuple.model"
+                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true"
+                                (onSelect)="onKeyChange(currentTuple)">
                 </p-autoComplete>
             </td>
             <td>
                 <p-autoComplete dataKey="id" field="name" appendTo="body"
                                 [suggestions]="valueSuggestion"
-                                (completeMethod)="completeMethodForValue($event, currentFeature.model.id)"
-                                [(ngModel)]="currentFeature.value"
+                                (completeMethod)="completeMethodForValue($event, currentTuple.model.id)"
+                                [(ngModel)]="currentTuple.value"
+                                [placeholder]="'Choisir une valeur'"
                                 [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
                 </p-autoComplete>
             </td>
             <td>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                        (click)="deleteValue(currentFeature)">
+                        (click)="deleteValue(currentTuple)">
                 </button>
             </td>
         </tr>
