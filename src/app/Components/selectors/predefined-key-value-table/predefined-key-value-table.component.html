@@ -19,7 +19,7 @@
         <tr>
             <td class="cell" style="overflow: visible">
                 <!-- appendTo="body" <=> the dropdown can be shown -->
-                <p-autoComplete id="field-popularity" dataKey="id" field="name" appendTo="body"
+                <p-autoComplete dataKey="id" field="name" appendTo="body"
                                 [suggestions]="keySuggestions"
                                 (completeMethod)="completeMethodForModel($event)"
                                 [(ngModel)]="currentFeature.model"
@@ -27,7 +27,12 @@
                 </p-autoComplete>
             </td>
             <td>
-                Empty
+                <p-autoComplete dataKey="id" field="value" appendTo="body"
+                                [suggestions]="valueSuggestion"
+                                (completeMethod)="completeMethodForValue($event, currentFeature.model.id)"
+                                [(ngModel)]="currentFeature.value"
+                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+                </p-autoComplete>
             </td>
             <td>
                 <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"

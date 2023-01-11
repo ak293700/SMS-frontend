@@ -86,4 +86,16 @@ export class PredefinedKeyValueTableComponent implements OnInit
     {
         this.keySuggestions = Operation.completeMethod(event.query, this.initialKeySuggestions);
     }
+
+    completeMethodForValue($event: any, modelId: number)
+    {
+        let suggestions = this._valueSuggestions[modelId];
+        if (suggestions == undefined)
+        {
+            // fetch it
+            suggestions = [];
+        }
+
+        this.valueSuggestion = Operation.completeMethod($event.query, suggestions);
+    }
 }
