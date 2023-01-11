@@ -74,8 +74,7 @@ export class PredefinedKeyValueTableComponent implements OnChanges
         let suggestions = this._valueSuggestions[modelId];
         if (suggestions == undefined)
         {
-            console.log("fetching suggestions for model " + modelId);
-            // fetch it
+            // if we do not have the value we fetch them
             suggestions = await this.getValuesSuggestions(modelId);
             this._valueSuggestions[modelId] = suggestions;
         }
@@ -86,5 +85,11 @@ export class PredefinedKeyValueTableComponent implements OnChanges
     onKeyChange(currentTuple: IKeyValueTuple)
     {
         currentTuple.value = {id: -1, name: ""};
+        this.currentTuplesChange.emit(this.currentTuples);
+    }
+
+    onValueChange()
+    {
+        this.currentTuplesChange.emit(this.currentTuples);
     }
 }

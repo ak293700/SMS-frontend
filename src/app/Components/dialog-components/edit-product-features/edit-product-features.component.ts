@@ -2,6 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {IKeyValueTuple} from "../../selectors/predefined-key-value-table/predefined-key-value-table.component";
 import {FeatureModelsService} from "../../../Services/feature-model.service.ts.service";
+import {HttpClientWrapperService} from "../../../Services/http-client-wrapper.service";
+import {HttpTools} from "../../../../utils/HttpTools";
+import {MessageService} from "primeng/api";
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
+import {api} from "../../../GlobalUsings";
 
 @Component({
     selector: 'app-edit-product-features',
@@ -20,23 +25,19 @@ export class EditProductFeaturesComponent implements OnInit
         {id: 2, name: "Expédié sous"},
     ];
 
-    currentFeatures: IKeyValueTuple[] = [
-        {
-            model: {id: 1, name: "Couleur"},
-            value: {id: 1, name: "Rouge"}
-        },
-        {
-            model: {id: 2, name: "Expédié sous"},
-            value: {id: 3, name: "24/48h"}
-        }
-    ];
+    currentFeatures: IKeyValueTuple[] = [];
 
-    constructor(private featureModelsService: FeatureModelsService)
+    constructor(private featureModelsService: FeatureModelsService,
+                private http: HttpClientWrapperService,
+                private messageService: MessageService)
     {}
 
     async ngOnInit()
     {
         this.modelSuggestions = await this.featureModelsService.getFeatureModels();
+
+        this.currentFeatures.push({model: this.modelSuggestions[0], value: {id: -1, name: ""}});
+        this.currentFeatures.push({model: this.modelSuggestions[1], value: {id: -1, name: ""}});
     }
 
     onValidate()
@@ -46,22 +47,13 @@ export class EditProductFeaturesComponent implements OnInit
 
     async getValuesSuggestions(modelId: number): Promise<IdNameDto[]>
     {
-        if (modelId === 1)
+        const response = await this.http.get(`${api}/featureValue/${modelId}`);
+        if (!HttpTools.IsValid(response.status))
         {
-            return [
-                {id: 1, name: "Rouge"},
-                {id: 2, name: "Vert"},
-            ];
+            MessageServiceTools.httpFail(this.messageService, response);
+            return [];
         }
 
-        if (modelId === 2)
-        {
-            return [
-                {id: 3, name: "24/48h"},
-                {id: 4, name: "72h"},
-            ];
-        }
-
-        return [];
+        return response.body;
     }
 }

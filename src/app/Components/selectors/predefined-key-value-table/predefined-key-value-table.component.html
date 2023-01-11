@@ -20,19 +20,17 @@
             <td class="cell" style="overflow: visible">
                 <!-- appendTo="body" <=> the dropdown can be shown -->
                 <p-autoComplete dataKey="id" field="name" appendTo="body"
-                                [suggestions]="keySuggestions"
+                                [suggestions]="keySuggestions" [(ngModel)]="currentTuple.model"
                                 (completeMethod)="completeMethodForModel($event)"
-                                [(ngModel)]="currentTuple.model"
-                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true"
-                                (onSelect)="onKeyChange(currentTuple)">
+                                (onSelect)="onKeyChange(currentTuple)" placeholder="Choisir une clef"
+                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
                 </p-autoComplete>
             </td>
             <td>
                 <p-autoComplete dataKey="id" field="name" appendTo="body"
-                                [suggestions]="valueSuggestion"
+                                [suggestions]="valueSuggestion" [(ngModel)]="currentTuple.value"
                                 (completeMethod)="completeMethodForValue($event, currentTuple.model.id)"
-                                [(ngModel)]="currentTuple.value"
-                                [placeholder]="'Choisir une valeur'"
+                                (onSelect)="onValueChange()" placeholder="Choisir une valeur"
                                 [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
                 </p-autoComplete>
             </td>
