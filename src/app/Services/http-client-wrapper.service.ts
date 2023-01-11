@@ -38,7 +38,6 @@ export class HttpClientWrapperService
 
     return lastValueFrom(response)
       .catch(error => {
-        console.log(error);
         return error;
       });
   }

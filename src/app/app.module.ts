@@ -70,6 +70,9 @@ import {StyleClassModule} from "primeng/styleclass";
 import {
     ShopSpecificSelectorComponent
 } from './Components/dialog-components/shop-specific-selector/shop-specific-selector.component';
+import {
+    PredefinedKeyValueTableComponent
+} from './Components/selectors/predefined-key-value-table/predefined-key-value-table.component';
 
 @NgModule({
   declarations: [
@@ -100,6 +103,7 @@ import {
       EditOneFeatureValueComponent,
       CreateFeatureModelComponent,
       ShopSpecificSelectorComponent,
+      PredefinedKeyValueTableComponent,
   ],
     imports: [
         BrowserModule,

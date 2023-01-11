@@ -13,11 +13,9 @@
             <ng-template pTemplate="header">
                 <tr>
                     <th>Valeur</th>
-
                     <th *ngFor="let shop of getModelShops()">
                         Id {{Shop.toString(shop)}}
                     </th>
-
                     <th>
                         <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-info"
                                 (click)="createEmptyValue()">
@@ -31,15 +29,10 @@
                     <td class="cell">
                         <input class="display-as-text" [(ngModel)]="featureValue.value"/>
                     </td>
-
-                    <!-- Logically every feature value should have the instance of the shopSpecific as it's model -->
-                    <!-- Else it would be a shame -->
-
                     <td *ngFor="let shopSpecific of featureValue.shopSpecifics" class="cell">
                         <app-input-number [(value)]="shopSpecific.idPrestashop" [transparent]="true">
                         </app-input-number>
                     </td>
-
                     <td>
                         <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
                                 (click)="deleteValue(featureValue)">
@@ -49,8 +42,6 @@
             </ng-template>
         </p-table>
     </div>
-
-
     <div class="flex-center changes-footer">
         <button pButton label="Annuler" class="p-button-danger"
                 (click)="reset()"></button>
@@ -58,7 +49,6 @@
                 (click)="save()"></button>
     </div>
 </div>
-
 
 <i *ngIf="featureModel == undefined || loading"
    class="pi pi-spin pi-spinner"

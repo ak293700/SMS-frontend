@@ -56,6 +56,8 @@ export class CreateFeatureModelComponent
   private async _create(request: CreateFeatureModelDto): Promise<void>
   {
     const response = await this.http.post(`${api}/FeatureModel`, request);
+    console.log(response);
+    console.log(response.body);
     if (!HttpTools.IsValid(response.status))
       return MessageServiceTools.httpFail(this.messageService, response);
 

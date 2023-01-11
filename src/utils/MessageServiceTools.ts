@@ -1,5 +1,5 @@
 import {MessageService} from "primeng/api";
-import {HttpResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 
 export class MessageServiceTools
 {
@@ -10,9 +10,10 @@ export class MessageServiceTools
 
   static httpFail(messageService: MessageService, response: HttpResponse<any> | undefined)
   {
-    if (response == undefined)
+    const error: HttpErrorResponse = response as unknown as HttpErrorResponse;
+    if (response == undefined || error.error === undefined)
       messageService.add({severity: 'warn', summary: 'Request issue', detail: 'Error during request to the server'});
     else
-      messageService.add({severity: 'warn', summary: response.statusText, detail: response.body});
+      messageService.add({severity: 'warn', summary: response.statusText, detail: error.error});
   }
 }
