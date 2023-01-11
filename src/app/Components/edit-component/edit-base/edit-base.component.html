@@ -1,35 +1,37 @@
 <nav class="nav">
-  <button class="reset-button" (click)="goToFollowingData(-1)">
-    <i class="pi pi-arrow-left" style="float: left"></i></button>
-  <p-button label="Retour filtre" routerLink="../../filter" styleClass="backButton"></p-button>
-  <button class="reset-button" (click)="goToFollowingData(1)">
-    <i class="pi pi-arrow-right"></i></button>
+    <button class="reset-button" (click)="goToFollowingData(-1)">
+        <i class="pi pi-arrow-left" style="float: left"></i>
+    </button>
+    <p-button label="Retour filtre" (click)="test()" styleClass="backButton"></p-button>
+    <button class="reset-button" (click)="goToFollowingData(1)">
+        <i class="pi pi-arrow-right"></i>
+    </button>
 </nav>
 
 <div class="grid-container" *ngIf="!loading">
-  <main>
-    <ng-content></ng-content>
+    <main>
+        <ng-content></ng-content>
 
-    <p-speedDial *ngIf="dialItems.length > 0" class="speed-dial" [model]="dialItems" [radius]="120"
-                 direction="down-left" type="quarter-circle" [style.z-index]="1" [mask]="true">
-    </p-speedDial>
+        <p-speedDial *ngIf="dialItems.length > 0" class="speed-dial" [model]="dialItems" [radius]="120"
+                     direction="down-left" type="quarter-circle" [style.z-index]="1" [mask]="true">
+        </p-speedDial>
 
-    <div class="flex-center changes-footer">
-      <button pButton label="Annuler" class="p-button-danger"
-              (click)="reset()"></button>
-      <button pButton label="Enregistrer" class="p-button-success"
-              (click)="save()"></button>
-    </div>
-  </main>
-  <aside>
-    <ul class="other-data-container">
-      <li *ngFor="let otherData of otherDatas" class="other-data-item">
-        <button (click)="goToData(otherData.id)" [disabled]="otherData.id === data.id">
-          {{otherData.name}}
-        </button>
-      </li>
-    </ul>
-  </aside>
+        <div class="flex-center changes-footer">
+            <button pButton label="Annuler" class="p-button-danger"
+                    (click)="reset()"></button>
+            <button pButton label="Enregistrer" class="p-button-success"
+                    (click)="save()"></button>
+        </div>
+    </main>
+    <aside>
+        <ul class="other-data-container">
+            <li *ngFor="let otherData of otherDatas" class="other-data-item">
+                <button (click)="goToData(otherData.id)" [disabled]="otherData.id === data.id">
+                    {{otherData.name}}
+                </button>
+            </li>
+        </ul>
+    </aside>
 </div>
 
 <i *ngIf="loading"

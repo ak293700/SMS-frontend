@@ -61,9 +61,6 @@ import {
     EditOneFeatureModelComponent
 } from './Components/feature-model/edit-one-feature-model/edit-one-feature-model.component';
 import {
-    FeatureValueFilterComponent
-} from './Components/feature-value/feature-value-filter/feature-value-filter.component';
-import {
     EditOneFeatureValueComponent
 } from './Components/feature-value/edit-one-feature-value/edit-one-feature-value.component';
 import {
@@ -100,7 +97,6 @@ import {
       InputNumberComponent,
       FeatureModelFilterComponent,
       EditOneFeatureModelComponent,
-      FeatureValueFilterComponent,
       EditOneFeatureValueComponent,
       CreateFeatureModelComponent,
       ShopSpecificSelectorComponent,

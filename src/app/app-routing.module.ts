@@ -29,6 +29,9 @@ import {
   CreateFeatureModelComponent
 } from "./Components/feature-model/create-feature-model/create-feature-model.component";
 
+// data.reuse <=> should the route be cached
+// data.reuseRoutesFrom <=> from where the route can be reused
+
 const createOrViewRoute: Route = {
   path: '',
   component: ReferralComponent, data: {
@@ -60,7 +63,7 @@ const productRoute: Route = {
   children: [
     createOrViewRoute,
     {path: 'create', component: CreateBundleComponent},
-    {path: 'filter', component: ProductFilterComponent},
+    {path: 'filter', component: ProductFilterComponent, data: {reuse: true}},
     {
       path: 'edit', children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -77,7 +80,7 @@ const discountRoute: Route = {
   children: [
     createOrViewRoute,
     {path: 'create', component: CreateDiscountComponent},
-    {path: 'filter', component: DiscountFilterComponent},
+    {path: 'filter', component: DiscountFilterComponent, data: {reuse: true}},
     {
       path: 'edit', children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -94,7 +97,7 @@ const distributorRoute: Route = {
   children: [
     createOrViewRoute,
     {path: 'create', component: CreateDistributorComponent},
-    {path: 'filter', component: DistributorFilterComponent},
+    {path: 'filter', component: DistributorFilterComponent, data: {reuse: true}},
   ],
   canActivate: [AuthGuard]
 };
@@ -104,12 +107,20 @@ const featureModelRoute: Route = {
   children: [
     createOrViewRoute,
     {path: 'create', component: CreateFeatureModelComponent},
-    {path: 'filter', component: FeatureModelFilterComponent},
+    {path: 'filter', component: FeatureModelFilterComponent, data: {reuse: true}},
     {
-      path: 'edit', children: [
+      path: 'edit',
+      children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
-        {path: 'one', component: EditOneFeatureModelComponent},
-      ]
+        {
+          path: 'one',
+          component: EditOneFeatureModelComponent,
+          data: {
+            reuse: true,
+            reuseRoutesFrom: ['/featureValue/edit/one']
+          }
+        },
+      ],
     },
   ],
   canActivate: [AuthGuard]
@@ -120,10 +131,14 @@ const featureValueRoute: Route = {
   children: [
     createOrViewRoute,
     {
-      path: 'edit', children: [
+      path: 'edit',
+      children: [
         {path: '', redirectTo: '/home', pathMatch: 'full'},
-        {path: 'one', component: EditOneFeatureValueComponent},
-      ]
+        {
+          path: 'one',
+          component: EditOneFeatureValueComponent,
+        },
+      ],
     },
   ],
   canActivate: [AuthGuard]

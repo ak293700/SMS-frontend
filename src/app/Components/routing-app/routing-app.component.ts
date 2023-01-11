@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ConfirmationService, MessageService} from "primeng/api";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,10 @@ import {ConfirmationService, MessageService} from "primeng/api";
 })
 export class RoutingAppComponent
 {
-  constructor()
-  {}
+  constructor(private router: Router)
+  {
+    // this.router.events.subscribe((event) => {
+    //     console.log(event);
+    // });
+  }
 }

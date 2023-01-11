@@ -4,6 +4,7 @@ import {EditBaseComponent} from "../edit-base/edit-base.component";
 import {ConfirmationServiceTools} from "../../../../utils/ConfirmationServiceTools";
 import {IChanges} from "../../../../Interfaces/IChanges";
 import {Sandbox} from "../../../../utils/Sandbox";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-edit-one-base',
@@ -15,9 +16,11 @@ export class EditOneBaseComponent extends EditBaseComponent
   @Input() detectChanges: () => IChanges = () => { return {diffObj: [], count: 0}; };
 
   constructor(messageService: MessageService,
-              confirmationService: ConfirmationService)
+              confirmationService: ConfirmationService,
+              router: Router,
+              route: ActivatedRoute)
   {
-    super(messageService, confirmationService);
+    super(messageService, confirmationService, router, route);
   }
 
   override async goToData(id: number)
