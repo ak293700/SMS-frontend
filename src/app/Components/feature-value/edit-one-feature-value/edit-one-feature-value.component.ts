@@ -13,6 +13,7 @@ import {Sandbox} from "../../../../utils/Sandbox";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {PatchFeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/PatchFeatureValueDto";
 import {IdPrestashopShopDto} from "../../../../Dtos/IdPrestashopShopDto";
+import {MessageServiceTools} from "../../../../utils/MessageServiceTools";
 
 
 @Component({
@@ -44,7 +45,7 @@ export class EditOneFeatureValueComponent implements OnInit
     {
         const routedData: { featureModelId: number } = history.state;
         if (routedData.featureModelId == undefined)
-            routedData.featureModelId = 47;
+            routedData.featureModelId = 49;
 
         await this.fetchFeatureModel(routedData.featureModelId);
     }
@@ -63,7 +64,6 @@ export class EditOneFeatureValueComponent implements OnInit
     initFeatureModel(): void
     {
         this.featureModel = Operation.deepCopy(this.initialFeatureModel);
-
 
         // for each value create the shop present in featureModel but not in the value
         const featureModelShops: Shop[] = this.featureModel.shopSpecifics.map(ss => ss.shop);
@@ -211,36 +211,19 @@ export class EditOneFeatureValueComponent implements OnInit
             };
             let response = await this.http.patch(`${api}/featureValue`, patch);
             if (!HttpTools.IsValid(response.status))
-            {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erreur',
-                    detail: `Erreur lors de la mise à jour de la valeur ${featureValue.value}`
-                });
-            }
+                MessageServiceTools.httpFail(this.messageService, response);
         }
 
         if (patchShopSpecifics)
         {
-            console.log('patchShopSpecifics');
-            console.log(featureValue.shopSpecifics);
             const shopSpecifics: IdPrestashopShopDto[] = featureValue.shopSpecifics
                 .filter((ss: any) => ss.idPrestashop != undefined);
-            console.log(shopSpecifics);
-
             const response = await this.http.post(`${api}/featureValue/shopSpecific/${featureValue.id}`,
                 shopSpecifics);
             if (!HttpTools.IsValid(response.status))
-            {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erreur',
-                    detail: `Erreur lors de la mise à jour des identifiant de la valeur ${featureValue.value}`
-                });
-            }
+                MessageServiceTools.httpFail(this.messageService, response);
         }
     }
-
 
     private async _saveAdd(toAdd: FeatureValueDto[]): Promise<void>
     {
@@ -257,13 +240,7 @@ export class EditOneFeatureValueComponent implements OnInit
             value: featureValue.value
         });
         if (!HttpTools.IsValid(response.status))
-        {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: `Erreur lors de l'ajout de la valeur ${featureValue.value}`
-            });
-        }
+            MessageServiceTools.httpFail(this.messageService, response);
 
         const shopSpecifics: IdPrestashopShopDto[] = featureValue.shopSpecifics
             .filter(ss => ss.idPrestashop != undefined);
@@ -273,13 +250,7 @@ export class EditOneFeatureValueComponent implements OnInit
         const featureValueId = response.body;
         response = await this.http.post(`${api}/featureValue/shopSpecific/${featureValueId}`, shopSpecifics);
         if (!HttpTools.IsValid(response.status))
-        {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: `Erreur lors de l'ajout des identifiants à la valeur ${featureValue.value}`
-            });
-        }
+            MessageServiceTools.httpFail(this.messageService, response);
     }
 
     private async _saveDelete(toDelete: FeatureValueDto[]): Promise<void>
@@ -294,13 +265,7 @@ export class EditOneFeatureValueComponent implements OnInit
     {
         const response = await this.http.delete(`${api}/featureValue/${featureValue.id}`);
         if (!HttpTools.IsValid(response.status))
-        {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: `Erreur lors de la suppression de la valeur ${featureValue.value}`
-            });
-        }
+            return MessageServiceTools.httpFail(this.messageService, response);
     }
 
     get Shop(): typeof Shop

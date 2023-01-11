@@ -12,8 +12,8 @@ export class MessageServiceTools
   {
     const error: HttpErrorResponse = response as unknown as HttpErrorResponse;
     if (response == undefined || error.error === undefined)
-      messageService.add({severity: 'warn', summary: 'Request issue', detail: 'Error during request to the server'});
+      messageService.add({severity: 'error', summary: 'Request issue', detail: 'Error during request to the server'});
     else
-      messageService.add({severity: 'warn', summary: response.statusText, detail: error.error});
+      messageService.add({severity: 'error', summary: response.statusText, detail: error.error});
   }
 }
