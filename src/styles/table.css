@@ -1,0 +1,12 @@
+.cell {
+    padding: 0 !important;
+    transition: all .1s ease-in-out;
+}
+
+.cell:hover {
+    background-color: var(--fourth-color);
+}
+
+.cell * {
+    margin: 5px !important;
+}

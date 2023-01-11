@@ -1,1 +1,39 @@
-<p>predefined-key-value-table works!</p>
+<p-table dataKey="id"
+         styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+         [value]="currentFeatures" [totalRecords]="currentFeatures.length"
+         [tableStyle]="{'width': '50vw'}" [scrollable]="true" scrollHeight="65vh">
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Model</th>
+            <th>Valeur</th>
+            <th>
+                <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-info"
+                        (click)="createEmptyValue()">
+                </button>
+            </th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-currentFeature>
+        <tr>
+            <td class="cell" style="overflow: visible">
+                <!-- appendTo="body" <=> the dropdown can be shown -->
+                <p-autoComplete id="field-popularity" dataKey="id" field="name" appendTo="body"
+                                [suggestions]="keySuggestions"
+                                (completeMethod)="completeMethodForModel($event)"
+                                [(ngModel)]="currentFeature.model"
+                                [dropdown]="true" [forceSelection]="true" [autoHighlight]="true">
+                </p-autoComplete>
+            </td>
+            <td>
+                Empty
+            </td>
+            <td>
+                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                        (click)="deleteValue(currentFeature)">
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
