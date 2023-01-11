@@ -149,7 +149,7 @@ export class EditOneProductComponent implements OnInit
     {
         let routedData: { selectedIds: number[], selectedId: number } = history.state;
         if (routedData.selectedIds == undefined)
-            routedData.selectedIds = [7212, 7909, 7910, 7911, 7912];
+            routedData.selectedIds = [6190, 7212, 7909, 7910, 7911, 7912];
 
         if (routedData.selectedId == undefined)
             routedData.selectedId = Operation.firstOrDefault(routedData.selectedIds) ?? 0;
