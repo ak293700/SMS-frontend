@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {FeatureModelsService} from "../../../Services/feature-model.service.ts.service";
-import {LiteFeatureValueDto} from "../../../../Dtos/FeatureDtos/FeatureValueDtos/LiteFeatureValueDto";
 import {Operation} from "../../../../utils/Operation";
 
 /*
@@ -31,7 +30,7 @@ export class PredefinedKeyValueTableComponent implements OnInit
 
     currentFeatures: {
         model: IdNameDto,
-        value: LiteFeatureValueDto
+        value: IdNameDto
     }[] = [];
 
     constructor(private featureModelsService: FeatureModelsService)
@@ -45,25 +44,23 @@ export class PredefinedKeyValueTableComponent implements OnInit
 
         this.currentFeatures = [
             {
-                model: {
-                    id: 1,
-                    name: "Couleur"
-                },
-                value: {
-                    id: 1,
-                    value: "Rouge"
-                }
+                model: {id: 1, name: "Couleur"},
+                value: {id: 1, name: "Rouge"}
             },
             {
-                model: {
-                    id: 1,
-                    name: "Expédié sous"
-                },
-                value: {
-                    id: 1,
-                    value: "24/48h"
-                }
+                model: {id: 2, name: "Expédié sous"},
+                value: {id: 3, name: "24/48h"}
             }
+        ];
+
+        this._valueSuggestions[1] = [
+            {id: 1, name: "Rouge"},
+            {id: 2, name: "Vert"},
+        ];
+
+        this._valueSuggestions[2] = [
+            {id: 3, name: "24/48h"},
+            {id: 4, name: "7j"},
         ];
     }
 
@@ -85,5 +82,21 @@ export class PredefinedKeyValueTableComponent implements OnInit
     completeMethodForModel(event: any)
     {
         this.keySuggestions = Operation.completeMethod(event.query, this.initialKeySuggestions);
+    }
+
+    completeMethodForValue(event: any, modelId: number)
+    {
+        console.log(modelId);
+
+        let suggestions = this._valueSuggestions[modelId];
+        if (suggestions == undefined)
+        {
+            // fetch it
+            suggestions = [];
+        }
+
+        console.log(suggestions);
+
+        this.valueSuggestion = Operation.completeMethod(event.query, suggestions);
     }
 }
