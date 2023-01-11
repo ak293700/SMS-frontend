@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {ConfirmationService, MessageService} from "primeng/api";
 import {EditBaseComponent} from "../edit-base/edit-base.component";
-import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
     selector: 'app-edit-multiple',
@@ -11,12 +10,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 export class EditMultipleComponent extends EditBaseComponent
 {
     constructor(messageService: MessageService,
-                confirmationService: ConfirmationService,
-                router: Router,
-                route: ActivatedRoute)
+                confirmationService: ConfirmationService)
 
     {
-        super(messageService, confirmationService, router, route);
+        super(messageService, confirmationService);
     }
 
     goToData(id

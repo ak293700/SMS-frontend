@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {IdNameDto} from "../../../../Dtos/IdNameDto";
 import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {Operation} from "../../../../utils/Operation";
-import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({template: ''}) // being abstract it has no selector, no style and no template
 export abstract class EditBaseComponent
@@ -20,9 +19,7 @@ export abstract class EditBaseComponent
   @Output('save') saveEvent = new EventEmitter();
 
   protected constructor(protected messageService: MessageService,
-                        protected confirmationService: ConfirmationService,
-                        protected router: Router,
-                        protected route: ActivatedRoute)
+                        protected confirmationService: ConfirmationService)
   {}
 
   @Input() dialItems: MenuItem[] = [];
@@ -50,13 +47,5 @@ export abstract class EditBaseComponent
   save()
   {
     this.saveEvent.emit();
-  }
-
-  async test()
-  {
-    console.log('test');
-    const a = await this.router.navigate(['../../filter'],
-        {relativeTo: this.route});
-    console.log(a);
   }
 }

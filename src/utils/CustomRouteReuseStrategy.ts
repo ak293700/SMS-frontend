@@ -5,18 +5,16 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
     private storedRoutes = new Map<string, DetachedRouteHandle>();
     private lastRoute: string = '';
 
-
     shouldDetach(route: ActivatedRouteSnapshot): boolean
     {
-        console.log('shouldDetach');
         if (route.routeConfig == undefined || route.routeConfig.component == undefined)
             return false;
 
         // we save the route for after
         this.lastRoute = this.getResolvedUrl(route);
-        const data = route.routeConfig.data as any;
 
-        return data?.reuse === true;
+        const data = route.routeConfig.data as any;
+        return data?.reuse === true || false;
     }
 
     store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void
@@ -29,38 +27,28 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
 
     shouldAttach(route: ActivatedRouteSnapshot): boolean
     {
-        console.log('shouldAttach');
+        const curr_url = this.getResolvedUrl(route);
         if (route.routeConfig == undefined)
             return false;
 
         // is the route we go is cache
-        const wasRoutePreviouslyDetached = !!route.routeConfig
-            && !!this.storedRoutes.get(this.getResolvedUrl(route));
-        if (wasRoutePreviouslyDetached)
+        const isRouteCached = this.storedRoutes.has(curr_url);
+
+        // if the route is cached, need to test that we can use it from where we are from
+        if (isRouteCached)
         {
             const reuseRoutesFrom = (route.data as any)?.reuseRoutesFrom as any;
 
-            if (reuseRoutesFrom === undefined)
-            {
-                console.log('no policy');
+            // the way the router call this is weird
+            // it will call multiple times for one navigation
+            // navigate from /a -> /b will call shouldAttach for /a and /a only then call shouldAttach for /a and /b
+            // so lastRoute is /a => return false but the second call return true
+            // this difference in the return create bug in future navigation
+            if (reuseRoutesFrom === undefined || curr_url === this.lastRoute)
                 return true; // if no just return true
-            }
 
-            console.log('policy exist');
-
-            // // check the policy allow to reuse the component
-
-            console.log('lasRoute', this.lastRoute);
-            const res: boolean = reuseRoutesFrom.includes(this.lastRoute);
-            console.log('res', res);
-            console.log(res !== true && res !== false);
-
-            // if (res !== true && res !== false)
-            //     throw new Error('reuseRoutesFrom must be an array of string or a boolean');
-
-            return false;
-            return true;
-            return res;
+            // check the policy allow to reuse the component
+            return reuseRoutesFrom.includes(this.lastRoute);
         }
 
         return false;
@@ -71,22 +59,23 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy
         if (route.routeConfig == undefined)
             return null;
 
-        console.log('retrieve', this.storedRoutes.get(this.getResolvedUrl(route)) ?? null);
         return this.storedRoutes.get(this.getResolvedUrl(route)) ?? null;
     }
 
     shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean
     {
-        console.log('shouldReuseRoute');
         // Basic check
-        // if just change the params of the product, we don't want to reuse the route
+        // if just a param in the url change we don't want to reload the page6
         return future.routeConfig === curr.routeConfig;
     }
 
     private getResolvedUrl(route: ActivatedRouteSnapshot): string
     {
         return route.pathFromRoot
-            .map(v => v.url.map(segment => segment.toString()).join('/'))
+            .map(v => v.url
+                .map(segment => segment.toString())
+                .join('/')
+            )
             .join('/');
     }
 }
